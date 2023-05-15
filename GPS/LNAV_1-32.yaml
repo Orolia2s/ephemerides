@@ -1,0 +1,56 @@
+kind: GNSS_format
+metadata:
+  constellation: GPS
+  message: LNAV
+frame_count: 1
+subframe_count: 5
+word_count: 10
+data_bits_per_word: [6, 30]
+order: lsb_first
+header:
+  - name: preamble
+    bits: 8
+  - name: telemetry
+    bits: 16
+  - bits: 2
+  - name: time_of_week
+    bits: 17
+    half: msb
+  - name: alert
+    bits: 1
+  - name: anti_spoof
+    bits: 1
+  - name: subframe_id
+    bits: 3
+  - bits: 2
+formats:
+  - subframe: 1
+    fields:
+      - name: week_number
+        bits: 10
+      - name: ca_or_p_on_l2
+        bits: 2
+      - name: user_range_accuracy_index
+        bits: 4
+      - name: satellite_health
+        bits: 6
+      - name: issue_of_data_clock
+        bits: 2
+        half: msb
+      - name: l2p_data_flag
+        bits: 1
+      - bits: 87
+      - name: group_delay_differential
+        bits: 8
+      - name: issue_of_data_clock
+        bits: 8
+        half: lsb
+      - name: time_of_clock
+        bits: 16
+      - name: clock_drift_rate_correction
+        bits: 8
+      - name: clock_drift_correction
+        bits: 16
+      - name: clock_bias_correction
+        bits: 22
+      - bits: 2
