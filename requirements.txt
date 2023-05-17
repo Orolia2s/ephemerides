@@ -1,0 +1,3 @@
+pyserial
+pyubx2
+pyYAML
