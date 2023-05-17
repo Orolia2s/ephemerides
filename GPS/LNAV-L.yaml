@@ -1,8 +1,11 @@
 kind: GNSS_format
 metadata:
   constellation: GPS
-  message: LNAV
-frame_count: 1
+  message: LNAV-L
+  description: |
+    Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
+  prn_max: 32
+frame_count: 25
 subframe_count: 5
 word_count: 10
 data_bits_per_word: [6, 30]
@@ -10,6 +13,7 @@ order: lsb_first
 header:
   - name: preamble
     bits: 8
+    value: 0b10001011
   - name: telemetry
     bits: 16
   - bits: 2
@@ -42,17 +46,32 @@ formats:
       - bits: 87
       - name: group_delay_differential
         bits: 8
+        latex: T_{GD}
+        shift: -31
+        unit: s
       - name: issue_of_data_clock
         bits: 8
         half: lsb
       - name: time_of_clock
         bits: 16
+        latex: t_{oc}
+        shift: 4
+        unit: s
       - name: clock_drift_rate_correction
         bits: 8
+        latex: a_{f2}
+        shift: -55
+        unit: s/s2
       - name: clock_drift_correction
         bits: 16
+        latex: a_{f1}
+        shift: -43
+        unit: s/s
       - name: clock_bias_correction
         bits: 22
+        latex: a_{f0}
+        shift: -31
+        unit: s
       - bits: 2
   - subframe: 2
     fields:
@@ -60,10 +79,16 @@ formats:
         bits: 8
       - name: orbit_radius_sine_correction
         bits: 16
+        latex: C_{rs}
+        shift: -5
+        unit: m
       - name: mean_motion_difference
         bits: 16
+        latex: \delta_n
+        shift: -43
       - name: mean_anomaly
         bits: 32
+        latex: M_0
       - name: argument_of_latitude_cosine_correction
         bits: 16
       - name: eccentricity
@@ -72,6 +97,7 @@ formats:
         bits: 16
       - name: square_root_of_semi_major_axis
         bits: 32
+        latex: \sqrt{A}
       - name: reference_time_ephemeris
         bits: 16
       - name: fit_interval_flag
