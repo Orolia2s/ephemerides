@@ -191,3 +191,140 @@ formats:
       - name: satellite_24_health
         bits: 6
       - bits: 24
+  - subframe: 4
+    pages: [1, 6, 11, 12, [14, 17], [19, 24]]
+    fields:
+      - name: data_id
+        bits: 2
+      - name: satellite_id
+        bits: 6
+      - bits: 184
+  - subframe: 4
+    pages: [18]
+    fields:
+      - name: data_id
+        bits: 2
+      - name: satellite_id
+        bits: 6
+      - name: alpha_0
+        bits: 8
+      - name: alpha_1
+        bits: 8
+      - name: alpha_2
+        bits: 8
+      - name: alpha_3
+        bits: 8
+      - name: beta_0
+        bits: 8
+      - name: beta_1
+        bits: 8
+      - name: beta_2
+        bits: 8
+      - name: beta_3
+        bits: 8
+      - name: A_1
+        bits: 24
+      - name: A_0
+        bits: 32
+      - name: utc_reference_time
+        bits: 8
+      - name: utc_week_number
+        bits: 8
+      - name: leap_seconds_delta
+        bits: 8
+      - name: leap_seconds_week_number
+        bits: 8
+      - name: day_number
+        bits: 8
+      - name: future_leap_seconds_week_number
+        bits: 8
+      - bits: 16
+  - subframe: 4
+    pages: [25]
+    fields:
+      - name: data_id
+        bits: 2
+      - name: satellite_id
+        bits: 6
+      - name: satellite_1_config
+        bits: 4
+      - name: satellite_2_config
+        bits: 4
+      - name: satellite_3_config
+        bits: 4
+      - name: satellite_4_config
+        bits: 4
+      - name: satellite_5_config
+        bits: 4
+      - name: satellite_6_config
+        bits: 4
+      - name: satellite_7_config
+        bits: 4
+      - name: satellite_8_config
+        bits: 4
+      - name: satellite_9_config
+        bits: 4
+      - name: satellite_10_config
+        bits: 4
+      - name: satellite_11_config
+        bits: 4
+      - name: satellite_12_config
+        bits: 4
+      - name: satellite_13_config
+        bits: 4
+      - name: satellite_14_config
+        bits: 4
+      - name: satellite_15_config
+        bits: 4
+      - name: satellite_16_config
+        bits: 4
+      - name: satellite_17_config
+        bits: 4
+      - name: satellite_18_config
+        bits: 4
+      - name: satellite_19_config
+        bits: 4
+      - name: satellite_20_config
+        bits: 4
+      - name: satellite_21_config
+        bits: 4
+      - name: satellite_22_config
+        bits: 4
+      - name: satellite_23_config
+        bits: 4
+      - name: satellite_24_config
+        bits: 4
+      - name: satellite_25_config
+        bits: 4
+      - name: satellite_26_config
+        bits: 4
+      - name: satellite_27_config
+        bits: 4
+      - name: satellite_28_config
+        bits: 4
+      - name: satellite_29_config
+        bits: 4
+      - name: satellite_30_config
+        bits: 4
+      - name: satellite_31_config
+        bits: 4
+      - name: satellite_32_config
+        bits: 4
+      - bits: 2
+      - name: satellite_25_health
+        bits: 6
+      - name: satellite_26_health
+        bits: 6
+      - name: satellite_27_health
+        bits: 6
+      - name: satellite_28_health
+        bits: 6
+      - name: satellite_29_health
+        bits: 6
+      - name: satellite_30_health
+        bits: 6
+      - name: satellite_31_health
+        bits: 6
+      - name: satellite_32_health
+        bits: 6
+      - bits: 4
