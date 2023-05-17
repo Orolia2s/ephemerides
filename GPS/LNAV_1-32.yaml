@@ -98,3 +98,96 @@ formats:
         bits: 8
       - name: rate_of_inclination_angle
         bits: 14
+  - subframe: 5
+    pages: [[1, 24]]
+    fields:
+      - name: data_id
+        bits: 2
+      - name: satellite_id
+        bits: 6
+      - name: eccentricity
+        bits: 16
+      - name: almanach_reference_time
+        bits: 8
+      - name: delta_i
+        bits: 16
+      - name: rate_of_right_ascension
+        bits: 16
+      - name: satellite_health
+        bits: 8
+      - name: square_root_of_semi_major_axis
+        bits: 24
+      - name: longitude_of_ascending_node_of_orbit_plane
+        bits: 24
+      - name: argument_of_perigee
+        bits: 24
+      - name: mean_anomaly
+        bits: 24
+      - name: clock_bias_correction
+        bits: 8
+        half: msb
+      - name: clock_drift_correction
+        bits: 11
+      - name: clock_bias_correction
+        bits: 3
+        half: lsb
+  - subframe: 5
+    pages: [25]
+    fields:
+      - name: data_id
+        bits: 2
+      - name: satellite_id
+        bits: 6
+      - name: almanach_reference_time
+        bits: 8
+      - name: almanach_week_number
+        bits: 8
+      - name: satellite_1_health
+        bits: 6
+      - name: satellite_2_health
+        bits: 6
+      - name: satellite_3_health
+        bits: 6
+      - name: satellite_4_health
+        bits: 6
+      - name: satellite_5_health
+        bits: 6
+      - name: satellite_6_health
+        bits: 6
+      - name: satellite_7_health
+        bits: 6
+      - name: satellite_8_health
+        bits: 6
+      - name: satellite_9_health
+        bits: 6
+      - name: satellite_10_health
+        bits: 6
+      - name: satellite_11_health
+        bits: 6
+      - name: satellite_12_health
+        bits: 6
+      - name: satellite_13_health
+        bits: 6
+      - name: satellite_14_health
+        bits: 6
+      - name: satellite_15_health
+        bits: 6
+      - name: satellite_16_health
+        bits: 6
+      - name: satellite_17_health
+        bits: 6
+      - name: satellite_18_health
+        bits: 6
+      - name: satellite_19_health
+        bits: 6
+      - name: satellite_20_health
+        bits: 6
+      - name: satellite_21_health
+        bits: 6
+      - name: satellite_22_health
+        bits: 6
+      - name: satellite_23_health
+        bits: 6
+      - name: satellite_24_health
+        bits: 6
+      - bits: 24
