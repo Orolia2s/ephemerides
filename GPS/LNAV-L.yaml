@@ -4,19 +4,21 @@ metadata:
   message: LNAV-L
   description: |
     Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
-  prn_max: 32
+  prns: [[1, 32]]
 frame_count: 25
 subframe_count: 5
 word_count: 10
-data_bits_per_word: [6, 30]
-order: lsb_first
+data_bits_per_word: [0, 24]
+order: msb_first
 header:
   - name: preamble
     bits: 8
     value: 0b10001011
   - name: telemetry
-    bits: 16
-  - bits: 2
+    bits: 14
+  - name: integrity_status
+    bits: 1
+  - bits: 1
   - name: time_of_week
     bits: 17
     half: msb
@@ -84,7 +86,7 @@ formats:
         unit: m
       - name: mean_motion_difference
         bits: 16
-        latex: \delta_n
+        latex: \Delta_n
         shift: -43
       - name: mean_anomaly
         bits: 32
@@ -93,13 +95,19 @@ formats:
         bits: 16
       - name: eccentricity
         bits: 32
+        latex: e
+        shift: -33
       - name: argument_of_latitude_sine_correction
         bits: 16
       - name: square_root_of_semi_major_axis
         bits: 32
         latex: \sqrt{A}
+        shift: -19
+        unit: \sqrt{m}
       - name: reference_time_ephemeris
         bits: 16
+        shift: 4
+        unit: s
       - name: fit_interval_flag
         bits: 1
       - name: age_of_data_offset
@@ -110,16 +118,24 @@ formats:
         bits: 16
       - name: longitude_of_ascending_node_of_orbit_plane
         bits: 32
+        latex: \Omega_0
+        shift: -31
       - name: angle_of_inclination_sine_correction
         bits: 16
       - name: inclination_angle_at_reference_time
         bits: 32
+        latex: i_0
+        shift: -31
       - name: orbit_radius_cosine_correction
         bits: 16
       - name: argument_of_perigee
         bits: 32
+        latex: \omega
+        shift: -31
       - name: rate_of_right_ascension
         bits: 24
+        latex: \dot{\Omega}
+        shift: -43
       - name: issue_of_data_ephemeris
         bits: 8
       - name: rate_of_inclination_angle
@@ -129,10 +145,12 @@ formats:
     fields:
       - name: data_id
         bits: 2
+        value: 0b01
       - name: satellite_id
         bits: 6
       - name: eccentricity
         bits: 16
+        latex: e
       - name: almanach_reference_time
         bits: 8
       - name: delta_i

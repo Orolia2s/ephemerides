@@ -1,3 +1,5 @@
 pyserial
 pyubx2
 pyYAML
+astropy
+more-itertools
