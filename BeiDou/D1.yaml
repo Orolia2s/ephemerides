@@ -1,0 +1,8 @@
+kind: GNSS_format
+metadata:
+  constellation: BeiDou
+  message: D1
+  description: |
+    Sent on the B3I signal (1269.520 MHz)
+frame_count: 24
+subframe_count: 5

@@ -1,0 +1,8 @@
+kind: GNSS_format
+metadata:
+  constellation: Galileo
+  message: FNAV
+  description: |
+    Transmitted on the E5a-I signal
+subframe_count: 12
+order: msb_first
