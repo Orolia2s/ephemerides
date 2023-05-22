@@ -237,13 +237,48 @@ formats:
         bits: 6
       - bits: 24
   - subframe: 4
-    pages: [1, 6, 11, 12, [14, 17], [19, 24]]
+    pages: [1, 6, 10, 11, 12, [14, 17], [19, 24]]
     fields:
       - name: data_id
         bits: 2
       - name: satellite_id
         bits: 6
       - bits: 184
+  - subframe: 4
+    pages: [[2, 5], [7, 9]]
+    fields:
+      - name: data_id
+        bits: 2
+        value: 0b01
+      - name: satellite_id
+        bits: 6
+      - name: eccentricity
+        bits: 16
+        latex: e
+      - name: almanach_reference_time
+        bits: 8
+      - name: delta_i
+        bits: 16
+      - name: rate_of_right_ascension
+        bits: 16
+      - name: satellite_health
+        bits: 8
+      - name: square_root_of_semi_major_axis
+        bits: 24
+      - name: longitude_of_ascending_node_of_orbit_plane
+        bits: 24
+      - name: argument_of_perigee
+        bits: 24
+      - name: mean_anomaly
+        bits: 24
+      - name: clock_bias_correction
+        bits: 8
+        half: msb
+      - name: clock_drift_correction
+        bits: 11
+      - name: clock_bias_correction
+        bits: 3
+        half: lsb
   - subframe: 4
     pages: [18]
     fields:
@@ -373,3 +408,66 @@ formats:
       - name: satellite_32_health
         bits: 6
       - bits: 4
+  - subframe: 4
+    pages: [13]
+    fields:
+      - name: edr_1
+        bits: 6
+      - name: edr_2
+        bits: 6
+      - name: edr_3
+        bits: 6
+      - name: edr_4
+        bits: 6
+      - name: edr_5
+        bits: 6
+      - name: edr_6
+        bits: 6
+      - name: edr_7
+        bits: 6
+      - name: edr_8
+        bits: 6
+      - name: edr_9
+        bits: 6
+      - name: edr_10
+        bits: 6
+      - name: edr_11
+        bits: 6
+      - name: edr_12
+        bits: 6
+      - name: edr_13
+        bits: 6
+      - name: edr_14
+        bits: 6
+      - name: edr_15
+        bits: 6
+      - name: edr_16
+        bits: 6
+      - name: edr_17
+        bits: 6
+      - name: edr_18
+        bits: 6
+      - name: edr_19
+        bits: 6
+      - name: edr_20
+        bits: 6
+      - name: edr_21
+        bits: 6
+      - name: edr_22
+        bits: 6
+      - name: edr_23
+        bits: 6
+      - name: edr_24
+        bits: 6
+      - name: edr_25
+        bits: 6
+      - name: edr_26
+        bits: 6
+      - name: edr_27
+        bits: 6
+      - name: edr_28
+        bits: 6
+      - name: edr_29
+        bits: 6
+      - name: edr_30
+        bits: 6
