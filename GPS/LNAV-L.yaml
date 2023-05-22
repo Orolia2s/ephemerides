@@ -88,6 +88,7 @@ formats:
         bits: 16
         latex: \Delta_n
         shift: -43
+        unit: s-1
       - name: mean_anomaly
         bits: 32
         latex: M_0
@@ -103,7 +104,7 @@ formats:
         bits: 32
         latex: \sqrt{A}
         shift: -19
-        unit: \sqrt{m}
+        unit: m(1/2)
       - name: reference_time_ephemeris
         bits: 16
         shift: 4
