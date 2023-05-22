@@ -152,30 +152,54 @@ formats:
       - name: eccentricity
         bits: 16
         latex: e
+        shift: -21
       - name: almanach_reference_time
         bits: 8
+        latex: t_{oa}
+        unit: s
       - name: delta_i
         bits: 16
+        shift: -14
       - name: rate_of_right_ascension
         bits: 16
+        latex: \dot{\Omega}
+        shift: -38
       - name: satellite_health
         bits: 8
       - name: square_root_of_semi_major_axis
         bits: 24
+        latex: \sqrt{A}
+        shift: -11
+        unit: m(1/2)
       - name: longitude_of_ascending_node_of_orbit_plane
         bits: 24
+        latex: \Omega_0
+        shift: -23
       - name: argument_of_perigee
         bits: 24
+        latex: \omega
+        shift: -23
       - name: mean_anomaly
         bits: 24
+        latex: M_0
+        shift: -23
       - name: clock_bias_correction
         bits: 8
         half: msb
+        latex: a_{f0}
+        shift: -20
+        unit: s
       - name: clock_drift_correction
         bits: 11
+        latex: a_{f1}
+        shift: -38
+        unit: s/s
       - name: clock_bias_correction
         bits: 3
         half: lsb
+        latex: a_{f0}
+        shift: -20
+        unit: s
   - subframe: 5
     pages: [25]
     fields:
@@ -185,6 +209,9 @@ formats:
         bits: 6
       - name: almanach_reference_time
         bits: 8
+        latex: t_{oa}
+        shift: 12
+        unit: s
       - name: almanach_week_number
         bits: 8
       - name: satellite_1_health
@@ -255,30 +282,54 @@ formats:
       - name: eccentricity
         bits: 16
         latex: e
+        shift: -21
       - name: almanach_reference_time
         bits: 8
+        latex: t_{oa}
+        unit: s
       - name: delta_i
         bits: 16
+        shift: -14
       - name: rate_of_right_ascension
         bits: 16
+        latex: \dot{\Omega}
+        shift: -38
       - name: satellite_health
         bits: 8
       - name: square_root_of_semi_major_axis
         bits: 24
+        latex: \sqrt{A}
+        shift: -11
+        unit: m(1/2)
       - name: longitude_of_ascending_node_of_orbit_plane
         bits: 24
+        latex: \Omega_0
+        shift: -23
       - name: argument_of_perigee
         bits: 24
+        latex: \omega
+        shift: -23
       - name: mean_anomaly
         bits: 24
+        latex: M_0
+        shift: -23
       - name: clock_bias_correction
         bits: 8
         half: msb
+        latex: a_{f0}
+        shift: -20
+        unit: s
       - name: clock_drift_correction
         bits: 11
+        latex: a_{f1}
+        shift: -38
+        unit: s/s
       - name: clock_bias_correction
         bits: 3
         half: lsb
+        latex: a_{f0}
+        shift: -20
+        unit: s
   - subframe: 4
     pages: [18]
     fields:
@@ -288,36 +339,76 @@ formats:
         bits: 6
       - name: alpha_0
         bits: 8
+        latex: \alpha_0
+        shift: -30
+        unit: s
       - name: alpha_1
         bits: 8
+        latex: \alpha_1
+        shift: -27
+        unit: s
       - name: alpha_2
         bits: 8
+        latex: \alpha_2
+        shift: -24
+        unit: s
       - name: alpha_3
         bits: 8
+        latex: \alpha_3
+        shift: -24
+        unit: s
       - name: beta_0
         bits: 8
+        latex: \beta_0
+        shift: 11
+        unit: s
       - name: beta_1
         bits: 8
+        latex: \beta_1
+        shift: 14
+        unit: sec
       - name: beta_2
         bits: 8
+        latex: \beta_2
+        shift: 16
+        unit: sec
       - name: beta_3
         bits: 8
+        latex: \beta_3
+        shift: 16
+        unit: s
       - name: A_1
         bits: 24
+        latex: A_1
+        shift: -50
+        unit: s/s
       - name: A_0
         bits: 32
+        latex: A_0
+        shift: -30
+        unit: s
       - name: utc_reference_time
         bits: 8
+        latex: t_{ot}
+        shift: 12
+        unit: s
       - name: utc_week_number
         bits: 8
+        latex: \text{WN}_t
       - name: leap_seconds_delta
         bits: 8
+        latex: \Delta t_{LS}
+        unit: s
       - name: leap_seconds_week_number
         bits: 8
+        latex: \text{WN}_{LSF}
       - name: day_number
         bits: 8
+        latex: \text{DN}
       - name: future_leap_seconds_week_number
         bits: 8
+        latex: \Delta t_{LSF}
+        unit: s
       - bits: 16
   - subframe: 4
     pages: [25]
