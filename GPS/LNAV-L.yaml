@@ -86,7 +86,7 @@ formats:
         unit: m
       - name: mean_motion_difference
         bits: 16
-        latex: \Delta_n
+        latex: \Delta n
         shift: -43
         unit: s-1
       - name: mean_anomaly
@@ -94,12 +94,14 @@ formats:
         latex: M_0
       - name: argument_of_latitude_cosine_correction
         bits: 16
+        latex: C_{uc}
       - name: eccentricity
         bits: 32
         latex: e
         shift: -33
       - name: argument_of_latitude_sine_correction
         bits: 16
+        latex: C_{us}
       - name: square_root_of_semi_major_axis
         bits: 32
         latex: \sqrt{A}
@@ -107,6 +109,7 @@ formats:
         unit: m(1/2)
       - name: reference_time_ephemeris
         bits: 16
+        latex: t_{oe}
         shift: 4
         unit: s
       - name: fit_interval_flag
@@ -117,18 +120,21 @@ formats:
     fields:
       - name: angle_of_inclination_cosine_correction
         bits: 16
+        latex: C_{ic}
       - name: longitude_of_ascending_node_of_orbit_plane
         bits: 32
         latex: \Omega_0
         shift: -31
       - name: angle_of_inclination_sine_correction
         bits: 16
+        latex: C_{is}
       - name: inclination_angle_at_reference_time
         bits: 32
         latex: i_0
         shift: -31
       - name: orbit_radius_cosine_correction
         bits: 16
+        latex: C_{rc}
       - name: argument_of_perigee
         bits: 32
         latex: \omega
@@ -159,6 +165,7 @@ formats:
         unit: s
       - name: delta_i
         bits: 16
+        latex: \delta_i
         shift: -14
       - name: rate_of_right_ascension
         bits: 16
@@ -214,6 +221,7 @@ formats:
         unit: s
       - name: almanach_week_number
         bits: 8
+        latex: \text{WN}_a
       - name: satellite_1_health
         bits: 6
       - name: satellite_2_health
@@ -289,6 +297,7 @@ formats:
         unit: s
       - name: delta_i
         bits: 16
+        latex: \delta_i
         shift: -14
       - name: rate_of_right_ascension
         bits: 16
