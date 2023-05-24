@@ -4,8 +4,10 @@
 import sys
 
 from astropy.units import Unit
+from more_itertools import grouper
+from types import SimpleNamespace
 
-from gnss_parser import ensure_fields, import_fields, Ordering
+from gnss_parser import ensure_fields, import_fields, Ordering, BitReaderMsbFirst
 
 class Field:
     def __init__(self, field: dict[str]):
@@ -41,8 +43,11 @@ class Parser:
         self.fields = list(map(Field, fields))
         self.bit_count = sum(f.bits for f in self.fields)
 
-    def parse(self, reader, destination):
-        pass
+    def parse(self, reader):
+        result = SimpleNamespace()
+        for field in self.fields:
+            field.parse(reader, result)
+        return result
 
     def to_markdown(self):
         heading = '|'.join(['', 'name', 'notation', 'bits', 'factor', 'unit', ''])
@@ -85,7 +90,11 @@ class GnssFormat:
 
     def parse_ublox_subframe(self, subframe: bytes):
         words = [int.from_bytes(word, 'little') for word in grouper(subframe, 4)]
-        self.reader = {Order.msb_first: BitReaderMsbFirst}[self.order](words)
+        for word in words:
+            print(f'{word:032b}')
+        #self.reader = {Ordering.msb_first: BitReaderMsbFirst}[self.order](words, range(24))
+        #self.header.parse(self.reader)
+        #print(f'{self.reader.count} bits read by the header')
 
     def to_markdown(self):
         lines = [f'## {self.constellation} {self.message}\n']
