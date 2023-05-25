@@ -125,22 +125,22 @@ formats:
       - bits: 2
   - subframe: 3
     fields:
-      - name: angle_of_inclination_cosine_correction
+      - name: inclination_angle_cosine_correction
         bits: 16
         latex: C_{ic}
         shift: -29
         unit: rad
-      - name: longitude_of_ascending_node_of_orbit_plane
+      - name: ascending_node_longitude
         bits: 32
         latex: \Omega_0
         shift: -31
         unit: semicircle
-      - name: angle_of_inclination_sine_correction
+      - name: inclination_angle_sine_correction
         bits: 16
         latex: C_{is}
         shift: -29
         unit: rad
-      - name: inclination_angle_at_reference_time
+      - name: inclination_angle
         bits: 32
         latex: i_0
         shift: -31
@@ -228,6 +228,7 @@ formats:
         latex: a_{f0}
         shift: -20
         unit: s
+      - bits: 2
   - subframe: 5
     pages: [25]
     fields:
@@ -532,6 +533,13 @@ formats:
   - subframe: 4
     pages: [13]
     fields:
+      - name: data_id
+        value: 0b01
+        bits: 2
+      - name: page_id
+        bits: 6
+      - name: availability
+        bits: 2
       - name: edr_1
         bits: 6
       - name: edr_2
@@ -592,3 +600,4 @@ formats:
         bits: 6
       - name: edr_30
         bits: 6
+      - bits: 2
