@@ -9,7 +9,7 @@ from more_itertools import grouper
 from types import SimpleNamespace
 from collections import defaultdict
 
-from gnss_parser import ensure_fields, import_fields, Ordering, BitReaderMsbFirst
+from gnss_parser import ensure_fields, import_fields, Ordering, SingleWordBitReaderMsb
 
 class Field:
     def __init__(self, field: dict[str]):
@@ -106,7 +106,7 @@ class GnssFormat:
         lines.append(self.description)
         lines.append('\n## Header\n')
         lines.append(self.header.to_markdown())
-        for key, value in self.readable_formats.items():
+        for key, value in sorted(self.readable_formats.items()):
             lines.append(f'\n## {key}\n')
             if isinstance(value, dict):
                 for subkey, subvalue in value.items():

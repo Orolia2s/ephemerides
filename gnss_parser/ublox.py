@@ -1,4 +1,4 @@
-from gnss_parser import GnssFormat, Constellation, ensure_fields
+from gnss_parser import Constellation, xor_bits
 
 message_from_ublox = {
     (Constellation.GPS, 0): 'LNAV-L', # L1 C/A (Coarse Acquisition)
