@@ -97,6 +97,8 @@ formats:
       - name: argument_of_latitude_cosine_correction
         bits: 16
         latex: C_{uc}
+        shift: -29
+        unit: rad
       - name: eccentricity
         bits: 32
         latex: e
@@ -104,6 +106,8 @@ formats:
       - name: argument_of_latitude_sine_correction
         bits: 16
         latex: C_{us}
+        shift: -29
+        unit: rad
       - name: square_root_of_semi_major_axis
         bits: 32
         latex: \sqrt{A}
@@ -124,6 +128,8 @@ formats:
       - name: angle_of_inclination_cosine_correction
         bits: 16
         latex: C_{ic}
+        shift: -29
+        unit: rad
       - name: longitude_of_ascending_node_of_orbit_plane
         bits: 32
         latex: \Omega_0
@@ -132,26 +138,35 @@ formats:
       - name: angle_of_inclination_sine_correction
         bits: 16
         latex: C_{is}
+        shift: -29
+        unit: rad
       - name: inclination_angle_at_reference_time
         bits: 32
         latex: i_0
         shift: -31
+        unit: semicircle
       - name: orbit_radius_cosine_correction
         bits: 16
         latex: C_{rc}
+        shift: -5
+        unit: m
       - name: argument_of_perigee
         bits: 32
         latex: \omega
         shift: -31
+        unit: semicircle
       - name: rate_of_right_ascension
         bits: 24
         latex: \dot{\Omega}
         shift: -43
+        unit: semicircle/s
       - name: issue_of_data_ephemeris
         bits: 8
       - name: rate_of_inclination_angle
         bits: 14
         latex: \text{IDOT}
+        shift: -43
+        unit: semicircle/s
       - bits: 2
   - subframe: 5
     pages: [[1, 24]]
