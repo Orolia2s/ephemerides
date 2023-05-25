@@ -35,7 +35,16 @@
 		#data.metadata.description
 	]
 
-	// TODO: partial outline
+	locate(loc => {
+		let q = query(heading.where(level: 2).or(heading.where(level: 1)).after(loc), loc)
+		if q.len() > 0 {
+			outline(
+				title: none,
+				indent: true,
+				target: selector(heading).after(loc).before(q.first().location(), inclusive: false),
+			)
+		}
+	})
 
 	let fields(contents) = {
 		let latex(s) = {
