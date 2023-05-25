@@ -31,8 +31,8 @@ class Field:
 
     def to_markdown(self):
         cells = ['']
-        cells.append(self.name if self.name else '_ignored_')
         cells.append(f'${self.latex}$' if self.latex else '')
+        cells.append(self.name if self.name else '_ignored_')
         cells.append(str(self.bits))
         cells.append(f'$2^{{{self.shift}}}$' if self.shift else '')
         cells.append(f'{self.unit:latex}' if self.unit else '')
@@ -51,9 +51,9 @@ class Parser:
         return result
 
     def to_markdown(self):
-        comment = f'{self.bit_count} bits mapped as follows:\n'
-        heading = '|'.join(['', 'name', 'notation', 'bits', 'factor', 'unit', ''])
-        hline   = '|'.join(['', ':---', ':------:', '---:', ':-----', ':--:', ''])
+        comment = f'\n{self.bit_count} bits mapped as follows:\n'
+        heading = '|'.join(['', 'notation', 'name', 'bits', 'factor', 'unit', ''])
+        hline   = '|'.join(['', ':------:', ':---', '---:', ':-----', ':--:', ''])
         return '\n'.join([comment, heading, hline] + [f.to_markdown() for f in self.fields])
 
     def __call__(self, *args):
@@ -104,10 +104,10 @@ class GnssFormat:
     def to_markdown(self):
         lines = [f'# {self.constellation} {self.message}\n']
         lines.append(self.description)
-        lines.append('\n## Header\n')
+        lines.append('## Header')
         lines.append(self.header.to_markdown())
         for key, value in sorted(self.readable_formats.items()):
-            lines.append(f'\n## {key}\n')
+            lines.append(f'\n## {key}')
             if isinstance(value, dict):
                 for subkey, subvalue in value.items():
                     lines.append(f'\n### {subkey}')
