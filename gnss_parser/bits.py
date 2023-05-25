@@ -1,5 +1,12 @@
 from enum import Enum
 
+def xor_bits(n: int):
+    """
+    Apply an exclusive or on all bits of the number.
+    The result is 1 if the number of 'on' bits is odd, else it is 0
+    """
+    return n.bit_count() & 1
+
 class Ordering(Enum):
     msb_first = 0
     lsb_first = 1

@@ -2,10 +2,12 @@
 """
 
 import sys
+import logging
 
 from astropy.units import Unit
 from more_itertools import grouper
 from types import SimpleNamespace
+from collections import defaultdict
 
 from gnss_parser import ensure_fields, import_fields, Ordering, BitReaderMsbFirst
 
@@ -19,8 +21,7 @@ class Field:
     def parse(self, reader, destination):
         value = reader.read(self.bits)
         if self.value and self.value != value:
-            print(f'Field "{self.name}" didn\'t have expected value of {self.value}, instead:',
-                  value, file=sys.stderr)
+            logging.warning(f'Field "{self.name}" didn\'t have expected value of {self.value}, instead: {value}')
         if self.shift:
             value *= 2 ** self.shift
         if self.unit:
@@ -34,7 +35,7 @@ class Field:
         cells.append(f'${self.latex}$' if self.latex else '')
         cells.append(str(self.bits))
         cells.append(f'$2^{{{self.shift}}}$' if self.shift else '')
-        cells.append(f'${self.unit:latex}$' if self.unit else '')
+        cells.append(f'{self.unit:latex}' if self.unit else '')
         return '|'.join(cells + [''])
 
 class Parser:
@@ -50,9 +51,10 @@ class Parser:
         return result
 
     def to_markdown(self):
+        comment = f'{self.bit_count} bits mapped as follows:\n'
         heading = '|'.join(['', 'name', 'notation', 'bits', 'factor', 'unit', ''])
         hline   = '|'.join(['', ':---', ':------:', '---:', ':-----', ':--:', ''])
-        return '\n'.join([heading, hline] + [f.to_markdown() for f in self.fields])
+        return '\n'.join([comment, heading, hline] + [f.to_markdown() for f in self.fields])
 
     def __call__(self, *args):
         return self.parse(*args)
@@ -69,9 +71,11 @@ class GnssFormat:
 
         frame_count = icd['frame_count']
         self.formats = {}
+        self.readable_formats = defaultdict(dict)
         for format in icd['formats']:
             ensure_fields('format', format, ['subframe', 'fields'])
             subframe = format['subframe']
+            parser = Parser(format['fields'])
             if 'pages' in format:
                 pages = set()
                 for p in format['pages']:
@@ -80,11 +84,12 @@ class GnssFormat:
                             pages.add(page)
                     else:
                         pages.add(p)
-                print(f'Found format of subframe {subframe} for pages {pages}', file=sys.stderr)
+                logging.info(f'Found format of subframe {subframe} for pages {pages}')
+                self.readable_formats[f'Subframe {subframe}'][f"Page{('s' if len(pages) > 1 else '')} {', '.join(map(str, pages))}"] = parser
             else:
                 pages = range(frame_count)
-                print(f'Found format of subframe {subframe} for all {frame_count} pages', file=sys.stderr)
-            parser = Parser(format['fields'])
+                logging.info(f'Found format of subframe {subframe} for all {frame_count} pages')
+                self.readable_formats[f'Subframe {subframe}'] = parser
             for page in pages:
                 self.formats[subframe, page] = parser
 
@@ -97,12 +102,16 @@ class GnssFormat:
         #print(f'{self.reader.count} bits read by the header')
 
     def to_markdown(self):
-        lines = [f'## {self.constellation} {self.message}\n']
+        lines = [f'# {self.constellation} {self.message}\n']
         lines.append(self.description)
-        lines.append('\n### Header\n')
-        lines.append(f'{self.header.bit_count} bits mapped as follows:\n')
+        lines.append('\n## Header\n')
         lines.append(self.header.to_markdown())
-        for key, format in self.formats.items():
-            lines.append(f'\n### Subframe {key[0]}, pages {key[1]}\n')
-            lines.append(format.to_markdown())
+        for key, value in self.readable_formats.items():
+            lines.append(f'\n## {key}\n')
+            if isinstance(value, dict):
+                for subkey, subvalue in value.items():
+                    lines.append(f'\n### {subkey}')
+                    lines.append(subvalue.to_markdown())
+            else:
+                lines.append(value.to_markdown())
         return '\n'.join(lines)

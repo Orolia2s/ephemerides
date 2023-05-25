@@ -2,6 +2,7 @@
 """
 
 import sys
+import logging
 
 def ensure_fields(location: str, obj: dict[str], fields: list[str]):
     """
@@ -20,4 +21,4 @@ def import_fields(destination, source: dict[str], fields: list[str]):
         setattr(destination, field, source.get(field, None))
     extras = source.keys() - set(fields)
     if extras:
-        print('Ignored extra fields:', extras, file=sys.stderr)
+        logging.warning('Ignored extra fields: {extras}')
