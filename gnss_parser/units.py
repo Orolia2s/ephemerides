@@ -1,5 +1,5 @@
 from astropy import units
 
-semicirle = units.def_unit('semicircle', 180 * deg)
+semicircle = units.def_unit('semicircle', 180 * units.deg)
 
-units.set_enabled_aliases({'semicircle': semicircle})
+units.add_enabled_units([semicircle])

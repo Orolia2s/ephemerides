@@ -1,8 +1,6 @@
 import argparse
 import yaml
-import sys
 import logging
-import traceback
 
 from serial import Serial
 from pyubx2 import UBXReader
@@ -50,7 +48,6 @@ if __name__ == '__main__':
     reader = UBXReader(stream, protfilter = 2)
     for _, ublox_message in reader:
         try:
-            formats[message].parse_ublox_subframe()
+            formats[message].parse_ublox_subframe(ublox_message.payload[8:])
         except Exception as err:
             logging.exception(err)
-            #print(f'Error when parsing message {message} ({constellation}):', err, file = sys.stderr)

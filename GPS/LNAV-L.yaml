@@ -88,10 +88,12 @@ formats:
         bits: 16
         latex: \Delta n
         shift: -43
-        unit: s-1
+        unit: semicircle/s
       - name: mean_anomaly
         bits: 32
         latex: M_0
+        shift: -31
+        unit: semicircle
       - name: argument_of_latitude_cosine_correction
         bits: 16
         latex: C_{uc}
@@ -116,6 +118,7 @@ formats:
         bits: 1
       - name: age_of_data_offset
         bits: 5
+      - bits: 2
   - subframe: 3
     fields:
       - name: angle_of_inclination_cosine_correction
@@ -125,6 +128,7 @@ formats:
         bits: 32
         latex: \Omega_0
         shift: -31
+        unit: semicircle
       - name: angle_of_inclination_sine_correction
         bits: 16
         latex: C_{is}
@@ -147,6 +151,8 @@ formats:
         bits: 8
       - name: rate_of_inclination_angle
         bits: 14
+        latex: \text{IDOT}
+      - bits: 2
   - subframe: 5
     pages: [[1, 24]]
     fields:
