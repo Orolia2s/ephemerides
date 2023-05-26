@@ -235,6 +235,7 @@ formats:
     fields:
       - name: data_id
         bits: 2
+        value: 0b01
       - name: satellite_id
         bits: 6
       - name: almanach_reference_time
@@ -299,6 +300,7 @@ formats:
     fields:
       - name: data_id
         bits: 2
+        value: 0b01
       - name: satellite_id
         bits: 6
       - bits: 184
@@ -367,6 +369,7 @@ formats:
     fields:
       - name: data_id
         bits: 2
+        value: 0b01
       - name: satellite_id
         bits: 6
       - name: alpha_0
@@ -447,6 +450,7 @@ formats:
     fields:
       - name: data_id
         bits: 2
+        value: 0b01
       - name: satellite_id
         bits: 6
       - name: satellite_1_config

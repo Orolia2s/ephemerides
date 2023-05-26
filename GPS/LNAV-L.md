@@ -83,7 +83,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||data_id|2|||
+|`01`|data_id|2|||
 ||satellite_id|6|||
 ||_ignored_|184|||
 
@@ -114,7 +114,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||data_id|2|||
+|`01`|data_id|2|||
 ||satellite_id|6|||
 |$\alpha_0$|alpha_0|8|$2^{-30}$|$\mathrm{s}$|
 |$\alpha_1$|alpha_1|8|$2^{-27}$|$\mathrm{s}$|
@@ -140,7 +140,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||data_id|2|||
+|`01`|data_id|2|||
 ||satellite_id|6|||
 ||satellite_1_config|4|||
 ||satellite_2_config|4|||
@@ -256,7 +256,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||data_id|2|||
+|`01`|data_id|2|||
 ||satellite_id|6|||
 |$t_{oa}$|almanach_reference_time|8|$2^{12}$|$\mathrm{s}$|
 |$\text{WN}_a$|almanach_week_number|8|||
