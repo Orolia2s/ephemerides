@@ -20,7 +20,7 @@ class Field:
     """
     def __init__(self, field: dict[str]):
         ensure_fields('format list element', field, ['bits'])
-        import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit'])
+        import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit', 'half'])
         if self.unit:
             self.unit = Unit(self.unit)
 
@@ -37,8 +37,10 @@ class Field:
 
     def to_markdown(self):
         cells = ['']
-        cells.append(f'${self.latex}$' if self.latex else '')
+        cells.append(f'${self.latex}$' if self.latex else f'`{self.value:0{self.bits}b}`' if self.value else '')
         cells.append(self.name if self.name else '_ignored_')
+        if self.half:
+            cells[-1] += f' ({self.half})'
         cells.append(str(self.bits))
         cells.append(f'$2^{{{self.shift}}}$' if self.shift else '')
         cells.append(f'{self.unit:latex}' if self.unit else '')
@@ -105,7 +107,9 @@ class GnssFormat:
                 self.formats[subframe, page] = parser
 
     def parse_ublox_subframe(self, reader):
-        self.header.parse(reader)
+        header = self.header.parse(reader)
+        logging.debug(f'Parsed the header and consumed {self.header.bit_count} bits')
+        logging.info(f'The header indicates this is subframe {header.subframe_id}')
 
     def to_markdown(self):
         lines = [f'# {self.constellation} {self.message}\n']

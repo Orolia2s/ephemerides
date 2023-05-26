@@ -13,6 +13,7 @@ markdown: $(MARKDOWN)
 
 clean:
 	$(RM) -r $(VENV_PATH)
+	$(RM) $(MARKDOWN)
 
 .PHONY: markdown clean
 

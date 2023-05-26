@@ -21,9 +21,9 @@ header:
   - bits: 1
   - name: time_of_week
     bits: 17
-    half: msb
   - name: alert
     bits: 1
+    value: 0
   - name: anti_spoof
     bits: 1
   - name: subframe_id

@@ -8,7 +8,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||preamble|8|||
+|`10001011`|preamble|8|||
 ||telemetry|14|||
 ||integrity_status|1|||
 ||_ignored_|1|||
@@ -28,11 +28,11 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||ca_or_p_on_l2|2|||
 ||user_range_accuracy_index|4|||
 ||satellite_health|6|||
-||issue_of_data_clock|2|||
+||issue_of_data_clock (msb)|2|||
 ||l2p_data_flag|1|||
 ||_ignored_|87|||
 |$T_{GD}$|group_delay_differential|8|$2^{-31}$|$\mathrm{s}$|
-||issue_of_data_clock|8|||
+||issue_of_data_clock (lsb)|8|||
 |$t_{oc}$|time_of_clock|16|$2^{4}$|$\mathrm{s}$|
 |$a_{f2}$|clock_drift_rate_correction|8|$2^{-55}$|$\mathrm{\frac{1}{s}}$|
 |$a_{f1}$|clock_drift_correction|16|$2^{-43}$|$\mathrm{}$|
@@ -93,7 +93,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||data_id|2|||
+|`01`|data_id|2|||
 ||satellite_id|6|||
 |$e$|eccentricity|16|$2^{-21}$||
 |$t_{oa}$|almanach_reference_time|8||$\mathrm{s}$|
@@ -104,9 +104,9 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 |$\Omega_0$|longitude_of_ascending_node_of_orbit_plane|24|$2^{-23}$||
 |$\omega$|argument_of_perigee|24|$2^{-23}$||
 |$M_0$|mean_anomaly|24|$2^{-23}$||
-|$a_{f0}$|clock_bias_correction|8|$2^{-20}$|$\mathrm{s}$|
+|$a_{f0}$|clock_bias_correction (msb)|8|$2^{-20}$|$\mathrm{s}$|
 |$a_{f1}$|clock_drift_correction|11|$2^{-38}$|$\mathrm{}$|
-|$a_{f0}$|clock_bias_correction|3|$2^{-20}$|$\mathrm{s}$|
+|$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
 
 ### Page 18
 
@@ -191,7 +191,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||data_id|2|||
+|`01`|data_id|2|||
 ||page_id|6|||
 ||availability|2|||
 ||edr_1|6|||
@@ -234,7 +234,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||data_id|2|||
+|`01`|data_id|2|||
 ||satellite_id|6|||
 |$e$|eccentricity|16|$2^{-21}$||
 |$t_{oa}$|almanach_reference_time|8||$\mathrm{s}$|
@@ -245,9 +245,9 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 |$\Omega_0$|longitude_of_ascending_node_of_orbit_plane|24|$2^{-23}$||
 |$\omega$|argument_of_perigee|24|$2^{-23}$||
 |$M_0$|mean_anomaly|24|$2^{-23}$||
-|$a_{f0}$|clock_bias_correction|8|$2^{-20}$|$\mathrm{s}$|
+|$a_{f0}$|clock_bias_correction (msb)|8|$2^{-20}$|$\mathrm{s}$|
 |$a_{f1}$|clock_drift_correction|11|$2^{-38}$|$\mathrm{}$|
-|$a_{f0}$|clock_bias_correction|3|$2^{-20}$|$\mathrm{s}$|
+|$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
 ||_ignored_|2|||
 
 ### Page 25
