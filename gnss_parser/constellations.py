@@ -1,6 +1,13 @@
+"""
+GNSS specific code
+"""
+
 from enum import Enum
 
 class Constellation(Enum):
+    """
+    GNSS system list, that conveniently corresponds to ublox representation
+    """
     GPS     = 0
     SBAS    = 1
     Galileo = 2

@@ -5,7 +5,7 @@ import logging
 from serial import Serial
 from pyubx2 import UBXReader
 
-from gnss_parser import GnssFormat, ensure_fields
+from gnss_parser import GnssFormat, ensure_fields, message_from_ublox, reader_from_ublox
 
 def interpret(obj: dict[str]):
     ensure_fields('top level', obj, ['kind'])
@@ -47,7 +47,9 @@ if __name__ == '__main__':
         stream = open(cli_args.file, 'rb')
     reader = UBXReader(stream, protfilter = 2)
     for _, ublox_message in reader:
+        constellation = Constellation(ublox_message.gnssId)
+        message = message_from_ublox.get((constellation, ublox_message.sigId), '(Unsupported)')
         try:
-            formats[message].parse_ublox_subframe(ublox_message.payload[8:])
+            formats[message].parse_ublox_subframe(reader_from_ublox[message](ublox_message.payload[8:]))
         except Exception as err:
             logging.exception(err)

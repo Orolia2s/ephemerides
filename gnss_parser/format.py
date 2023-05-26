@@ -1,17 +1,23 @@
 """
+Code related to parsing binary and interpreting it as a sequence of fields of varying widths
 """
 
 import sys
 import logging
 
-from astropy.units import Unit
-from more_itertools import grouper
 from types import SimpleNamespace
 from collections import defaultdict
+from more_itertools import grouper
+
+from astropy.units import Unit
 
 from gnss_parser import ensure_fields, import_fields, Ordering, SingleWordBitReaderMsb
 
 class Field:
+    """
+    Represents a single field.
+    No name would represent padding of reserved
+    """
     def __init__(self, field: dict[str]):
         ensure_fields('format list element', field, ['bits'])
         import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit'])
@@ -39,6 +45,9 @@ class Field:
         return '|'.join(cells + [''])
 
 class Parser:
+    """
+    Represent a continuous sequence of fields
+    """
 
     def __init__(self, fields: list[dict[str]]):
         self.fields = list(map(Field, fields))
@@ -60,6 +69,8 @@ class Parser:
         return self.parse(*args)
 
 class GnssFormat:
+    """
+    """
 
     def __init__(self, icd: dict[str]):
         ensure_fields('top level', icd, ['header', 'formats', 'metadata', 'order'])
@@ -93,13 +104,8 @@ class GnssFormat:
             for page in pages:
                 self.formats[subframe, page] = parser
 
-    def parse_ublox_subframe(self, subframe: bytes):
-        words = [int.from_bytes(word, 'little') for word in grouper(subframe, 4)]
-        for word in words:
-            print(f'{word:032b}')
-        #self.reader = {Ordering.msb_first: BitReaderMsbFirst}[self.order](words, range(24))
-        #self.header.parse(self.reader)
-        #print(f'{self.reader.count} bits read by the header')
+    def parse_ublox_subframe(self, reader):
+        self.header.parse(reader)
 
     def to_markdown(self):
         lines = [f'# {self.constellation} {self.message}\n']
