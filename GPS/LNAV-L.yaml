@@ -34,6 +34,7 @@ formats:
     fields:
       - name: week_number
         bits: 10
+        latex: \text{WN}
       - name: ca_or_p_on_l2
         bits: 2
       - name: user_range_accuracy_index
@@ -430,13 +431,13 @@ formats:
         bits: 8
         latex: \Delta t_{LS}
         unit: s
-      - name: leap_seconds_week_number
+      - name: future_leap_seconds_week_number
         bits: 8
         latex: \text{WN}_{LSF}
-      - name: day_number
+      - name: future_leap_seconds_day_number
         bits: 8
         latex: \text{DN}
-      - name: future_leap_seconds_week_number
+      - name: future_leap_seconds_delta
         bits: 8
         latex: \Delta t_{LSF}
         unit: s
