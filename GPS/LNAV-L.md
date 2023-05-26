@@ -13,7 +13,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||integrity_status|1|||
 ||_ignored_|1|||
 ||time_of_week|17|||
-||alert|1|||
+|`0`|alert|1|||
 ||anti_spoof|1|||
 ||subframe_id|3|||
 ||_ignored_|2|||

@@ -26,7 +26,7 @@ class Field:
 
     def parse(self, reader, destination):
         value = reader.read(self.bits)
-        if self.value and self.value != value:
+        if self.value != None and self.value != value:
             logging.warning(f'Field "{self.name}" didn\'t have expected value of {self.value}, instead: {value}')
         if self.shift:
             value *= 2 ** self.shift
@@ -37,7 +37,7 @@ class Field:
 
     def to_markdown(self):
         cells = ['']
-        cells.append(f'${self.latex}$' if self.latex else f'`{self.value:0{self.bits}b}`' if self.value else '')
+        cells.append(f'${self.latex}$' if self.latex else f'`{self.value:0{self.bits}b}`' if self.value != None else '')
         cells.append(self.name if self.name else '_ignored_')
         if self.half:
             cells[-1] += f' ({self.half})'
