@@ -24,7 +24,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||week_number|10|||
+|$\text{WN}$|week_number|10|||
 ||ca_or_p_on_l2|2|||
 ||user_range_accuracy_index|4|||
 ||satellite_health|6|||
@@ -47,11 +47,11 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 |:------:|:---|---:|:-----|:--:|
 ||issue_of_data_ephemeris|8|||
 |$C_{rs}$|orbit_radius_sine_correction|16|$2^{-5}$|$\mathrm{m}$|
-|$\Delta_n$|mean_motion_difference|16|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
+|$\Delta n$|mean_motion_difference|16|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
 |$M_0$|mean_anomaly|32|$2^{-31}$|$\mathrm{semicircle}$|
-|$C_{UC}$|argument_of_latitude_cosine_correction|16|$2^{-29}$|$\mathrm{rad}$|
+|$C_{uc}$|argument_of_latitude_cosine_correction|16|$2^{-29}$|$\mathrm{rad}$|
 |$e$|eccentricity|32|$2^{-33}$||
-|$C_{US}$|argument_of_latitude_sine_correction|16|$2^{-29}$|$\mathrm{rad}$|
+|$C_{us}$|argument_of_latitude_sine_correction|16|$2^{-29}$|$\mathrm{rad}$|
 |$\sqrt{A}$|square_root_of_semi_major_axis|32|$2^{-19}$|$\mathrm{m^{1/2}}$|
 |$t_{oe}$|reference_time_ephemeris|16|$2^{4}$|$\mathrm{s}$|
 ||fit_interval_flag|1|||
@@ -97,7 +97,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||satellite_id|6|||
 |$e$|eccentricity|16|$2^{-21}$||
 |$t_{oa}$|almanach_reference_time|8||$\mathrm{s}$|
-||delta_i|16|$2^{-14}$||
+|$\delta_i$|delta_i|16|$2^{-14}$||
 |$\dot{\Omega}$|rate_of_right_ascension|16|$2^{-38}$||
 ||satellite_health|8|||
 |$\sqrt{A}$|square_root_of_semi_major_axis|24|$2^{-11}$|$\mathrm{m^{1/2}}$|
@@ -129,9 +129,9 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 |$t_{ot}$|utc_reference_time|8|$2^{12}$|$\mathrm{s}$|
 |$\text{WN}_t$|utc_week_number|8|||
 |$\Delta t_{LS}$|leap_seconds_delta|8||$\mathrm{s}$|
-|$\text{WN}_{LSF}$|leap_seconds_week_number|8|||
-|$\text{DN}$|day_number|8|||
-|$\Delta t_{LSF}$|future_leap_seconds_week_number|8||$\mathrm{s}$|
+|$\text{WN}_{LSF}$|future_leap_seconds_week_number|8|||
+|$\text{DN}$|future_leap_seconds_day_number|8|||
+|$\Delta t_{LSF}$|future_leap_seconds_delta|8||$\mathrm{s}$|
 ||_ignored_|16|||
 
 ### Page 25
@@ -238,7 +238,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||satellite_id|6|||
 |$e$|eccentricity|16|$2^{-21}$||
 |$t_{oa}$|almanach_reference_time|8||$\mathrm{s}$|
-||delta_i|16|$2^{-14}$||
+|$\delta_i$|delta_i|16|$2^{-14}$||
 |$\dot{\Omega}$|rate_of_right_ascension|16|$2^{-38}$||
 ||satellite_health|8|||
 |$\sqrt{A}$|square_root_of_semi_major_axis|24|$2^{-11}$|$\mathrm{m^{1/2}}$|
@@ -259,7 +259,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||data_id|2|||
 ||satellite_id|6|||
 |$t_{oa}$|almanach_reference_time|8|$2^{12}$|$\mathrm{s}$|
-||almanach_week_number|8|||
+|$\text{WN}_a$|almanach_week_number|8|||
 ||satellite_1_health|6|||
 ||satellite_2_health|6|||
 ||satellite_3_health|6|||
