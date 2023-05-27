@@ -381,17 +381,17 @@ formats:
         bits: 8
         latex: \alpha_1
         shift: -27
-        unit: s
+        unit: s / semicircle
       - name: alpha_2
         bits: 8
         latex: \alpha_2
         shift: -24
-        unit: s
+        unit: s / semicircle2
       - name: alpha_3
         bits: 8
         latex: \alpha_3
         shift: -24
-        unit: s
+        unit: s / semicircle3
       - name: beta_0
         bits: 8
         latex: \beta_0
@@ -401,17 +401,17 @@ formats:
         bits: 8
         latex: \beta_1
         shift: 14
-        unit: s
+        unit: s / semicircle
       - name: beta_2
         bits: 8
         latex: \beta_2
         shift: 16
-        unit: s
+        unit: s / semicircle2
       - name: beta_3
         bits: 8
         latex: \beta_3
         shift: 16
-        unit: s
+        unit: s / semicircle3
       - name: A_1
         bits: 24
         latex: A_1
