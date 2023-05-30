@@ -32,8 +32,9 @@ class Field:
             value *= 2 ** self.shift
         if self.unit:
             value *= self.unit
-        print(f'\t{self.name}: {value}')
-        setattr(destination, self.name, value)
+        if self.name:
+            print(f'\t{self.name}: {value}')
+            setattr(destination, self.name, value)
 
     def to_markdown(self):
         cells = ['']

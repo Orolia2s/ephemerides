@@ -11,8 +11,12 @@ VENV_ACTIVATE := $(VENV_PATH)/bin/activate
 
 markdown: $(MARKDOWN)
 
+run: | $(VENV_ACTIVATE)
+	test -z "${VIRTUAL_ENV}" && source $|
+	sudo -E $(VENV_PATH)/bin/python -m gnss_parser GPS/LNAV-L.yaml -s /dev/ttyACM0 -v
+
 clean:
-	$(RM) -r $(VENV_PATH)
+#	$(RM) -r $(VENV_PATH)
 	$(RM) $(MARKDOWN)
 
 .PHONY: markdown clean
