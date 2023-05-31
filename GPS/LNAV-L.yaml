@@ -29,6 +29,12 @@ header:
   - name: subframe_id
     bits: 3
   - bits: 2
+page_header:
+  - name: data_id
+    bits: 2
+    value: 0b01
+  - name: page_id
+    bits: 6
 formats:
   - subframe: 1
     fields:
@@ -172,11 +178,6 @@ formats:
   - subframe: 5
     pages: [[1, 24]]
     fields: &ephemeris
-      - name: data_id
-        bits: 2
-        value: 0b01
-      - name: satellite_id
-        bits: 6
       - name: eccentricity
         bits: 16
         latex: e
@@ -233,11 +234,6 @@ formats:
   - subframe: 5
     pages: [25]
     fields:
-      - name: data_id
-        bits: 2
-        value: 0b01
-      - name: satellite_id
-        bits: 6
       - name: almanach_reference_time
         bits: 8
         latex: t_{oa}
@@ -298,11 +294,6 @@ formats:
   - subframe: 4
     pages: [1, 6, 11, 12, [14, 17], [19, 24]]
     fields:
-      - name: data_id
-        bits: 2
-        value: 0b01
-      - name: satellite_id
-        bits: 6
       - bits: 184
   - subframe: 4
     pages: [[2, 5], [7, 10]]
@@ -310,11 +301,6 @@ formats:
   - subframe: 4
     pages: [18]
     fields:
-      - name: data_id
-        bits: 2
-        value: 0b01
-      - name: satellite_id
-        bits: 6
       - name: alpha_0
         bits: 8
         latex: \alpha_0
@@ -391,11 +377,6 @@ formats:
   - subframe: 4
     pages: [25]
     fields:
-      - name: data_id
-        bits: 2
-        value: 0b01
-      - name: satellite_id
-        bits: 6
       - name: satellite_1_config
         bits: 4
       - name: satellite_2_config
@@ -481,11 +462,6 @@ formats:
   - subframe: 4
     pages: [13]
     fields:
-      - name: data_id
-        value: 0b01
-        bits: 2
-      - name: page_id
-        bits: 6
       - name: availability
         bits: 2
       - name: edr_1

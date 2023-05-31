@@ -81,9 +81,11 @@ class GnssFormat:
         import_fields(self, icd['metadata'], ['constellation', 'message', 'description'])
 
         self.header = Parser(icd['header'])
+        if 'page_header' in icd:
+            self.page_header = Parser(icd['page_header'])
+
         self.order = Ordering[icd['order']]
 
-        frame_count = icd['frame_count']
         self.formats = {}
         self.readable_formats = defaultdict(dict)
         for format in icd['formats']:
@@ -104,22 +106,40 @@ class GnssFormat:
                 logging.info(f'Found format of subframe {subframe} for pages {pages}')
                 self.readable_formats[f'Subframe {subframe}'][min(pages), f"Page{('s' if len(pages) > 1 else '')} {', '.join(human_readable)}"] = parser
             else:
-                pages = range(frame_count)
-                logging.info(f'Found format of subframe {subframe} for all {frame_count} pages')
+                pages = [None]
+                logging.info(f'Found format of subframe {subframe}, not paged')
                 self.readable_formats[f'Subframe {subframe}'] = parser
             for page in pages:
                 self.formats[subframe, page] = parser
 
     def parse_ublox_subframe(self, reader):
         header = self.header.parse(reader)
-        logging.debug(f'Parsed the header and consumed {self.header.bit_count} bits')
-        logging.info(f'The header indicates this is subframe {header.subframe_id}')
+        len_header = reader.count
+        logging.debug(f'Parsed the header and consumed {len_header} bits ({self.header.bit_count})')
+        logging.info(f'{header}')
+        logging.debug(f'The header indicates this is subframe {header.subframe_id}')
+        if (header.subframe_id, None) in self.formats:
+            print(self.formats[header.subframe_id, None].parse(reader))
+        elif hasattr(self, 'page_header'):
+            page_header = self.page_header.parse(reader)
+            len_page_header = reader.count - len_header
+            logging.debug(f'Parsed an additional {len_header} bits to find the page ({self.page_header.bit_count})')
+            if (header.subframe_id, page_header.page_id) in self.formats:
+                print(self.formats[header.subframe_id, page_header.page_id].parse(reader))
+                logging.debug(f'Parsed a total of {reader.count} bits')
+            else:
+                logging.error(f'Invalid subframe ID and page combination: {header.subframe_id}, {page_header.page_id}')
+        else:
+            logging.error(f'Invalid subframe ID with no page: {header.subframe_id}')
 
     def to_markdown(self):
         lines = [f'# {self.constellation} {self.message}\n']
         lines.append(self.description)
         lines.append('## Header')
         lines.append(self.header.to_markdown())
+        if hasattr(self, 'page_header'):
+            lines.append('\n## Header extension to paged subframes')
+            lines.append(self.page_header.to_markdown())
         for key, value in sorted(self.readable_formats.items()):
             lines.append(f'\n## {key}')
             if isinstance(value, dict):

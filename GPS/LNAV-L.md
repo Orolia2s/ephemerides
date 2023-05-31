@@ -18,6 +18,15 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||subframe_id|3|||
 ||_ignored_|2|||
 
+## Header extension to paged subframes
+
+8 bits mapped as follows:
+
+|notation|name|bits|factor|unit|
+|:------:|:---|---:|:-----|:--:|
+|`01`|data_id|2|||
+||page_id|6|||
+
 ## Subframe 1
 
 192 bits mapped as follows:
@@ -79,22 +88,18 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Pages 1, 6, 11, 12, 14 to 17, 19 to 24
 
-192 bits mapped as follows:
+184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|`01`|data_id|2|||
-||satellite_id|6|||
 ||_ignored_|184|||
 
 ### Pages 2 to 5, 7 to 10
 
-192 bits mapped as follows:
+184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|`01`|data_id|2|||
-||satellite_id|6|||
 |$e$|eccentricity|16|$2^{-21}$||
 |$t_{oa}$|almanach_reference_time|8||$\mathrm{s}$|
 |$\delta_i$|delta_i|16|$2^{-14}$||
@@ -111,12 +116,10 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Page 13
 
-192 bits mapped as follows:
+184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|`01`|data_id|2|||
-||page_id|6|||
 ||availability|2|||
 ||edr_1|6|||
 ||edr_2|6|||
@@ -152,12 +155,10 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Page 18
 
-192 bits mapped as follows:
+184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|`01`|data_id|2|||
-||satellite_id|6|||
 |$\alpha_0$|alpha_0|8|$2^{-30}$|$\mathrm{s}$|
 |$\alpha_1$|alpha_1|8|$2^{-27}$|$\mathrm{\frac{s}{semicircle}}$|
 |$\alpha_2$|alpha_2|8|$2^{-24}$|$\mathrm{\frac{s}{semicircle^{2}}}$|
@@ -178,12 +179,10 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Page 25
 
-192 bits mapped as follows:
+184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|`01`|data_id|2|||
-||satellite_id|6|||
 ||satellite_1_config|4|||
 ||satellite_2_config|4|||
 ||satellite_3_config|4|||
@@ -231,12 +230,10 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Pages 1 to 24
 
-192 bits mapped as follows:
+184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|`01`|data_id|2|||
-||satellite_id|6|||
 |$e$|eccentricity|16|$2^{-21}$||
 |$t_{oa}$|almanach_reference_time|8||$\mathrm{s}$|
 |$\delta_i$|delta_i|16|$2^{-14}$||
@@ -253,12 +250,10 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Page 25
 
-192 bits mapped as follows:
+184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|`01`|data_id|2|||
-||satellite_id|6|||
 |$t_{oa}$|almanach_reference_time|8|$2^{12}$|$\mathrm{s}$|
 |$\text{WN}_a$|almanach_week_number|8|||
 ||satellite_1_health|6|||
