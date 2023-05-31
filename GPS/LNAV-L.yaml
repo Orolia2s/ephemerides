@@ -477,7 +477,7 @@ formats:
         bits: 6
       - name: satellite_32_health
         bits: 6
-      - bits: 4
+      - bits: 6
   - subframe: 4
     pages: [13]
     fields:

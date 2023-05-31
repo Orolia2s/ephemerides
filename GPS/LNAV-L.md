@@ -178,7 +178,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Page 25
 
-190 bits mapped as follows:
+192 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
@@ -225,7 +225,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||satellite_30_health|6|||
 ||satellite_31_health|6|||
 ||satellite_32_health|6|||
-||_ignored_|4|||
+||_ignored_|6|||
 
 ## Subframe 5
 
