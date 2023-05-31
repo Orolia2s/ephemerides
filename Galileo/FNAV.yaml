@@ -3,6 +3,11 @@ metadata:
   constellation: Galileo
   message: FNAV
   description: |
-    Transmitted on the E5a-I signal
+    Transmitted on the E5a-I signal, the F-band (1278.75 MHz)
+    is used for the transmission of Galileo System Time (GST)
+    and other system messages, such as almanacs and health status messages.
 subframe_count: 12
 order: msb_first
+header:
+  - name: subframe_id
+    bits: 6

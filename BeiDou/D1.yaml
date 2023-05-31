@@ -6,3 +6,40 @@ metadata:
     Sent on the B3I signal (1269.520 MHz)
 frame_count: 24
 subframe_count: 5
+word_count: 10
+order: msb_first
+header:
+  - name: preamble
+    bits: 11
+    value: 0b11100010010
+  - bits: 4
+  - name: subframe_id
+    bits: 3
+  - name: second_of_week
+    bits: 20
+formats:
+  - subframe: 1
+    fields:
+      - name: sat_h1
+        bits: 1
+  - subframe: 2
+    fields:
+      - latex: \Delta_n
+        bits: 16
+      - latex: C_{uc}
+        bits: 18
+      - latex: M_0
+        bits: 32
+      - latex: e
+        bits: 32
+      - latex: C_{us}
+        bits: 18
+      - latex: C_{rc}
+        bits: 18
+      - latex: C_{rs}
+        bits: 18
+      - latex: \sqrt{A}
+        bits: 32
+      - latex: t_{oe}
+        bits: 2
+        half: msb

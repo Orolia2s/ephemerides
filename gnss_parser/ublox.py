@@ -52,6 +52,18 @@ def parity_LNAVL(byte_array: bytes) -> int:
         total += (word >> 6) & 0xFFFFFF
     return SingleWordBitReaderMsb(total, 10 * 24)
 
+def parity_FNAV(byte_array: bytes) -> int:
+    """
+    Galileo F-band message
+    """
+    words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
+    total = 0
+    for word in words[:6]:
+        total <<= 32
+        total += word
+    total <<= 22
+    total += words[6] >> 10
+
 reader_from_ublox = {
     'LNAV-L': parity_LNAVL
 }
