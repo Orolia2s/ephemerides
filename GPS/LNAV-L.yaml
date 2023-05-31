@@ -171,7 +171,7 @@ formats:
       - bits: 2
   - subframe: 5
     pages: [[1, 24]]
-    fields:
+    fields: &ephemeris
       - name: data_id
         bits: 2
         value: 0b01
@@ -306,64 +306,7 @@ formats:
       - bits: 184
   - subframe: 4
     pages: [[2, 5], [7, 10]]
-    fields:
-      - name: data_id
-        bits: 2
-        value: 0b01
-      - name: satellite_id
-        bits: 6
-      - name: eccentricity
-        bits: 16
-        latex: e
-        shift: -21
-      - name: almanach_reference_time
-        bits: 8
-        latex: t_{oa}
-        unit: s
-      - name: delta_i
-        bits: 16
-        latex: \delta_i
-        shift: -14
-      - name: rate_of_right_ascension
-        bits: 16
-        latex: \dot{\Omega}
-        shift: -38
-      - name: satellite_health
-        bits: 8
-      - name: square_root_of_semi_major_axis
-        bits: 24
-        latex: \sqrt{A}
-        shift: -11
-        unit: m(1/2)
-      - name: longitude_of_ascending_node_of_orbit_plane
-        bits: 24
-        latex: \Omega_0
-        shift: -23
-      - name: argument_of_perigee
-        bits: 24
-        latex: \omega
-        shift: -23
-      - name: mean_anomaly
-        bits: 24
-        latex: M_0
-        shift: -23
-      - name: clock_bias_correction
-        bits: 8
-        half: msb
-        latex: a_{f0}
-        shift: -20
-        unit: s
-      - name: clock_drift_correction
-        bits: 11
-        latex: a_{f1}
-        shift: -38
-        unit: s/s
-      - name: clock_bias_correction
-        bits: 3
-        half: lsb
-        latex: a_{f0}
-        shift: -20
-        unit: s
+    fields: *ephemeris
   - subframe: 4
     pages: [18]
     fields:
