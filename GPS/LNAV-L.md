@@ -18,7 +18,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||subframe_id|3|||
 ||_ignored_|2|||
 
-## Header extension to paged subframes
+## Header extension for paged subframes
 
 8 bits mapped as follows:
 

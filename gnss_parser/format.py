@@ -20,7 +20,7 @@ class Field:
     """
     def __init__(self, field: dict[str]):
         ensure_fields('format list element', field, ['bits'])
-        import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit', 'half'])
+        import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit', 'half', 'signed'])
         if self.unit:
             self.unit = Unit(self.unit)
 
@@ -138,7 +138,7 @@ class GnssFormat:
         lines.append('## Header')
         lines.append(self.header.to_markdown())
         if hasattr(self, 'page_header'):
-            lines.append('\n## Header extension to paged subframes')
+            lines.append('\n## Header extension for paged subframes')
             lines.append(self.page_header.to_markdown())
         for key, value in sorted(self.readable_formats.items()):
             lines.append(f'\n## {key}')

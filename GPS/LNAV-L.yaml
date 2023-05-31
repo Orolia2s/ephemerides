@@ -88,21 +88,25 @@ formats:
         bits: 8
       - name: orbit_radius_sine_correction
         bits: 16
+        signed: true
         latex: C_{rs}
         shift: -5
         unit: m
       - name: mean_motion_difference
         bits: 16
+        signed: true
         latex: \Delta n
         shift: -43
         unit: semicircle/s
       - name: mean_anomaly
         bits: 32
+        signed: true
         latex: M_0
         shift: -31
         unit: semicircle
       - name: argument_of_latitude_cosine_correction
         bits: 16
+        signed: true
         latex: C_{uc}
         shift: -29
         unit: rad
@@ -112,6 +116,7 @@ formats:
         shift: -33
       - name: argument_of_latitude_sine_correction
         bits: 16
+        signed: true
         latex: C_{us}
         shift: -29
         unit: rad
@@ -134,36 +139,43 @@ formats:
     fields:
       - name: inclination_angle_cosine_correction
         bits: 16
+        signed: true
         latex: C_{ic}
         shift: -29
         unit: rad
       - name: ascending_node_longitude
         bits: 32
+        signed: true
         latex: \Omega_0
         shift: -31
         unit: semicircle
       - name: inclination_angle_sine_correction
         bits: 16
+        signed: true
         latex: C_{is}
         shift: -29
         unit: rad
       - name: inclination_angle
         bits: 32
+        signed: true
         latex: i_0
         shift: -31
         unit: semicircle
       - name: orbit_radius_cosine_correction
         bits: 16
+        signed: true
         latex: C_{rc}
         shift: -5
         unit: m
       - name: argument_of_perigee
         bits: 32
+        signed: true
         latex: \omega
         shift: -31
         unit: semicircle
       - name: rate_of_right_ascension
         bits: 24
+        signed: true
         latex: \dot{\Omega}
         shift: -43
         unit: semicircle/s
@@ -171,6 +183,7 @@ formats:
         bits: 8
       - name: rate_of_inclination_angle
         bits: 14
+        signed: true
         latex: \text{IDOT}
         shift: -43
         unit: semicircle/s
