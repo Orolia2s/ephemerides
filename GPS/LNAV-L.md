@@ -77,7 +77,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ## Subframe 4
 
-### Pages 1, 6, 11, 12, 14, 15, 16, 19, 20, 21, 22, 23
+### Pages 1, 6, 11, 12, 14 to 17, 19 to 24
 
 192 bits mapped as follows:
 
@@ -87,9 +87,9 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||satellite_id|6|||
 ||_ignored_|184|||
 
-### Pages 2, 3, 4, 7, 8, 9
+### Pages 2 to 5, 7 to 10
 
-190 bits mapped as follows:
+192 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
@@ -107,6 +107,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 |$a_{f0}$|clock_bias_correction (msb)|8|$2^{-20}$|$\mathrm{s}$|
 |$a_{f1}$|clock_drift_correction|11|$2^{-38}$|$\mathrm{}$|
 |$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
+||_ignored_|2|||
 
 ### Page 18
 
@@ -228,7 +229,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ## Subframe 5
 
-### Pages 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+### Pages 1 to 24
 
 192 bits mapped as follows:
 

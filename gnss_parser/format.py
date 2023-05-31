@@ -92,14 +92,17 @@ class GnssFormat:
             parser = Parser(format['fields'])
             if 'pages' in format:
                 pages = set()
+                human_readable = []
                 for p in format['pages']:
                     if isinstance(p, list):
-                        for page in range(p[0], p[1]):
+                        for page in range(p[0], p[1] + 1):
                             pages.add(page)
+                        human_readable += [f'{p[0]} to {p[1]}']
                     else:
                         pages.add(p)
+                        human_readable += [str(p)]
                 logging.info(f'Found format of subframe {subframe} for pages {pages}')
-                self.readable_formats[f'Subframe {subframe}'][f"Page{('s' if len(pages) > 1 else '')} {', '.join(map(str, pages))}"] = parser
+                self.readable_formats[f'Subframe {subframe}'][f"Page{('s' if len(pages) > 1 else '')} {', '.join(human_readable)}"] = parser
             else:
                 pages = range(frame_count)
                 logging.info(f'Found format of subframe {subframe} for all {frame_count} pages')
