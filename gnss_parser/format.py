@@ -68,9 +68,6 @@ class Parser:
         hline   = '|'.join(['', ':------:', ':---', '---:', ':-----', ':--:', ''])
         return '\n'.join([comment, heading, hline] + [f.to_markdown() for f in self.fields])
 
-    def __call__(self, *args):
-        return self.parse(*args)
-
 class GnssFormat:
     """
     """
@@ -123,7 +120,7 @@ class GnssFormat:
         elif hasattr(self, 'page_header'):
             page_header = self.page_header.parse(reader)
             len_page_header = reader.count - len_header
-            logging.debug(f'Parsed an additional {len_header} bits to find the page ({self.page_header.bit_count})')
+            logging.debug(f'Parsed an additional {len_page_header} bits to find the page ({self.page_header.bit_count})')
             if (header.subframe_id, page_header.page_id) in self.formats:
                 print(self.formats[header.subframe_id, page_header.page_id].parse(reader))
                 logging.debug(f'Parsed a total of {reader.count} bits')

@@ -47,7 +47,7 @@ class SingleWordBitReaderMsb(BitReader):
         self.iter = iter(self)
 
     def __iter__(self):
-        for mask in (1 << i for i in range(self.size, -1, -1)):
+        for mask in (1 << i for i in range(self.size - 1, -1, -1)):
             self.count += 1
             yield bool(self.data & mask)
 
