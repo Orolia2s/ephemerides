@@ -109,6 +109,47 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 |$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
 ||_ignored_|2|||
 
+### Page 13
+
+192 bits mapped as follows:
+
+|notation|name|bits|factor|unit|
+|:------:|:---|---:|:-----|:--:|
+|`01`|data_id|2|||
+||page_id|6|||
+||availability|2|||
+||edr_1|6|||
+||edr_2|6|||
+||edr_3|6|||
+||edr_4|6|||
+||edr_5|6|||
+||edr_6|6|||
+||edr_7|6|||
+||edr_8|6|||
+||edr_9|6|||
+||edr_10|6|||
+||edr_11|6|||
+||edr_12|6|||
+||edr_13|6|||
+||edr_14|6|||
+||edr_15|6|||
+||edr_16|6|||
+||edr_17|6|||
+||edr_18|6|||
+||edr_19|6|||
+||edr_20|6|||
+||edr_21|6|||
+||edr_22|6|||
+||edr_23|6|||
+||edr_24|6|||
+||edr_25|6|||
+||edr_26|6|||
+||edr_27|6|||
+||edr_28|6|||
+||edr_29|6|||
+||edr_30|6|||
+||_ignored_|2|||
+
 ### Page 18
 
 192 bits mapped as follows:
@@ -185,47 +226,6 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||satellite_31_health|6|||
 ||satellite_32_health|6|||
 ||_ignored_|4|||
-
-### Page 13
-
-192 bits mapped as follows:
-
-|notation|name|bits|factor|unit|
-|:------:|:---|---:|:-----|:--:|
-|`01`|data_id|2|||
-||page_id|6|||
-||availability|2|||
-||edr_1|6|||
-||edr_2|6|||
-||edr_3|6|||
-||edr_4|6|||
-||edr_5|6|||
-||edr_6|6|||
-||edr_7|6|||
-||edr_8|6|||
-||edr_9|6|||
-||edr_10|6|||
-||edr_11|6|||
-||edr_12|6|||
-||edr_13|6|||
-||edr_14|6|||
-||edr_15|6|||
-||edr_16|6|||
-||edr_17|6|||
-||edr_18|6|||
-||edr_19|6|||
-||edr_20|6|||
-||edr_21|6|||
-||edr_22|6|||
-||edr_23|6|||
-||edr_24|6|||
-||edr_25|6|||
-||edr_26|6|||
-||edr_27|6|||
-||edr_28|6|||
-||edr_29|6|||
-||edr_30|6|||
-||_ignored_|2|||
 
 ## Subframe 5
 

@@ -102,7 +102,7 @@ class GnssFormat:
                         pages.add(p)
                         human_readable += [str(p)]
                 logging.info(f'Found format of subframe {subframe} for pages {pages}')
-                self.readable_formats[f'Subframe {subframe}'][f"Page{('s' if len(pages) > 1 else '')} {', '.join(human_readable)}"] = parser
+                self.readable_formats[f'Subframe {subframe}'][min(pages), f"Page{('s' if len(pages) > 1 else '')} {', '.join(human_readable)}"] = parser
             else:
                 pages = range(frame_count)
                 logging.info(f'Found format of subframe {subframe} for all {frame_count} pages')
@@ -123,8 +123,8 @@ class GnssFormat:
         for key, value in sorted(self.readable_formats.items()):
             lines.append(f'\n## {key}')
             if isinstance(value, dict):
-                for subkey, subvalue in value.items():
-                    lines.append(f'\n### {subkey}')
+                for subkey, subvalue in sorted(value.items()):
+                    lines.append(f'\n### {subkey[1]}')
                     lines.append(subvalue.to_markdown())
             else:
                 lines.append(value.to_markdown())
