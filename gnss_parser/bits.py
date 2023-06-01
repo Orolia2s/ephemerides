@@ -18,6 +18,8 @@ class Ordering(Enum):
     msb_first = 0
     lsb_first = 1
 
+complementary_half = {'msb': 'lsb', 'lsb': 'msb'}
+
 class BitReader:
     """
     Abstract class

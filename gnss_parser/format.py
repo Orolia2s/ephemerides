@@ -11,7 +11,7 @@ from more_itertools import grouper
 
 from astropy.units import Unit
 
-from gnss_parser import ensure_fields, import_fields, Ordering, SingleWordBitReaderMsb
+from gnss_parser import ensure_fields, import_fields, Ordering, SingleWordBitReaderMsb, complementary_half
 
 class Field:
     """
@@ -23,9 +23,17 @@ class Field:
         import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit', 'half', 'signed'])
         if self.unit:
             self.unit = Unit(self.unit)
+        if self.half:
+            assert self.half in complementary_half, 'Half can only be ' + ' or '.join(complementary_half)
+            if not self.name:
+                raise Exception(f'Split field without name !')
 
     def parse(self, reader, destination):
         value = reader.read(self.bits)
+        if self.half:
+            logging.debug(f'Found the {self.half} half of {self.name} : {value:0{self.bits}b}')
+            destination.halves[self.name][self.half] = (value, self)
+            return
         if self.value != None and self.value != value:
             logging.warning(f'Field "{self.name}" didn\'t have expected value of {self.value}, instead: {value}')
         if self.shift:
@@ -58,6 +66,7 @@ class Parser:
 
     def parse(self, reader):
         result = SimpleNamespace()
+        result.halves = defaultdict(dict)
         for field in self.fields:
             field.parse(reader, result)
         return result
