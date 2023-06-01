@@ -20,8 +20,49 @@ header:
 formats:
   - subframe: 1
     fields:
-      - name: sat_h1
+      - name: autonomous_health_flag
         bits: 1
+        value: 0
+      - name:
+        bits: 5
+      - name: user_range_accuracy_index
+        bits: 4
+      - name: week_number
+        bits: 13
+        latex: \text{WN}
+      - name: time_of_clock
+        bits: 17
+        latex: t_{oc}
+      - bits: 10
+        latex: T_{GD1}
+      - bits: 10
+        latex: T_{GD2}
+      - bits: 8
+        shift: -30
+        unit: s
+        latex: \alpha_0
+      - bits: 8
+        shift: -27
+        unit: s / semicircle
+        latex: \alpha_1
+      - bits: 8
+        latex: \alpha_2
+      - bits: 8
+        latex: \alpha_3
+      - bits: 8
+        latex: \beta_0
+      - bits: 8
+        latex: \beta_1
+      - bits: 8
+        latex: \beta_2
+      - bits: 8
+        latex: \beta_3
+      - bits: 24
+        latex: a_0
+      - bits: 22
+        latex: a_1
+      - name: aode
+        bits: 5
   - subframe: 2
     fields:
       - latex: \Delta_n
