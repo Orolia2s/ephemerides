@@ -92,17 +92,7 @@ Ephemeris (2/2)
 
 ## Subframe 4
 
-### Pages 1, 6, 11, 12, 14 to 17, 19 to 24
-
-Reserved.
-
-184 bits mapped as follows:
-
-|notation|name|bits|factor|unit|
-|:------:|:---|---:|:-----|:--:|
-||_ignored_|184|||
-
-### Pages 2 to 5, 7 to 10
+### Pages 25 to 32
 
 Almanac for satellites 25 through 32
 
@@ -124,7 +114,7 @@ Almanac for satellites 25 through 32
 |$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
 ||_ignored_|2|||
 
-### Page 13
+### Page 52
 
 Navigation Message Correction Table
 
@@ -165,9 +155,19 @@ Navigation Message Correction Table
 ||edr_30|6|||
 ||_ignored_|2|||
 
-### Page 18
+### Pages 53 to 55, 57 to 62
 
-Ionospheric and UTC data.
+Reserved
+
+184 bits mapped as follows:
+
+|notation|name|bits|factor|unit|
+|:------:|:---|---:|:-----|:--:|
+||_ignored_|184|||
+
+### Page 56
+
+Ionospheric and UTC data
 
 184 bits mapped as follows:
 
@@ -191,9 +191,9 @@ Ionospheric and UTC data.
 |$\Delta t_{LSF}$|future_leap_seconds_delta|8||$\mathrm{s}$|
 ||_ignored_|16|||
 
-### Page 25
+### Page 63
 
-A-S flags/SV configurations for 32 SVs, plus SV health for SV 25 through 32
+Anti-spoofing flags and configurations of satellites 1 through 32, and health for satellites 25 through 32
 
 184 bits mapped as follows:
 
@@ -266,9 +266,9 @@ Almanac for satellites 1 through 24
 |$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
 ||_ignored_|2|||
 
-### Page 25
+### Page 51
 
-Satellites 1 trhough 24 health, the almanac reference time and reference week number.
+Health of satellites 1 through 24, Almanac reference time and reference week number
 
 184 bits mapped as follows:
 
