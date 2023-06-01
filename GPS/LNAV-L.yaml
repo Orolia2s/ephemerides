@@ -250,7 +250,7 @@ formats:
         unit: s
       - bits: 2
   - subframe: 5
-    pages: [25]
+    pages: [51]
     description: Health of satellites 1 through 24, Almanac reference time and week number
     fields:
       - name: almanac_reference_time
@@ -311,16 +311,16 @@ formats:
         bits: 6
       - bits: 24
   - subframe: 4
-    pages: [1, 6, 11, 12, [14, 17], [19, 24]]
+    pages: [[53, 55], [57, 62]]
     description: Reserved
     fields:
       - bits: 184
   - subframe: 4
-    pages: [[2, 5], [7, 10]]
+    pages: [[25, 32]]
     description: Almanac for satellites 25 through 32
     fields: *almanac
   - subframe: 4
-    pages: [18]
+    pages: [56]
     description: Ionospheric and UTC data
     fields:
       - name: alpha_0
@@ -397,7 +397,7 @@ formats:
         unit: s
       - bits: 16
   - subframe: 4
-    pages: [25]
+    pages: [63]
     description: Anti-spoofing flags and configurations of satellites 1 through 32, and health for satellites 25 through 32
     fields:
       - name: satellite_1_config
@@ -483,7 +483,7 @@ formats:
         bits: 6
       - bits: 6
   - subframe: 4
-    pages: [13]
+    pages: [52]
     description: Navigation Message Correction Table
     fields:
       - name: availability
