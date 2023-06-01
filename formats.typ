@@ -122,8 +122,20 @@
 					if "half" in field {
 						[ (#upper(field.half))]
 					}
+					if "value" in field {
+						let dec = field.value
+						let bin = if dec == 0 { "0" } else { "" }
+						while dec > 0 {
+							let rem = calc.rem(dec, 2)
+							dec -= rem
+							dec /= 2
+							bin = str(rem) + bin
+						}
+						h(1fr)
+						[$=$ #raw(bin)]
+					}
 				},
-				[$field.bits$],
+				[#if field.at("signed", default: false) { "i" } else { "u" }#field.bits],
 				if "shift" in field {
 					[$2^(#field.shift)$]
 				},
