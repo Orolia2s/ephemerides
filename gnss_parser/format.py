@@ -44,17 +44,6 @@ class Field:
             print(f'\t{self.name}: {value}')
             setattr(destination, self.name, value)
 
-    def to_markdown(self):
-        cells = ['']
-        cells.append(f'${self.latex}$' if self.latex else f'`{self.value:0{self.bits}b}`' if self.value != None else '')
-        cells.append(self.name if self.name else '_ignored_')
-        if self.half:
-            cells[-1] += f' ({self.half})'
-        cells.append(str(self.bits))
-        cells.append(f'$2^{{{self.shift}}}$' if self.shift else '')
-        cells.append(f'{self.unit:latex}' if self.unit else '')
-        return '|'.join(cells + [''])
-
 class Parser:
     """
     Represent a continuous sequence of fields
@@ -70,12 +59,6 @@ class Parser:
         for field in self.fields:
             field.parse(reader, result)
         return result
-
-    def to_markdown(self):
-        comment = f'\n{self.bit_count} bits mapped as follows:\n'
-        heading = '|'.join(['', 'notation', 'name', 'bits', 'factor', 'unit', ''])
-        hline   = '|'.join(['', ':------:', ':---', '---:', ':-----', ':--:', ''])
-        return '\n'.join([comment, heading, hline] + [f.to_markdown() for f in self.fields])
 
 class GnssFormat:
     """
@@ -137,21 +120,3 @@ class GnssFormat:
                 logging.error(f'Invalid subframe ID and page combination: {header.subframe_id}, {page_header.page_id}')
         else:
             logging.error(f'Invalid subframe ID with no page: {header.subframe_id}')
-
-    def to_markdown(self):
-        lines = [f'# {self.constellation} {self.message}\n']
-        lines.append(self.description)
-        lines.append('## Header')
-        lines.append(self.header.to_markdown())
-        if hasattr(self, 'page_header'):
-            lines.append('\n## Header extension for paged subframes')
-            lines.append(self.page_header.to_markdown())
-        for key, value in sorted(self.readable_formats.items()):
-            lines.append(f'\n## {key}')
-            if isinstance(value, dict):
-                for subkey, subvalue in sorted(value.items()):
-                    lines.append(f'\n### {subkey[1]}')
-                    lines.append(subvalue.to_markdown())
-            else:
-                lines.append(value.to_markdown())
-        return '\n'.join(lines)

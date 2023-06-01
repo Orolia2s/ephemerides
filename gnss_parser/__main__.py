@@ -5,7 +5,7 @@ import logging
 from serial import Serial
 from pyubx2 import UBXReader
 
-from gnss_parser import GnssFormat, ensure_fields, message_from_ublox, reader_from_ublox, Constellation
+from gnss_parser import GnssFormat, ensure_fields, message_from_ublox, reader_from_ublox, Constellation, format_to_markdown
 
 def interpret(obj: dict[str]):
     ensure_fields('top level', obj, ['kind'])
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     # Read ublox stream using formats
     if cli_args.output:
         for name, format in formats.items():
-            print(format.to_markdown())
+            print(format_to_markdown(format))
         exit(0)
     if cli_args.serial:
         stream = Serial(cli_args.serial, 115200, timeout = 3)
