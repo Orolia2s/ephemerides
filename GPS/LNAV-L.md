@@ -34,7 +34,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
 |$\text{WN}$|week_number|10|||
-||ca_or_p_on_l2|2|||
+||l2_code|2|||
 ||user_range_accuracy_index|4|||
 ||satellite_health|6|||
 ||issue_of_data_clock (msb)|2|||
@@ -88,6 +88,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Pages 1, 6, 11, 12, 14 to 17, 19 to 24
 
+Reserved.
+
 184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
@@ -95,6 +97,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||_ignored_|184|||
 
 ### Pages 2 to 5, 7 to 10
+
+Almanac for satellites 25 through 32
 
 184 bits mapped as follows:
 
@@ -115,6 +119,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||_ignored_|2|||
 
 ### Page 13
+
+Navigation Message Correction Table
 
 184 bits mapped as follows:
 
@@ -155,6 +161,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Page 18
 
+Ionospheric and UTC data.
+
 184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
@@ -178,6 +186,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||_ignored_|16|||
 
 ### Page 25
+
+A-S flags/SV configurations for 32 SVs, plus SV health for SV 25 through 32
 
 184 bits mapped as follows:
 
@@ -230,6 +240,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ### Pages 1 to 24
 
+Almanac for satellites 1 through 24
+
 184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
@@ -249,6 +261,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||_ignored_|2|||
 
 ### Page 25
+
+Satellites 1 trhough 24 health, the almanac reference time and reference week number.
 
 184 bits mapped as follows:
 

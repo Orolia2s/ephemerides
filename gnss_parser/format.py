@@ -81,6 +81,7 @@ class GnssFormat:
             ensure_fields('format', format, ['subframe', 'fields'])
             subframe = format['subframe']
             parser = Parser(format['fields'])
+            description = format['description'] if 'description' in format else None
             if 'pages' in format:
                 pages = set()
                 human_readable = []
@@ -93,11 +94,11 @@ class GnssFormat:
                         pages.add(p)
                         human_readable += [str(p)]
                 logging.info(f'Found format of subframe {subframe} for pages {pages}')
-                self.readable_formats[f'Subframe {subframe}'][min(pages), f"Page{('s' if len(pages) > 1 else '')} {', '.join(human_readable)}"] = parser
+                self.readable_formats[f'Subframe {subframe}'][min(pages), f"Page{('s' if len(pages) > 1 else '')} {', '.join(human_readable)}"] = (parser, description)
             else:
                 pages = [None]
                 logging.info(f'Found format of subframe {subframe}, not paged')
-                self.readable_formats[f'Subframe {subframe}'] = parser
+                self.readable_formats[f'Subframe {subframe}'] = (parser, description)
             for page in pages:
                 self.formats[subframe, page] = parser
 

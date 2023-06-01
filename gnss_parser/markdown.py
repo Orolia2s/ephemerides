@@ -31,7 +31,8 @@ def format_to_markdown(self):
         if isinstance(value, dict):
             for subkey, subvalue in sorted(value.items()):
                 lines.append(f'\n### {subkey[1]}')
-                lines.append(parser_to_markdown(subvalue))
+                lines.append(f'\n{subvalue[1]}')
+                lines.append(parser_to_markdown(subvalue[0]))
         else:
-            lines.append(parser_to_markdown(value))
+            lines.append(parser_to_markdown(value[0]))
     return '\n'.join(lines)
