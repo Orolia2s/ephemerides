@@ -29,6 +29,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ## Subframe 1
 
+Clock parameters
+
 192 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
@@ -50,6 +52,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
 ## Subframe 2
 
+Ephemeris (1/2)
+
 192 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
@@ -68,6 +72,8 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||_ignored_|2|||
 
 ## Subframe 3
+
+Ephemeris (2/2)
 
 192 bits mapped as follows:
 

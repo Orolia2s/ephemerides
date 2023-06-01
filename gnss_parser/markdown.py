@@ -34,5 +34,6 @@ def format_to_markdown(self):
                 lines.append(f'\n{subvalue[1]}')
                 lines.append(parser_to_markdown(subvalue[0]))
         else:
+            lines.append(f'\n{value[1]}')
             lines.append(parser_to_markdown(value[0]))
     return '\n'.join(lines)

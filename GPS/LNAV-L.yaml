@@ -37,7 +37,7 @@ page_header:
     bits: 6
 formats:
   - subframe: 1
-    description: clock parameters
+    description: Clock parameters
     fields:
       - name: week_number
         bits: 10
