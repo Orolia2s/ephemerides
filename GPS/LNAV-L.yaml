@@ -250,7 +250,7 @@ formats:
       - bits: 2
   - subframe: 5
     pages: [25]
-    description: Satellites 1 trhough 24 health, the almanac reference time and reference week number.
+    description: Health of satellites 1 through 24, Almanac reference time and reference week number
     fields:
       - name: almanach_reference_time
         bits: 8
@@ -311,7 +311,7 @@ formats:
       - bits: 24
   - subframe: 4
     pages: [1, 6, 11, 12, [14, 17], [19, 24]]
-    description: Reserved.
+    description: Reserved
     fields:
       - bits: 184
   - subframe: 4
@@ -320,7 +320,7 @@ formats:
     fields: *almanac
   - subframe: 4
     pages: [18]
-    description: Ionospheric and UTC data.
+    description: Ionospheric and UTC data
     fields:
       - name: alpha_0
         bits: 8
@@ -397,7 +397,7 @@ formats:
       - bits: 16
   - subframe: 4
     pages: [25]
-    description: A-S flags/SV configurations for 32 SVs, plus SV health for SV 25 through 32
+    description: Anti-spoofing flags and configurations of satellites 1 through 32, and health for satellites 25 through 32
     fields:
       - name: satellite_1_config
         bits: 4

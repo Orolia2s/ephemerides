@@ -3,9 +3,6 @@
 	title: title,
 	author: "Tanguy BERTHOUD",
 )
-#set page(
-	numbering: "1",
-)
 #set text(
 	font: "New Computer Modern",
 )
@@ -14,17 +11,25 @@
 	size: 11pt,
 )
 #set heading(
-	numbering: "1.1",
+	numbering: "I.1.1",
 )
 
-#align(center)[
-	#text(2em)[
+#align(center + horizon)[
+	#text(4em)[
 		*#title*
 	]
 ]
-#v(3em)
-#outline(indent: true, depth: 2)
-#v(5em)
+#align(bottom)[
+	#outline(indent: true, depth: 2)
+]
+#pagebreak()
+
+#set page(
+	numbering: "1",
+)
+#set par(
+	justify: true,
+)
 
 #let format(file) = {
 	let data = yaml(file)
@@ -32,17 +37,24 @@
 
 	[
 		== #data.metadata.message
-		#data.metadata.description
+		#data.metadata.description.replace(regex("[[:space:]]+"), " ")
 	]
 
 	locate(loc => {
 		let q = query(heading.where(level: 2).or(heading.where(level: 1)).after(loc), loc)
-		if q.len() > 0 {
+		let end_q = query(selector(heading).after(loc), loc)
+		if q.len() > 0 or end_q.len() > 0 {
+			let target = selector(heading).after(loc)
+			if q.len() > 0 {
+				target = target.before(q.first().location(), inclusive: false)
+			}
+			v(1em)
 			outline(
 				title: none,
 				indent: true,
-				target: selector(heading).after(loc).before(q.first().location(), inclusive: false),
+				target: target,
 			)
+			v(1em)
 		}
 	})
 
@@ -122,7 +134,7 @@
 						if type(pow) == "string" {
 							pow = pow.trim(regex("\(|\)"))
 						}
-						[$#field.unit.slice(last_end, match.start)$]
+						[$#field.unit.slice(last_end, match.start).trim()$]
 						[$attach(upright(#match.captures.at(0)), tr: #pow)$]
 						last_end = match.end
 					}
@@ -131,9 +143,16 @@
 		)
 	}
 
+	if "header" in data or "page_header" in data {
+		[=== Headers]
+	}
 	if "header" in data {
-		[=== Header]
+		[==== Subframe header]
 		fields(data.header)
+	}
+	if "page_header" in data {
+		[==== Page header]
+		fields(data.page_header)
 	}
 
 	if "formats" in data {
@@ -143,22 +162,37 @@
 				sheets.push(())
 			}
 			let subframe = sheets.at(sheet.subframe)
-			subframe.push((sheet.at("pages", default: ()), sheet.fields))
+			subframe.push((
+				sheet.at("pages", default: ()),
+				sheet.at("description", default: ""),
+				sheet.fields,
+			))
 			sheets.at(sheet.subframe) = subframe
 		}
 
 		for (i, subframe) in sheets.enumerate().filter(((i, subframe)) => subframe != none) {
-			[=== Subframe #i]
-			for (pages, sf_fields) in subframe {
+			let first = true
+			for (pages, description, sf_fields) in subframe {
+				description = if description.len() > 0 {
+					text(
+						style: if description == "Reserved" { "italic" } else { "normal" },
+						description.replace(regex("[[:space:]]+"), " ")
+					)
+				}
+				if first {
+					[=== Subframe #i#if subframe.len() <= 1 and description != none { [: #description] }]
+					first = false
+				}
 				if pages.flatten().len() == 1 {
-					[==== Page #pages.first()]
+					[==== Page #pages.first()#if description != none { [: #description] }]
 				} else if pages.len() > 0 {
 					[==== Pages #pages.map((item) => if type(item) == "array" {
 						[#item.first()--#item.last()]
 					} else {
 						[#item]
-					}).join([, ], last: [ and ])]
+					}).join(", ", last: " and ")#if description != none { [: #description] }]
 				}
+				
 				fields(sf_fields)
 			}
 		}
@@ -167,7 +201,9 @@
 
 = GPS
 #format("GPS/LNAV-L.yaml")
+#pagebreak()
 = Galileo
 #format("Galileo/FNAV.yaml")
+#pagebreak()
 = BeiDou
 #format("BeiDou/D1.yaml")
