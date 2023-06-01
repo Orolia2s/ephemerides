@@ -37,11 +37,12 @@ page_header:
     bits: 6
 formats:
   - subframe: 1
+    description: clock parameters
     fields:
       - name: week_number
         bits: 10
         latex: \text{WN}
-      - name: ca_or_p_on_l2
+      - name: l2_code
         bits: 2
       - name: user_range_accuracy_index
         bits: 4
@@ -83,6 +84,7 @@ formats:
         unit: s
       - bits: 2
   - subframe: 2
+    description: Ephemeris (1/2)
     fields:
       - name: issue_of_data_ephemeris
         bits: 8
@@ -136,6 +138,7 @@ formats:
         bits: 5
       - bits: 2
   - subframe: 3
+    description: Ephemeris (2/2)
     fields:
       - name: inclination_angle_cosine_correction
         bits: 16
@@ -190,7 +193,8 @@ formats:
       - bits: 2
   - subframe: 5
     pages: [[1, 24]]
-    fields: &ephemeris
+    description: Almanac for satellites 1 through 24
+    fields: &almanac
       - name: eccentricity
         bits: 16
         latex: e
@@ -246,6 +250,7 @@ formats:
       - bits: 2
   - subframe: 5
     pages: [25]
+    description: Satellites 1 trhough 24 health, the almanac reference time and reference week number.
     fields:
       - name: almanach_reference_time
         bits: 8
@@ -306,13 +311,16 @@ formats:
       - bits: 24
   - subframe: 4
     pages: [1, 6, 11, 12, [14, 17], [19, 24]]
+    description: Reserved.
     fields:
       - bits: 184
   - subframe: 4
     pages: [[2, 5], [7, 10]]
-    fields: *ephemeris
+    description: Almanac for satellites 25 through 32
+    fields: *almanac
   - subframe: 4
     pages: [18]
+    description: Ionospheric and UTC data.
     fields:
       - name: alpha_0
         bits: 8
@@ -389,6 +397,7 @@ formats:
       - bits: 16
   - subframe: 4
     pages: [25]
+    description: A-S flags/SV configurations for 32 SVs, plus SV health for SV 25 through 32
     fields:
       - name: satellite_1_config
         bits: 4
@@ -474,6 +483,7 @@ formats:
       - bits: 6
   - subframe: 4
     pages: [13]
+    description: Navigation Message Correction Table
     fields:
       - name: availability
         bits: 2
