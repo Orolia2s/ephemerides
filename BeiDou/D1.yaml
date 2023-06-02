@@ -23,7 +23,7 @@ formats:
       - name: autonomous_health_flag
         bits: 1
         value: 0
-      - name:
+      - name: age_of_data_clock
         bits: 5
       - name: user_range_accuracy_index
         bits: 4
@@ -32,36 +32,74 @@ formats:
         latex: \text{WN}
       - name: time_of_clock
         bits: 17
+        shift: 3
         latex: t_{oc}
+        unit: s
       - bits: 10
         latex: T_{GD1}
       - bits: 10
         latex: T_{GD2}
-      - bits: 8
+      - name: alpha_0
+        bits: 8
+        signed: true
         shift: -30
         unit: s
         latex: \alpha_0
-      - bits: 8
+      - name: alpha_1
+        bits: 8
+        signed: true
         shift: -27
         unit: s / semicircle
         latex: \alpha_1
-      - bits: 8
+      - name: alpha_2
+        bits: 8
+        signed: true
+        shift: -24
+        unit: s / semicircle2
         latex: \alpha_2
-      - bits: 8
+      - name: alpha_3
+        bits: 8
+        signed: true
+        shift: -24
+        unit: s / semicircle3
         latex: \alpha_3
-      - bits: 8
+      - name: beta_0
+        bits: 8
+        signed: true
+        shift: 11
+        unit: s
         latex: \beta_0
-      - bits: 8
+      - name: beta_1
+        bits: 8
+        signed: true
+        shift: 14
+        unit: s / semicircle
         latex: \beta_1
-      - bits: 8
+      - name: beta_2
+        bits: 8
+        signed: true
+        shift: 16
+        unit: s / semicircle2
         latex: \beta_2
-      - bits: 8
+      - name: beta_3
+        bits: 8
+        signed: true
+        shift: 16
+        unit: s / semicircle3
         latex: \beta_3
-      - bits: 24
-        latex: a_0
-      - bits: 22
-        latex: a_1
-      - name: aode
+      - name: A_0
+        bits: 24
+        signed: true
+        shift: -33
+        latex: A_0
+        unit: s
+      - name: A_1
+        bits: 22
+        signed: true
+        shift: -50
+        latex: A_1
+        unit: s/s
+      - name: age_of_data_ephemeris
         bits: 5
   - subframe: 2
     fields:
