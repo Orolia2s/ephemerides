@@ -113,9 +113,13 @@
 					latex(field.latex)
 				},
 				{
-					let name = field.at("name", default: [_Reserved_])
-					if type(name) == "content" {
-						name
+					let name = field.at("name", default: none)
+					if name == none {
+						if "bits" in field and field.len() == 1 {
+							text(style: "italic", "Reserved")
+						} else {
+							text(red)[_Unnamed_]
+						}
 					} else {
 						raw(name)
 					}
