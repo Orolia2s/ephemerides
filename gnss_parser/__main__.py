@@ -54,6 +54,7 @@ if __name__ == '__main__':
         if message not in formats:
             continue
         try:
-            formats[message].parse_ublox_subframe(reader_from_ublox[message](ublox_message.payload[8:]))
+            _,_, parsed = formats[message].parse_ublox_subframe(reader_from_ublox[message](ublox_message.payload[8:]))
+            print(f'Subframe of SV {ublox_message.svId}', parsed)
         except Exception as err:
             logging.exception(err)

@@ -106,18 +106,18 @@ class GnssFormat:
         header = self.header.parse(reader)
         len_header = reader.count
         logging.debug(f'Parsed the header and consumed {len_header} bits ({self.header.bit_count})')
-        logging.info(f'{header}')
+        # logging.info(f'{header}')
         logging.debug(f'The header indicates this is subframe {header.subframe_id}')
         if (header.subframe_id, None) in self.formats:
-            print(self.formats[header.subframe_id, None].parse(reader))
+            return header, None, self.formats[header.subframe_id, None].parse(reader)
         elif hasattr(self, 'page_header'):
             page_header = self.page_header.parse(reader)
-            len_page_header = reader.count - len_header
-            logging.debug(f'Parsed an additional {len_page_header} bits to find the page ({self.page_header.bit_count})')
+            logging.debug(f'Parsed an additional {reader.count - len_header} bits to find the page ({self.page_header.bit_count})')
             if (header.subframe_id, page_header.page_id) in self.formats:
-                print(self.formats[header.subframe_id, page_header.page_id].parse(reader))
+                result = self.formats[header.subframe_id, page_header.page_id].parse(reader)
                 logging.debug(f'Parsed a total of {reader.count} bits')
+                return header, page_header, result
             else:
-                logging.error(f'Invalid subframe ID and page combination: {header.subframe_id}, {page_header.page_id}')
+                raise Exception(f'Invalid subframe ID and page combination: {header.subframe_id}, {page_header.page_id}')
         else:
-            logging.error(f'Invalid subframe ID with no page: {header.subframe_id}')
+            raise Exception(f'Invalid subframe ID with no page: {header.subframe_id}')
