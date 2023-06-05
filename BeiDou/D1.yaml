@@ -15,11 +15,12 @@ header:
   - bits: 4
   - name: subframe_id
     bits: 3
-  - name: second_of_week
+  - name: time_of_week
     bits: 20
+    unit: s
 page_header:
   - bits: 1
-  - name: page_number
+  - name: page_id
     bits: 7
 formats:
   - subframe: 1

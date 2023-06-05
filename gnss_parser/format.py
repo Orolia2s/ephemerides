@@ -20,13 +20,15 @@ class Field:
     """
     def __init__(self, field: dict[str]):
         ensure_fields('format list element', field, ['bits'])
-        import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit', 'half', 'signed'])
+        import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit', 'half', 'signed', 'factor'])
         if self.unit:
             self.unit = Unit(self.unit)
+        if self.factor and self.shift:
+            raise Exception("Can't have both factor and shift !")
         if self.half:
             assert self.half in complementary_half, 'Half can only be ' + ' or '.join(complementary_half)
             if not self.name:
-                raise Exception(f'Split field without name !')
+                raise Exception('Split field without name !')
 
     def parse(self, reader, destination):
         value = reader.read(self.bits)
@@ -38,6 +40,8 @@ class Field:
             logging.warning(f'Field "{self.name}" didn\'t have expected value of {self.value}, instead: {value}')
         if self.shift:
             value *= 2 ** self.shift
+        if self.factor:
+            value *= factor
         if self.unit:
             value *= self.unit
         if self.name:

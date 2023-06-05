@@ -66,7 +66,7 @@ Ephemeris (1/2)
 |$e$|eccentricity|32|$2^{-33}$||
 |$C_{us}$|argument_of_latitude_sine_correction|16|$2^{-29}$|$\mathrm{rad}$|
 |$\sqrt{A}$|square_root_of_semi_major_axis|32|$2^{-19}$|$\mathrm{m^{1/2}}$|
-|$t_{oe}$|reference_time_ephemeris|16|$2^{4}$|$\mathrm{s}$|
+|$t_{oe}$|ephemeris_reference_time|16|$2^{4}$|$\mathrm{s}$|
 ||fit_interval_flag|1|||
 ||age_of_data_offset|5|||
 ||_ignored_|2|||
@@ -101,14 +101,14 @@ Almanac for satellites 25 through 32
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
 |$e$|eccentricity|16|$2^{-21}$||
-|$t_{oa}$|almanach_reference_time|8||$\mathrm{s}$|
-|$\delta_i$|delta_i|16|$2^{-14}$||
+|$t_{oa}$|almanac_reference_time|8||$\mathrm{s}$|
+|$\delta_i$|orbit_reference_incliation_correction|16|$2^{-14}$||
 |$\dot{\Omega}$|rate_of_right_ascension|16|$2^{-38}$||
 ||satellite_health|8|||
 |$\sqrt{A}$|square_root_of_semi_major_axis|24|$2^{-11}$|$\mathrm{m^{1/2}}$|
 |$\Omega_0$|longitude_of_ascending_node_of_orbit_plane|24|$2^{-23}$||
 |$\omega$|argument_of_perigee|24|$2^{-23}$||
-|$M_0$|mean_anomaly|24|$2^{-23}$||
+|$M_0$|mean_anomaly|24|$2^{-23}$|$\mathrm{semicircle}$|
 |$a_{f0}$|clock_bias_correction (msb)|8|$2^{-20}$|$\mathrm{s}$|
 |$a_{f1}$|clock_drift_correction|11|$2^{-38}$|$\mathrm{}$|
 |$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
@@ -181,8 +181,8 @@ Ionospheric and UTC data
 |$\beta_1$|beta_1|8|$2^{14}$|$\mathrm{\frac{s}{semicircle}}$|
 |$\beta_2$|beta_2|8|$2^{16}$|$\mathrm{\frac{s}{semicircle^{2}}}$|
 |$\beta_3$|beta_3|8|$2^{16}$|$\mathrm{\frac{s}{semicircle^{3}}}$|
-|$A_1$|A_1|24|$2^{-50}$|$\mathrm{}$|
-|$A_0$|A_0|32|$2^{-30}$|$\mathrm{s}$|
+|$A_1$|utc_drift_correction|24|$2^{-50}$|$\mathrm{}$|
+|$A_0$|utc_bias_correction|32|$2^{-30}$|$\mathrm{s}$|
 |$t_{ot}$|utc_reference_time|8|$2^{12}$|$\mathrm{s}$|
 |$\text{WN}_t$|utc_week_number|8|||
 |$\Delta t_{LS}$|leap_seconds_delta|8||$\mathrm{s}$|
@@ -253,14 +253,14 @@ Almanac for satellites 1 through 24
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
 |$e$|eccentricity|16|$2^{-21}$||
-|$t_{oa}$|almanach_reference_time|8||$\mathrm{s}$|
-|$\delta_i$|delta_i|16|$2^{-14}$||
+|$t_{oa}$|almanac_reference_time|8||$\mathrm{s}$|
+|$\delta_i$|orbit_reference_incliation_correction|16|$2^{-14}$||
 |$\dot{\Omega}$|rate_of_right_ascension|16|$2^{-38}$||
 ||satellite_health|8|||
 |$\sqrt{A}$|square_root_of_semi_major_axis|24|$2^{-11}$|$\mathrm{m^{1/2}}$|
 |$\Omega_0$|longitude_of_ascending_node_of_orbit_plane|24|$2^{-23}$||
 |$\omega$|argument_of_perigee|24|$2^{-23}$||
-|$M_0$|mean_anomaly|24|$2^{-23}$||
+|$M_0$|mean_anomaly|24|$2^{-23}$|$\mathrm{semicircle}$|
 |$a_{f0}$|clock_bias_correction (msb)|8|$2^{-20}$|$\mathrm{s}$|
 |$a_{f1}$|clock_drift_correction|11|$2^{-38}$|$\mathrm{}$|
 |$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
@@ -268,14 +268,14 @@ Almanac for satellites 1 through 24
 
 ### Page 51
 
-Health of satellites 1 through 24, Almanac reference time and reference week number
+Health of satellites 1 through 24, Almanac reference time and week number
 
 184 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|$t_{oa}$|almanach_reference_time|8|$2^{12}$|$\mathrm{s}$|
-|$\text{WN}_a$|almanach_week_number|8|||
+|$t_{oa}$|almanac_reference_time|8|$2^{12}$|$\mathrm{s}$|
+|$\text{WN}_a$|almanac_week_number|8|||
 ||satellite_1_health|6|||
 ||satellite_2_health|6|||
 ||satellite_3_health|6|||
