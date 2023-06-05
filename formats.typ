@@ -31,7 +31,7 @@
 	justify: true,
 )
 
-#let format(file) = {
+#let format(file, notes: ()) = {
 	let data = yaml(file)
 	assert.eq(data.kind, "GNSS_format", message: file + " should be a `GNSS_format` kind")
 
@@ -57,6 +57,16 @@
 			v(1em)
 		}
 	})
+
+	if notes.len() > 0 {
+		[=== Notes]
+		for (title, content) in notes {
+			[
+				==== #title
+				#content
+			]
+		}
+	}
 
 	let fields(contents) = {
 		let latex(s) = {
@@ -225,7 +235,44 @@
 }
 
 = GPS
-#format("GPS/LNAV-L.yaml")
+#format("GPS/LNAV-L.yaml", notes: (
+	([`page_id` to documented page ID mapping], [
+		While the ICD mentions page IDs ranging from 1 to 25, the effectively transmitted IDs (in the `page_id` fields) range from 1 to 63.\
+		The following table describes this mapping:
+		#let map = (
+			((1, 24), (1, 24)),
+			((25, 28), (2, 5)),
+			((29, 32), (7, 10)),
+			(51, [25]),
+			((52, 54), (13, 15)),
+			((55, 56), (17, 18)),
+			(57, [1, 6, 11, 16, 21]),
+			((58, 59), (19, 20)),
+			((60, 61), (22, 23)),
+			(62, (12, 24)),
+			(63, [25]),
+		)
+		#figure(caption: [Page ID mapping], table(
+			columns: 3 * (auto,),
+			[*`page_id`*], [*Subframe*], [*ICD page ID*],
+			..map.map(((page_id, icd)) => {
+				let subframe = if page_id == (1, 24) or page_id == 51 { 5 } else { 4 }
+				page_id = if type(page_id) == "array" and page_id.len() == 2 {
+					[*#page_id.at(0)--#page_id.at(1)*]
+				} else {
+					[*#page_id*]
+				}
+				icd = if type(icd) == "array" and icd.len() == 2 {
+					[#icd.at(0)--#icd.at(1)]
+				} else {
+					[#icd]
+				}
+				(page_id, [#subframe], icd)
+			}).flatten()
+		))
+		#emoji.warning *The page IDs used in this document are `page_id` values*, not ICD page IDs!
+	]),
+))
 #pagebreak()
 = Galileo
 #format("Galileo/FNAV.yaml")
