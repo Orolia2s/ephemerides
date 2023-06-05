@@ -5,7 +5,7 @@ import logging
 from serial import Serial
 from pyubx2 import UBXReader
 
-from gnss_parser import GnssFormat, ensure_fields, message_from_ublox, reader_from_ublox, Constellation, format_to_markdown
+from gnss_parser import GnssFormat, ensure_fields, message_from_ublox, reader_from_ublox, Constellation, format_to_markdown, accumulate
 
 def interpret(obj: dict[str]):
     ensure_fields('top level', obj, ['kind'])
@@ -54,7 +54,8 @@ if __name__ == '__main__':
         if message not in formats:
             continue
         try:
-            _,_, parsed = formats[message].parse_ublox_subframe(reader_from_ublox[message](ublox_message.payload[8:]))
-            print(f'Subframe of SV {ublox_message.svId}', parsed)
+            header, page_header, parsed = formats[message].parse_ublox_subframe(reader_from_ublox[message](ublox_message.payload[8:]))
+            # print(f'Subframe of SV {ublox_message.svId}', parsed)
+            accumulate(message, ublox_message.svId, header.subframe_id, page_header.page_id if page_header else None, header.time_of_week, parsed)
         except Exception as err:
             logging.exception(err)

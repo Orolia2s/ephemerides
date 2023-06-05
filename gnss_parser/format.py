@@ -41,7 +41,7 @@ class Field:
         if self.unit:
             value *= self.unit
         if self.name:
-            print(f'\t{self.name}: {value}')
+            # print(f'\t{self.name}: {value}')
             setattr(destination, self.name, value)
 
 class Parser:
@@ -106,13 +106,14 @@ class GnssFormat:
         header = self.header.parse(reader)
         len_header = reader.count
         logging.debug(f'Parsed the header and consumed {len_header} bits ({self.header.bit_count})')
-        # logging.info(f'{header}')
+        logging.debug(f'{header}')
         logging.debug(f'The header indicates this is subframe {header.subframe_id}')
         if (header.subframe_id, None) in self.formats:
+            logging.debug(f'Parsed a total of {reader.count} bits')
             return header, None, self.formats[header.subframe_id, None].parse(reader)
         elif hasattr(self, 'page_header'):
             page_header = self.page_header.parse(reader)
-            logging.debug(f'Parsed an additional {reader.count - len_header} bits to find the page ({self.page_header.bit_count})')
+            logging.debug(f'Parsed an additional {reader.count - len_header} bits to find out this is page {page_header.page_id} ({self.page_header.bit_count})')
             if (header.subframe_id, page_header.page_id) in self.formats:
                 result = self.formats[header.subframe_id, page_header.page_id].parse(reader)
                 logging.debug(f'Parsed a total of {reader.count} bits')
