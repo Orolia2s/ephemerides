@@ -17,8 +17,13 @@ header:
     bits: 3
   - name: second_of_week
     bits: 20
+page_header:
+  - bits: 1
+  - name: page_number
+    bits: 7
 formats:
   - subframe: 1
+    description: Ionospheric and time data
     fields:
       - name: autonomous_health_flag
         bits: 1
@@ -35,10 +40,18 @@ formats:
         shift: 3
         latex: t_{oc}
         unit: s
-      - bits: 10
+      - name: group_delay_differential_1
+        bits: 10
+        signed: true
+        factor: 0.1
         latex: T_{GD1}
-      - bits: 10
+        unit: ns
+      - name: group_delay_differential_2
+        bits: 10
+        signed: true
+        factor: 0.1
         latex: T_{GD2}
+        unit: ns
       - name: alpha_0
         bits: 8
         signed: true
@@ -102,23 +115,357 @@ formats:
       - name: age_of_data_ephemeris
         bits: 5
   - subframe: 2
+    description: Ephemeris (1/2)
     fields:
-      - latex: \Delta_n
+      - name: mean_motion_difference
+        latex: \Delta n
         bits: 16
-      - latex: C_{uc}
+        signed: true
+        shift: -43
+        unit: semicircle / s
+      - name: argument_of_latitude_cosine_correction
+        latex: C_{uc}
         bits: 18
-      - latex: M_0
+        signed: true
+        shift: -31
+        unit: rad
+      - name: mean_anomaly
+        latex: M_0
         bits: 32
-      - latex: e
+        signed: true
+        shift: -31
+        unit: semicircle
+      - name: eccentricity
+        latex: e
         bits: 32
-      - latex: C_{us}
+        shift: -33
+      - name: argument_of_latitude_sine_correction
+        latex: C_{us}
         bits: 18
-      - latex: C_{rc}
+        signed: true
+        shift: -31
+        unit: rad
+      - name: orbit_radius_cosine_correction
+        latex: C_{rc}
         bits: 18
-      - latex: C_{rs}
+        signed: true
+        shift: -6
+        unit: m
+      - name: orbit_radius_sine_correction
+        latex: C_{rs}
         bits: 18
-      - latex: \sqrt{A}
+        signed: true
+        shift: -6
+        unit: m
+      - name: square_root_of_semi_major_axis
+        latex: \sqrt{A}
         bits: 32
-      - latex: t_{oe}
+        shift: -19
+        unit: m(1/2)
+      - name: reference_time_ephemeris
+        latex: t_{oe}
         bits: 2
+        shift: 3
+        unit: s
         half: msb
+  - subframe: 3
+    description: Ephemeris (2/2)
+    fields:
+      - name: reference_time_ephemeris
+        latex: t_{oe}
+        bits: 15
+        shift: 3
+        unit: s
+        half: lsb
+      - name: inclination_angle
+        latex: i_0
+        bits: 32
+        signed: true
+        shift: -31
+        unit: semicircle
+      - name: inclination_angle_cosine_correction
+        latex: C_{ic}
+        bits: 18
+        signed: true
+        shift: -31
+        unit: rad
+      - name: rate_of_right_ascension
+        latex: \dot{\Omega}
+        bits: 24
+        signed: true
+        shift: -43
+        unit: semicircle / s
+      - name: inclination_angle_sine_correction
+        latex: C_{is}
+        bits: 18
+        signed: true
+        shift: -31
+        unit: rad
+      - name: rate_of_inclination_angle
+        latex: \text{IDOT}
+        bits: 14
+        signed: true
+        shift: -43
+        unit: semicircle / s
+      - name: argument_of_perigee
+        latex: \omega
+        bits: 32
+        signed: true
+        shift: -31
+        unit: semicircle
+      - bits: 1
+  - subframe: 4
+    pages: [[1, 24]]
+    description: Almanac
+    fields: &almanac
+      - name: square_root_of_semi_major_axis
+        latex: \sqrt{A}
+        bits: 24
+        shift: -11
+        unit: m(1/2)
+      - name: clock_drift_correction
+        latex: a_{f1}
+        bits: 11
+        signed: true
+        shift: -38
+        unit: s/s
+      - name: clock_bias_correction
+        latex: a_{f0}
+        bits: 11
+        signed: true
+        shift: -20
+        unit: s
+      - name: longitude_of_ascending_node_of_orbit_plane
+        latex: \Omega_0
+        bits: 24
+        signed: true
+        shift: -23
+        unit: semicircle
+      - name: eccentricity
+        latex: e
+        bits: 17
+        shift: -21
+      - name: orbit_reference_incliation_correction
+        latex: \delta_i
+        bits: 16
+        signed: true
+        shift: -19
+        unit: semicircle
+      - name: almanac_reference_time
+        latex: t_{oa}
+        bits: 8
+        shift: 12
+        unit: s
+      - name: rate_of_right_ascension
+        latex: \dot{\Omega}
+        bits: 17
+        signed: true
+        shift: -38
+        unit: semicircle / s
+      - name: argument_of_perigee
+        latex: \omega
+        bits: 24
+        signed: true
+        shift: -23
+        unit: semicircle
+      - name: mean_anomaly
+        latex: M_0
+        bits: 24
+        signed: true
+        shift: -23
+        unit: semicircle
+      - name: expanded_almanac_id
+        bits: 2
+  - subframe: 5
+    pages: [[1, 6]]
+    description: Almanac
+    fields: *almanac
+  - subframe: 5
+    pages: [7]
+    description: Health of satellites 1 through 19
+    fields:
+      - name: satellite_1_health
+        bits: 9
+      - name: satellite_2_health
+        bits: 9
+      - name: satellite_3_health
+        bits: 9
+      - name: satellite_4_health
+        bits: 9
+      - name: satellite_5_health
+        bits: 9
+      - name: satellite_6_health
+        bits: 9
+      - name: satellite_7_health
+        bits: 9
+      - name: satellite_8_health
+        bits: 9
+      - name: satellite_9_health
+        bits: 9
+      - name: satellite_10_health
+        bits: 9
+      - name: satellite_11_health
+        bits: 9
+      - name: satellite_12_health
+        bits: 9
+      - name: satellite_13_health
+        bits: 9
+      - name: satellite_14_health
+        bits: 9
+      - name: satellite_15_health
+        bits: 9
+      - name: satellite_16_health
+        bits: 9
+      - name: satellite_17_health
+        bits: 9
+      - name: satellite_18_health
+        bits: 9
+      - name: satellite_19_health
+        bits: 9
+      - bits: 7
+  - subframe: 5
+    pages: [8]
+    description: Health of satellites 20 through 30, Almanac reference time and week number
+    fields:
+      - name: satellite_20_health
+        bits: 9
+      - name: satellite_21_health
+        bits: 9
+      - name: satellite_22_health
+        bits: 9
+      - name: satellite_23_health
+        bits: 9
+      - name: satellite_24_health
+        bits: 9
+      - name: satellite_25_health
+        bits: 9
+      - name: satellite_26_health
+        bits: 9
+      - name: satellite_27_health
+        bits: 9
+      - name: satellite_28_health
+        bits: 9
+      - name: satellite_29_health
+        bits: 9
+      - name: satellite_30_health
+        bits: 9
+      - name: almanac_week_number
+        latex: \text{WN}_a
+        bits: 8
+      - name: almanac_reference_time
+        latex: t_{oa}
+        bits: 8
+        shift: 12
+        unit: s
+      - bits: 63
+  - subframe: 5
+    pages: [9]
+    description: GPS, Galileo and GLONASS correction data
+    fields:
+      - bits: 30
+      - name: gps_bias_correction
+        latex: A_{0GPS}
+        bits: 14
+        signed: true
+        factor: 0.1
+        unit: ns
+      - name: gps_drift_correction
+        latex: A_{1GPS}
+        bits: 16
+        signed: true
+        factor: 0.1
+        unit: ns/s
+      - name: galileo_bias_correction
+        latex: A_{0Gal}
+        bits: 14
+        signed: true
+        factor: 0.1
+        unit: ns
+      - name: galileo_drift_correction
+        latex: A_{1Gal}
+        bits: 16
+        signed: true
+        factor: 0.1
+        unit: ns/s
+      - name: glonass_bias_correction
+        latex: A_{0GLO}
+        bits: 14
+        signed: true
+        factor: 0.1
+        unit: s
+      - name: glonass_drift_correction
+        latex: A_{1GLO}
+        bits: 16
+        signed: true
+        factor: 0.1
+        unit: ns/s
+  - subframe: 5
+    pages: [10]
+    description: UTC data
+    fields:
+      - name: leap_seconds_delta
+        latex: \Delta t_{LS}
+        bits: 8
+        signed: true
+        unit: s
+      - name: future_leap_seconds_delta
+        latex: \Delta t_{LSF}
+        bits: 8
+        signed: true
+        unit: s
+      - name: future_leap_seconds_week_number
+        latex: \text{WN}_{LSF}
+        bits: 8
+      - name: utc_bias_correction
+        latex: A_{0UTC}
+        bits: 32
+        signed: true
+        shift: -30
+        unit: s
+      - name: utc_drift_correction
+        latex: A_{1UTC}
+        bits: 24
+        signed: true
+        shift: -50
+        unit: s/s
+      - name: future_leap_seconds_day_number
+        latex: \text{DN}
+        bits: 8
+      - bits: 90
+  - subframe: 5
+    pages: [[11, 23]]
+    description: Almanac
+    fields: *almanac
+  - subframe: 5
+    pages: [24]
+    description: Health of satellites 31 through 43
+    fields:
+      - name: satellite_31_health
+        bits: 9
+      - name: satellite_32_health
+        bits: 9
+      - name: satellite_33_health
+        bits: 9
+      - name: satellite_34_health
+        bits: 9
+      - name: satellite_35_health
+        bits: 9
+      - name: satellite_36_health
+        bits: 9
+      - name: satellite_37_health
+        bits: 9
+      - name: satellite_38_health
+        bits: 9
+      - name: satellite_39_health
+        bits: 9
+      - name: satellite_40_health
+        bits: 9
+      - name: satellite_41_health
+        bits: 9
+      - name: satellite_42_health
+        bits: 9
+      - name: satellite_43_health
+        bits: 9
+      - name: expanded_almanac_id
+        bits: 2
+      - bits: 59

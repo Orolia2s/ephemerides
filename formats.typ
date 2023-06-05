@@ -139,19 +139,28 @@
 						[$=$ #raw(bin)]
 					}
 				},
-				[#if field.at("signed", default: false) { "i" } else { "u" }#field.bits],
-				if "shift" in field {
-					[$2^(#field.shift)$]
+				[#text(font: "New Computer Modern Sans", if field.at("signed", default: false) { "i" } else { "u" })#field.bits],
+				if "factor" in field {
+					[$#field.factor$]
+				} else if "shift" in field {
+					[$2^#int(field.shift)$]
 				},
 				if "unit" in field {
 					let last_end = 0
 					for match in field.unit.matches(regex("([[:alpha:]]+)(-?\d+|\(-?\d+(?:/\d+)?\))?")) {
+						let unit = match.captures.at(0)
+						if unit == "semicircle" {
+							unit = sym.pi
+						}
 						let pow = match.captures.at(1, default: none)
 						if type(pow) == "string" {
 							pow = pow.trim(regex("\(|\)"))
+							if pow.starts-with("-") {
+								pow = [$-#pow.slice(1)$]
+							}
 						}
 						[$#field.unit.slice(last_end, match.start).trim()$]
-						[$attach(upright(#match.captures.at(0)), tr: #pow)$]
+						[$attach(upright(#unit), tr: #pow)$]
 						last_end = match.end
 					}
 				}

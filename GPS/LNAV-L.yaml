@@ -104,8 +104,8 @@ formats:
         bits: 32
         signed: true
         latex: M_0
-        shift: -31
         unit: semicircle
+        shift: -31
       - name: argument_of_latitude_cosine_correction
         bits: 16
         signed: true
@@ -127,7 +127,7 @@ formats:
         latex: \sqrt{A}
         shift: -19
         unit: m(1/2)
-      - name: reference_time_ephemeris
+      - name: ephemeris_reference_time
         bits: 16
         latex: t_{oe}
         shift: 4
@@ -199,11 +199,11 @@ formats:
         bits: 16
         latex: e
         shift: -21
-      - name: almanach_reference_time
+      - name: almanac_reference_time
         bits: 8
         latex: t_{oa}
         unit: s
-      - name: delta_i
+      - name: orbit_reference_incliation_correction
         bits: 16
         latex: \delta_i
         shift: -14
@@ -230,6 +230,7 @@ formats:
         bits: 24
         latex: M_0
         shift: -23
+        unit: semicircle
       - name: clock_bias_correction
         bits: 8
         half: msb
@@ -250,14 +251,14 @@ formats:
       - bits: 2
   - subframe: 5
     pages: [25]
-    description: Health of satellites 1 through 24, Almanac reference time and reference week number
+    description: Health of satellites 1 through 24, Almanac reference time and week number
     fields:
-      - name: almanach_reference_time
+      - name: almanac_reference_time
         bits: 8
         latex: t_{oa}
         shift: 12
         unit: s
-      - name: almanach_week_number
+      - name: almanac_week_number
         bits: 8
         latex: \text{WN}_a
       - name: satellite_1_health
@@ -362,12 +363,12 @@ formats:
         latex: \beta_3
         shift: 16
         unit: s / semicircle3
-      - name: A_1
+      - name: utc_drift_correction
         bits: 24
         latex: A_1
         shift: -50
         unit: s/s
-      - name: A_0
+      - name: utc_bias_correction
         bits: 32
         latex: A_0
         shift: -30
