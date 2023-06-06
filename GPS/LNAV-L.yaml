@@ -20,6 +20,7 @@ header:
     bits: 1
   - bits: 1
   - name: time_of_week
+    latex: \text{TOW}
     bits: 17
   - name: alert
     bits: 1

@@ -1,4 +1,4 @@
-#let title = "GNSS navigation message formats"
+#let title = "GNSS navigation messages"
 #set document(
 	title: title,
 	author: "Tanguy BERTHOUD",
@@ -13,15 +13,10 @@
 #set heading(
 	numbering: "I.1.1",
 )
+#show link: underline
 
-#align(center + horizon)[
-	#text(4em)[
-		*#title*
-	]
-]
-#align(bottom)[
-	#outline(indent: true, depth: 2)
-]
+#align(center + horizon, text(size: 4em, weight: "bold", title))
+#align(bottom, outline(indent: true, depth: 2))
 #pagebreak()
 
 #set page(
@@ -30,9 +25,14 @@
 #set par(
 	justify: true,
 )
+#show figure: this => align(center, block(breakable: false)[
+	#this.body
+	*#this.supplement #this.counter.display(this.numbering)*: #this.caption
+])
+
 
 #let format(file, notes: ()) = {
-	let data = yaml(file)
+	let data = yaml(file + ".yaml")
 	assert.eq(data.kind, "GNSS_format", message: file + " should be a `GNSS_format` kind")
 
 	[
@@ -59,13 +59,11 @@
 	})
 
 	if notes.len() > 0 {
-		[=== Notes]
 		for (title, content) in notes {
-			[
-				==== #title
-				#content
-			]
+			heading(level: 3, numbering: "I.1.a", title)
+			content
 		}
+		counter(heading).update((a,b,c) => (a,b,0))
 	}
 
 	let fields(contents) = {
@@ -235,10 +233,28 @@
 }
 
 = GPS
-#format("GPS/LNAV-L.yaml", notes: (
+#format("GPS/LNAV-L", notes: (
+	([GPS Time], [
+		The GPS Time (GPST) is a continuous time scale (no _leap seconds_) starting on (Sunday) January 6, 1980 at 00:00:00.
+
+		To compute the date from the LNAV-L message, two values are needed:
+		- the *week number (WN)* found in the subframe 1
+		- the *time of week (TOW)* found in the subframe header
+
+		The time of week is a count defined as the number of subframes that have been sent since the last Sunday, 00:00:00.
+		Each subframe spans *6 seconds*.\
+		The time of week is related to the _Z-count_, a count defined as the number of X1 epochs that have occurred since the last Sunday, 00:00:00.
+		An X1 epochs spans 1.5 seconds.
+		Therefore, 1 TOW count equals 4 Z-counts.
+
+		The week number is a count defined as the number of weeks that have occured since the zero time-point.
+		But this value is broadcast on 10 bits, meaning that every 1024 weeks (about 19.7 years) the transmitted value _rolls over_ to 0 again.
+		At the time of writing, the last rollover occurred on *(Sunday) April 7, 2019* at *00:00:00*.
+		The next one is planned on (Sunday) November 21, 2038 at 00:00:00.
+	]),
 	([`page_id` to documented page ID mapping], [
-		While the ICD mentions page IDs ranging from 1 to 25, the effectively transmitted IDs (in the `page_id` fields) range from 1 to 63.\
-		The following table describes this mapping:
+		While the ICD mentions page IDs ranging from 1 to 25, the effectively transmitted IDs (in the `page_id` fields) range from 1 to 63.
+
 		#let map = (
 			((1, 24), (1, 24)),
 			((25, 28), (2, 5)),
@@ -270,12 +286,27 @@
 				(page_id, [#subframe], icd)
 			}).flatten()
 		))
+
 		#emoji.warning *The page IDs used in this document are `page_id` values*, not ICD page IDs!
 	]),
 ))
 #pagebreak()
 = Galileo
-#format("Galileo/FNAV.yaml")
+#format("Galileo/FNAV")
 #pagebreak()
 = BeiDou
-#format("BeiDou/D1.yaml")
+#format("BeiDou/D1", notes: (
+	([BeiDou Time], [
+		The BeiDou Time (BDT) is a continuous time scale (no _leap seconds_) starting on *(Sunday) January 1, 2006* at *00:00:00*.
+
+		To compute the date from the D1 message, two values are needed:
+		- the *week number (WN)* found in the subframe 1
+		- the *time of week (SOW)* found in the subframe header
+
+		The time of week is defined as the number of seconds that have occurred since the last Sunday, 00:00:00.
+
+		The week number is a count defined as the number of weeks that have occurred since the zero time-point.
+		But this value is broadcast on 13 bits, meaning that every 8192 weeks (157.5 years) the transmitted value _rolls over_ to 0 again.
+		At the time of writing, the next rollover should occur on (Sunday) January 2, 2163 at 00:00:00.
+	]),
+))

@@ -16,6 +16,7 @@ header:
   - name: subframe_id
     bits: 3
   - name: time_of_week
+    latex: \text{SOW}
     bits: 20
     unit: s
 page_header:
@@ -393,7 +394,7 @@ formats:
         bits: 14
         signed: true
         factor: 0.1
-        unit: s
+        unit: ns
       - name: glonass_drift_correction
         latex: A_{1GLO}
         bits: 16
