@@ -1,28 +1,38 @@
+"""
+Handle subframes accross time, calling subscribers when sufficient data has been collected
+"""
+
 import logging
 
 from collections import defaultdict
 from types import SimpleNamespace
 
-from gnss_parser import Constellation, ephemerides
+from gnss_parser import Constellation, ephemeris
 
 storage = {}
 
 subscribers = {
-    'LNAV': {
-        (2, 3): ephemerides,
+    'LNAV-L': {
+        (2, 3): ephemeris,
     },
     'D1': {
-        (2, 3): ephemerides
+        (2, 3): ephemeris
     },
 }
 
 def merge(messages: list[SimpleNamespace]) -> SimpleNamespace:
+    """
+    Create a single object from multiple subframes, also reconstructing split fields
+    """
+    print(f'Merging {len(messages)} subframes')
+    result = {}
+
     halves = defaultdict(dict)
     for message in messages:
         for field, parts in message.halves.items():
-            for part, value in parts:
+            for part, value in parts.items():
                 if part in halves[field]:
-                    raise Exception(f'Found multiple {part} of {field} !?')
+                    logging.warning(f'Found multiple {part} of {field} !?')
                 halves[field][part] = value
     for field, parts in halves.items():
         if parts.keys() != {'msb', 'lsb'}:
@@ -38,27 +48,38 @@ def merge(messages: list[SimpleNamespace]) -> SimpleNamespace:
         if data.unit:
             value *= data.unit
         logging.info(f'Reconstructed field "{field}": {value}')
+        result[field] = value
 
-    result = {}
     for message in messages:
-        result.update(message)
+        message.__dict__.pop('halves')
+        duplicates = message.__dict__.keys() & result.keys()
+        if duplicates:
+            logging.error(f'Duplicate fields: {duplicates}')
+        result.update(message.__dict__)
     return SimpleNamespace(**result)
 
 def accumulate(message_type: str, satellite: int, subframe: int, page: int | None, time: int, message):
+    """
+    Store a single subframe
+    """
     if message_type not in storage:
-        print(f'New message type: {message_type}')
+        logging.debug(f'New message type: {message_type}')
         storage[message_type] = {}
     if satellite not in storage[message_type]:
-        print(f'First {message_type} of satellite {satellite}')
+        logging.debug(f'First {message_type} of satellite {satellite}')
         storage[message_type][satellite] = {}
 
     key = (subframe, page) if page else subframe
     storage[message_type][satellite][key] = message
+    print(f'{message_type} > {satellite} > {key}')
+    print('-' * 30)
 
-    for message_type, subscriber in subscribers.items():
-        if message_type not in storage:
+    for sought_subframes, callback in subscribers[message_type].items():
+        sought_subframes = set(sought_subframes)
+        if key not in sought_subframes:
             continue
-        for subframes, callback in subscriber:
-            for satellite in storage[message_type]:
-                if set(subframes).is_subset(set(satellite.keys())):
-                    callback(merge(satellite[k] for k in subframes))
+        stored_subframes = storage[message_type][satellite]
+        print(f'In {message_type}, we are looking for {sought_subframes} for satellite {satellite} : {set(stored_subframes.keys())}')
+        if sought_subframes <= stored_subframes.keys():
+            callback(merge(list(stored_subframes[key] for key in sought_subframes)))
+            print()
