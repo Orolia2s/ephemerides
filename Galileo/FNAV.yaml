@@ -6,8 +6,65 @@ metadata:
     Transmitted on the E5a-I signal, the F-band (1278.75 MHz)
     is used for the transmission of Galileo System Time (GST)
     and other system messages, such as almanacs and health status messages.
+
+    Note that compared to the ICD, the notion of page and subframe has been swapped here
 subframe_count: 12
 order: msb_first
 header:
   - name: subframe_id
     bits: 6
+formats:
+  - subframe: 1
+    description: |
+      SVID, clock correction, SISA, Ionospheric correction, BGD,
+      Signal health status, GST and Data validity status
+    fields:
+      - name: satellite_id
+        bits: 6
+        latex: \text{SV}_{ID}
+      - name: issue_of_data_ephemeris
+        bits: 10
+        latex: \text{IOD}_{nav}
+      - name: time_of_clock
+        bits: 14
+        latex: t_{oc}
+      - name: clock_bias_correction
+        bits: 31
+        latex: a_{f0}
+      - name: clock_drift_correction
+        bits: 21
+        latex: a_{f1}
+      - name: clock_drift_rate_correction
+        bits: 6
+        latex: a_{f2}
+      - latex: \text{SISA}
+        bits: 8
+      - latex: a_{i0}
+        bits: 11
+      - latex: a_{i1}
+        bits: 11
+      - latex: a_{i2}
+        bits: 14
+      - name: ionospheric_disturbance_region_1
+        bits: 1
+      - name: ionospheric_disturbance_region_2
+        bits: 1
+      - name: ionospheric_disturbance_region_3
+        bits: 1
+      - name: ionospheric_disturbance_region_4
+        bits: 1
+      - name: ionospheric_disturbance_region_5
+        bits: 1
+      - name: BGD
+        bits: 10
+      - latex: E5a_{HS}
+        bits: 2
+      - name: week_number
+        bits: 12
+        latex: \text{WN}
+      - name: time_of_week
+        bits: 20
+        latex: \text{TOW}
+      - latex: E5a_{DVS}
+        bits: 1
+      - bits: 26

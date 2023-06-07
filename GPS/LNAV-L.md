@@ -12,7 +12,7 @@ Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 ||telemetry|14|||
 ||integrity_status|1|||
 ||_ignored_|1|||
-||time_of_week|17|||
+|$\text{TOW}$|time_of_week|17|||
 |`0`|alert|1|||
 ||anti_spoof|1|||
 ||subframe_id|3|||

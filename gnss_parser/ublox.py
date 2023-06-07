@@ -13,6 +13,10 @@ message_from_ublox = {
     (Constellation.BeiDou, 0): 'D1', # L1 C/A (Coarse Acquisition)
 }
 
+keep_22_lsb =  0x3fffff
+keep_24_lsb =  0xffffff
+keep_26_lsb = 0x3ffffff
+
 def parity_LNAVL(byte_array: bytes) -> int:
     """
     Hamming Code (32, 26)
@@ -46,11 +50,11 @@ def parity_LNAVL(byte_array: bytes) -> int:
         if previous_30:
             ublox_parity = ~ublox_parity & 0x3f
         if parity != ublox_parity:
-            logging.warning(f'Wrong parity: {parity:06b} vs {ublox_parity & 0x3f:06b}')
+            raise Exception(f'Wrong parity: {parity:06b} vs {ublox_parity & 0x3f:06b}')
         previous_30 = parity & 1
         previous_29 = (parity & 2) >> 1
         total <<= 24
-        total += (word >> 6) & 0xFFFFFF
+        total += (word >> 6) & keep_24_lsb
     return SingleWordBitReaderMsb(total, 10 * 24)
 
 def extract_data_D1(byte_array: bytes) -> int:
@@ -59,26 +63,30 @@ def extract_data_D1(byte_array: bytes) -> int:
     """
     words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
     # First word: 26 information bits, 4 parity bits
-    total = (words[0] >> 4) & 0x3ffffff
+    total = (words[0] >> 4) & keep_26_lsb
     # words 2-10: 22 information bits, 8 parity bits
     for word in words[1:]:
         total <<= 22
-        total += (word >> 8) & 0x3fffff
+        total += (word >> 8) & keep_22_lsb
     return SingleWordBitReaderMsb(total, 26 + 9 * 22)
 
-def parity_FNAV(byte_array: bytes) -> int:
+def extract_data_FNAV(byte_array: bytes) -> int:
     """
     Galileo F-band message
     """
     words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
     total = 0
+    # 6 first words in full
     for word in words[:6]:
         total <<= 32
         total += word
+    # 7th word: 22 information bits, 10 parity bits
     total <<= 22
-    total += words[6] >> 10
+    total += (words[6] >> 10) & keep_22_lsb
+    return SingleWordBitReaderMsb(total, 214)
 
 reader_from_ublox = {
     'LNAV-L': parity_LNAVL,
-    'D1': extract_data_D1
+    'D1': extract_data_D1,
+    'FNAV': extract_data_FNAV,
 }
