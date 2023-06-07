@@ -27,13 +27,12 @@ ClockDriftRate
 Tgd
 '''
 
-translate_to_skydel =
-{
+translate_to_skydel = {
     'square_root_of_semi_major_axis': 'SqrtA',
     'eccentricity': 'Eccentricity',
     'argument_of_perigee': 'LittleOmega',
     'mean_anomaly': 'M0',
-    'inclination_angle', 'I0',
+    'inclination_angle': 'I0',
     'ascending_node_longitude': 'BigOmega',
     'mean_motion_difference': 'DeltaN',
     'rate_of_inclination_angle': 'Idot',

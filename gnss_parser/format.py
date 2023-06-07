@@ -41,7 +41,7 @@ class Field:
         if self.shift:
             value *= 2 ** self.shift
         if self.factor:
-            value *= factor
+            value *= self.factor
         if self.unit:
             value *= self.unit
         if self.name:

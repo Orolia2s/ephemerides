@@ -10,6 +10,7 @@ from gnss_parser import Constellation, xor_bits, SingleWordBitReaderMsb
 
 message_from_ublox = {
     (Constellation.GPS, 0): 'LNAV-L', # L1 C/A (Coarse Acquisition)
+    (Constellation.BeiDou, 0): 'D1', # L1 C/A (Coarse Acquisition)
 }
 
 def parity_LNAVL(byte_array: bytes) -> int:
@@ -52,6 +53,19 @@ def parity_LNAVL(byte_array: bytes) -> int:
         total += (word >> 6) & 0xFFFFFF
     return SingleWordBitReaderMsb(total, 10 * 24)
 
+def extract_data_D1(byte_array: bytes) -> int:
+    """
+    BeiDou D1
+    """
+    words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
+    # First word: 26 information bits, 4 parity bits
+    total = (words[0] >> 4) & 0x3ffffff
+    # words 2-10: 22 information bits, 8 parity bits
+    for word in words[1:]:
+        total <<= 22
+        total += (word >> 8) & 0x3fffff
+    return SingleWordBitReaderMsb(total, 26 + 9 * 22)
+
 def parity_FNAV(byte_array: bytes) -> int:
     """
     Galileo F-band message
@@ -65,5 +79,6 @@ def parity_FNAV(byte_array: bytes) -> int:
     total += words[6] >> 10
 
 reader_from_ublox = {
-    'LNAV-L': parity_LNAVL
+    'LNAV-L': parity_LNAVL,
+    'D1': extract_data_D1
 }
