@@ -124,4 +124,50 @@ formats:
       - name: ephemeris_reference_time
         bits: 14
         latex: t_{oe}
+      - *weekNumber
+      - *timeOfWeek
       - bits: 8
+  - subframe: 4
+    description: Ephemeris (3/3), GST-UTC conversion, GST-GPS conversion and TOW
+    fields:
+      - *issueOfDataNav
+      - name: inclination_angle_cosine_correction
+        bits: 16
+        latex: C_{ic}
+      - name: inclination_angle_sine_correction
+        bits: 16
+        latex: C_{is}
+      - name: galileo_bias_correction
+        bits: 32
+        latex: A_0
+      - name: galileo_drift_correction
+        bits: 24
+        latex: A_1
+      - name: leap_seconds_delta
+        bits: 8
+        latex: \Delta{}t_{Ls}
+      - bits: 8
+        latex: t_0t
+      - bits: 8
+        latex: \text{WN}_{0t}
+      - name: future_leap_seconds_week_number
+        bits: 8
+        latex: \text{WN}_{\text{LSF}}
+      - name: future_leap_seconds_day_number
+        bits: 3
+        latex: \text{DN}
+      - name: future_leap_seconds_delta
+        bits: 8
+        latex: \Delta{}t_{text{LSF}}
+      - bits: 8
+        latex: t_{0G}
+      - name: gps_bias_correction
+        bits: 16
+        latex: A_{0G}
+      - name: gps_drift_correction
+        bits: 12
+        latex: A_{1G}
+      - bits: 6
+        latex: \text{WN}_{0G}
+      - *timeOfWeek
+      - bits: 5

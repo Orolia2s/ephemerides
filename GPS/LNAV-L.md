@@ -87,7 +87,7 @@ Ephemeris (2/2)
 |$\omega$|argument_of_perigee|32|$2^{-31}$|$\mathrm{semicircle}$|
 |$\dot{\Omega}$|rate_of_right_ascension|24|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
 ||issue_of_data_ephemeris|8|||
-|$\text{IDOT}$|rate_of_inclination_angle|14|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
+|$\dot{i}$|rate_of_inclination_angle|14|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
 ||_ignored_|2|||
 
 ## Subframe 4

@@ -68,7 +68,7 @@ Ephemeris (1/3) and GST
 
 Ephemeris (2/3) and GST
 
-176 bits mapped as follows:
+208 bits mapped as follows:
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
@@ -81,4 +81,32 @@ Ephemeris (2/3) and GST
 |$C_{rc}$|orbit_radius_cosine_correction|16|||
 |$C_{rs}$|orbit_radius_sine_correction|16|||
 |$t_{oe}$|ephemeris_reference_time|14|||
+|$\text{WN}$|week_number|12|||
+|$\text{TOW}$|time_of_week|20|||
 ||_ignored_|8|||
+
+## Subframe 4
+
+Ephemeris (3/3), GST-UTC conversion, GST-GPS conversion and TOW
+
+208 bits mapped as follows:
+
+|notation|name|bits|factor|unit|
+|:------:|:---|---:|:-----|:--:|
+|$\text{IOD}_{\text{nav}}$|issue_of_data_ephemeris|10|||
+|$C_{ic}$|inclination_angle_cosine_correction|16|||
+|$C_{is}$|inclination_angle_sine_correction|16|||
+|$A_0$|galileo_bias_correction|32|||
+|$A_1$|galileo_drift_correction|24|||
+|$\Delta{}t_{Ls}$|leap_seconds_delta|8|||
+|$t_0t$|_ignored_|8|||
+|$\text{WN}_{0t}$|_ignored_|8|||
+|$\text{WN}_{\text{LSF}}$|future_leap_seconds_week_number|8|||
+|$\text{DN}$|future_leap_seconds_day_number|3|||
+|$\Delta{}t_{text{LSF}}$|future_leap_seconds_delta|8|||
+|$t_{0G}$|_ignored_|8|||
+|$A_{0G}$|gps_bias_correction|16|||
+|$A_{1G}$|gps_drift_correction|12|||
+|$\text{WN}_{0G}$|_ignored_|6|||
+|$\text{TOW}$|time_of_week|20|||
+||_ignored_|5|||
