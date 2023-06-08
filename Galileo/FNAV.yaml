@@ -81,6 +81,9 @@ formats:
         bits: 32
       - name: rate_of_right_ascension
         bits: 24
+        shift: -43
+        signed: true
+        unit: semicircle / s
         latex: \dot{\Omega}
       - name: eccentricity
         bits: 32
@@ -93,6 +96,9 @@ formats:
         latex: \Omega_0
       - name: rate_of_inclination_angle
         bits: 14
+        shift: -43
+        signed: true
+        unit: semicircle / s
         latex: \dot{i}
       - *weekNumber
       - *timeOfWeek
@@ -111,18 +117,32 @@ formats:
         latex: \Delta_n
       - name: argument_of_latitude_cosine_correction
         bits: 16
+        shift: -29
+        signed: true
+        unit: rad
         latex: C_{uc}
       - name: argument_of_latitude_sine_correction
         bits: 16
+        shift: -29
+        signed: true
+        unit: rad
         latex: C_{us}
       - name: orbit_radius_cosine_correction
         bits: 16
+        shift: -5
+        signed: true
+        unit: m
         latex: C_{rc}
       - name: orbit_radius_sine_correction
         bits: 16
+        shift: -5
+        signed: true
+        unit: m
         latex: C_{rs}
       - name: ephemeris_reference_time
         bits: 14
+        factor: 60
+        unit: s
         latex: t_{oe}
       - *weekNumber
       - *timeOfWeek
@@ -133,9 +153,15 @@ formats:
       - *issueOfDataNav
       - name: inclination_angle_cosine_correction
         bits: 16
+        shift: -29
+        signed: true
+        unit: rad
         latex: C_{ic}
       - name: inclination_angle_sine_correction
         bits: 16
+        shift: -29
+        signed: true
+        unit: rad
         latex: C_{is}
       - name: galileo_bias_correction
         bits: 32

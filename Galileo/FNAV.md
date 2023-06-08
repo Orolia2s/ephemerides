@@ -56,11 +56,11 @@ Ephemeris (1/3) and GST
 |:------:|:---|---:|:-----|:--:|
 |$\text{IOD}_{\text{nav}}$|issue_of_data_ephemeris|10|||
 |$M_0$|mean_anomaly|32|||
-|$\dot{\Omega}$|rate_of_right_ascension|24|||
+|$\dot{\Omega}$|rate_of_right_ascension|24|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
 |$e$|eccentricity|32|||
 |$\sqrt{A}$|square_root_of_semi_major_axis|32|||
 |$\Omega_0$|ascending_node_longitude|32|||
-|$\dot{i}$|rate_of_inclination_angle|14|||
+|$\dot{i}$|rate_of_inclination_angle|14|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
 |$\text{WN}$|week_number|12|||
 |$\text{TOW}$|time_of_week|20|||
 
@@ -76,11 +76,11 @@ Ephemeris (2/3) and GST
 |$i_0$|inclination_angle|32|||
 |$\omega$|argument_of_perigee|32|||
 |$\Delta_n$|mean_motion_difference|16|||
-|$C_{uc}$|argument_of_latitude_cosine_correction|16|||
-|$C_{us}$|argument_of_latitude_sine_correction|16|||
-|$C_{rc}$|orbit_radius_cosine_correction|16|||
-|$C_{rs}$|orbit_radius_sine_correction|16|||
-|$t_{oe}$|ephemeris_reference_time|14|||
+|$C_{uc}$|argument_of_latitude_cosine_correction|16|$2^{-29}$|$\mathrm{rad}$|
+|$C_{us}$|argument_of_latitude_sine_correction|16|$2^{-29}$|$\mathrm{rad}$|
+|$C_{rc}$|orbit_radius_cosine_correction|16|$2^{-5}$|$\mathrm{m}$|
+|$C_{rs}$|orbit_radius_sine_correction|16|$2^{-5}$|$\mathrm{m}$|
+|$t_{oe}$|ephemeris_reference_time|14|60|$\mathrm{s}$|
 |$\text{WN}$|week_number|12|||
 |$\text{TOW}$|time_of_week|20|||
 ||_ignored_|8|||
@@ -94,8 +94,8 @@ Ephemeris (3/3), GST-UTC conversion, GST-GPS conversion and TOW
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
 |$\text{IOD}_{\text{nav}}$|issue_of_data_ephemeris|10|||
-|$C_{ic}$|inclination_angle_cosine_correction|16|||
-|$C_{is}$|inclination_angle_sine_correction|16|||
+|$C_{ic}$|inclination_angle_cosine_correction|16|$2^{-29}$|$\mathrm{rad}$|
+|$C_{is}$|inclination_angle_sine_correction|16|$2^{-29}$|$\mathrm{rad}$|
 |$A_0$|galileo_bias_correction|32|||
 |$A_1$|galileo_drift_correction|24|||
 |$\Delta{}t_{Ls}$|leap_seconds_delta|8|||
