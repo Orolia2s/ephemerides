@@ -204,7 +204,7 @@ formats:
         shift: -31
         unit: rad
       - name: rate_of_inclination_angle
-        latex: \text{IDOT}
+        latex: \dot{i}
         bits: 14
         signed: true
         shift: -43

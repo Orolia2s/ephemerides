@@ -57,6 +57,7 @@ formats:
       - bits: 87
       - name: group_delay_differential
         bits: 8
+        signed: true
         latex: T_{GD}
         shift: -31
         unit: s
@@ -70,16 +71,19 @@ formats:
         unit: s
       - name: clock_drift_rate_correction
         bits: 8
+        signed: true
         latex: a_{f2}
         shift: -55
         unit: s/s2
       - name: clock_drift_correction
         bits: 16
+        signed: true
         latex: a_{f1}
         shift: -43
         unit: s/s
       - name: clock_bias_correction
         bits: 22
+        signed: true
         latex: a_{f0}
         shift: -31
         unit: s
@@ -188,7 +192,7 @@ formats:
       - name: rate_of_inclination_angle
         bits: 14
         signed: true
-        latex: \text{IDOT}
+        latex: \dot{i}
         shift: -43
         unit: semicircle/s
       - bits: 2
@@ -206,10 +210,12 @@ formats:
         unit: s
       - name: orbit_reference_incliation_correction
         bits: 16
+        signed: true
         latex: \delta_i
         shift: -14
       - name: rate_of_right_ascension
         bits: 16
+        signed: true
         latex: \dot{\Omega}
         shift: -38
       - name: satellite_health
@@ -221,30 +227,36 @@ formats:
         unit: m(1/2)
       - name: longitude_of_ascending_node_of_orbit_plane
         bits: 24
+        signed: true
         latex: \Omega_0
         shift: -23
       - name: argument_of_perigee
         bits: 24
+        signed: true
         latex: \omega
         shift: -23
       - name: mean_anomaly
         bits: 24
+        signed: true
         latex: M_0
         shift: -23
         unit: semicircle
       - name: clock_bias_correction
         bits: 8
+        signed: true
         half: msb
         latex: a_{f0}
         shift: -20
         unit: s
       - name: clock_drift_correction
         bits: 11
+        signed: true
         latex: a_{f1}
         shift: -38
         unit: s/s
       - name: clock_bias_correction
         bits: 3
+        signed: true
         half: lsb
         latex: a_{f0}
         shift: -20
@@ -326,51 +338,61 @@ formats:
     fields:
       - name: alpha_0
         bits: 8
+        signed: true
         latex: \alpha_0
         shift: -30
         unit: s
       - name: alpha_1
         bits: 8
+        signed: true
         latex: \alpha_1
         shift: -27
         unit: s / semicircle
       - name: alpha_2
         bits: 8
+        signed: true
         latex: \alpha_2
         shift: -24
         unit: s / semicircle2
       - name: alpha_3
         bits: 8
+        signed: true
         latex: \alpha_3
         shift: -24
         unit: s / semicircle3
       - name: beta_0
         bits: 8
+        signed: true
         latex: \beta_0
         shift: 11
         unit: s
       - name: beta_1
         bits: 8
+        signed: true
         latex: \beta_1
         shift: 14
         unit: s / semicircle
       - name: beta_2
         bits: 8
+        signed: true
         latex: \beta_2
         shift: 16
         unit: s / semicircle2
       - name: beta_3
         bits: 8
+        signed: true
         latex: \beta_3
         shift: 16
         unit: s / semicircle3
       - name: utc_drift_correction
         bits: 24
+        signed: true
         latex: A_1
         shift: -50
         unit: s/s
       - name: utc_bias_correction
         bits: 32
+        signed: true
         latex: A_0
         shift: -30
         unit: s
@@ -384,6 +406,7 @@ formats:
         latex: \text{WN}_t
       - name: leap_seconds_delta
         bits: 8
+        signed: true
         latex: \Delta t_{LS}
         unit: s
       - name: future_leap_seconds_week_number
@@ -394,6 +417,7 @@ formats:
         latex: \text{DN}
       - name: future_leap_seconds_delta
         bits: 8
+        signed: true
         latex: \Delta t_{LSF}
         unit: s
       - bits: 16
