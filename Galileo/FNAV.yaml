@@ -79,6 +79,9 @@ formats:
       - name: mean_anomaly
         latex: M_0
         bits: 32
+        shift: -31
+        signed: true
+        unit: semicircle
       - name: rate_of_right_ascension
         bits: 24
         shift: -43
@@ -87,12 +90,18 @@ formats:
         latex: \dot{\Omega}
       - name: eccentricity
         bits: 32
+        shift: -33
         latex: e
       - name: square_root_of_semi_major_axis
         bits: 32
+        shift: -19
+        unit: m(1/2)
         latex: \sqrt{A}
       - name: ascending_node_longitude
         bits: 32
+        shift: -31
+        signed: true
+        unit: semicircle
         latex: \Omega_0
       - name: rate_of_inclination_angle
         bits: 14
@@ -108,12 +117,21 @@ formats:
       - *issueOfDataNav
       - name: inclination_angle
         bits: 32
+        shift: -31
+        signed: true
+        unit: semicircle
         latex: i_0
       - name: argument_of_perigee
         bits: 32
+        shift: -31
+        signed: true
+        unit: semicircle
         latex: \omega
       - name: mean_motion_difference
         bits: 16
+        shift: -43
+        signed: true
+        unit: semicircle / s
         latex: \Delta_n
       - name: argument_of_latitude_cosine_correction
         bits: 16
