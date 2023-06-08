@@ -23,7 +23,8 @@ formats:
       - name: satellite_id
         bits: 6
         latex: \text{SV}_{ID}
-      - name: issue_of_data_ephemeris
+      - &issueOfDataNav
+        name: issue_of_data_ephemeris
         bits: 10
         latex: \text{IOD}_{\text{nav}}
       - name: time_of_clock
@@ -60,10 +61,12 @@ formats:
         bits: 10
       - latex: \text{E5a}_{HS}
         bits: 2
-      - name: week_number
+      - &weekNumber
+        name: week_number
         bits: 12
         latex: \text{WN}
-      - name: time_of_week
+      - &timeOfWeek
+        name: time_of_week
         bits: 20
         latex: \text{TOW}
       - latex: \text{E5a}_{DVS}
@@ -72,9 +75,7 @@ formats:
   - subframe: 2
     description: Ephemeris (1/3) and GST
     fields:
-      - name: issue_of_data_ephemeris
-        bits: 10
-        latex: \text{IOD}_{\text{nav}}
+      - *issueOfDataNav
       - name: mean_anomaly
         latex: M_0
         bits: 32
@@ -93,9 +94,34 @@ formats:
       - name: rate_of_inclination_angle
         bits: 14
         latex: \dot{i}
-      - name: week_number
-        bits: 12
-        latex: \text{WN}
-      - name: time_of_week
-        bits: 20
-        latex: \text{TOW}
+      - *weekNumber
+      - *timeOfWeek
+  - subframe: 3
+    description: Ephemeris (2/3) and GST
+    fields:
+      - *issueOfDataNav
+      - name: inclination_angle
+        bits: 32
+        latex: i_0
+      - name: argument_of_perigee
+        bits: 32
+        latex: \omega
+      - name: mean_motion_difference
+        bits: 16
+        latex: \Delta_n
+      - name: argument_of_latitude_cosine_correction
+        bits: 16
+        latex: C_{uc}
+      - name: argument_of_latitude_sine_correction
+        bits: 16
+        latex: C_{us}
+      - name: orbit_radius_cosine_correction
+        bits: 16
+        latex: C_{rc}
+      - name: orbit_radius_sine_correction
+        bits: 16
+        latex: C_{rs}
+      - name: ephemeris_reference_time
+        bits: 14
+        latex: t_{0e}
+      - bits: 8

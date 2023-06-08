@@ -13,7 +13,7 @@ markdown: $(MARKDOWN)
 
 run: $(YAML_ICDS) | $(VENV_ACTIVATE)
 	test -z "${VIRTUAL_ENV}" && source $|
-	sudo -E $(VENV_PATH)/bin/python -m gnss_parser $^ -s /dev/ttyACM0
+	sudo -E $(VENV_PATH)/bin/python -m gnss_parser $^ -s /dev/ttyACM0 -v
 
 clean:
 #	$(RM) -r $(VENV_PATH)

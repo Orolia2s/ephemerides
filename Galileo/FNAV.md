@@ -63,3 +63,22 @@ Ephemeris (1/3) and GST
 |$\dot{i}$|rate_of_inclination_angle|14|||
 |$\text{WN}$|week_number|12|||
 |$\text{TOW}$|time_of_week|20|||
+
+## Subframe 3
+
+Ephemeris (2/3) and GST
+
+176 bits mapped as follows:
+
+|notation|name|bits|factor|unit|
+|:------:|:---|---:|:-----|:--:|
+|$\text{IOD}_{\text{nav}}$|issue_of_data_ephemeris|10|||
+|$i_0$|inclination_angle|32|||
+|$\omega$|argument_of_perigee|32|||
+|$\Delta_n$|mean_motion_difference|16|||
+|$C_{uc}$|argument_of_latitude_cosine_correction|16|||
+|$C_{us}$|argument_of_latitude_sine_correction|16|||
+|$C_{rc}$|orbit_radius_cosine_correction|16|||
+|$C_{rs}$|orbit_radius_sine_correction|16|||
+|$t_{0e}$|ephemeris_reference_time|14|||
+||_ignored_|8|||
