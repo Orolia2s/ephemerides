@@ -29,36 +29,67 @@ formats:
         latex: \text{IOD}_{\text{nav}}
       - name: time_of_clock
         bits: 14
+        factor: 60
+        unit: s
         latex: t_{oc}
       - name: clock_bias_correction
         bits: 31
+        shift: -34
+        signed: true
+        unit: s
         latex: a_{f0}
       - name: clock_drift_correction
         bits: 21
+        shift: -46
+        signed: true
+        unit: s / s
         latex: a_{f1}
       - name: clock_drift_rate_correction
         bits: 6
+        shift: -59
+        signed: true
+        unit: s / s2
         latex: a_{f2}
       - latex: \text{SISA}
         bits: 8
-      - latex: a_{i0}
+      - name: ionisation_level_1st_order
+        latex: a_{i0}
         bits: 11
-      - latex: a_{i1}
+        shift: -2
+        unit: sfu
+      - name: ionisation_level_2nd_order
+        latex: a_{i1}
         bits: 11
-      - latex: a_{i2}
+        shift: -8
+        signed: true
+        unit: sfu / deg
+      - name: ionisation_level_3rd_order
+        latex: a_{i2}
         bits: 14
+        shift: -15
+        signed: true
+        unit: sfu / deg2
       - name: ionospheric_disturbance_region_1
         bits: 1
+        latex: \text{SF}_1
       - name: ionospheric_disturbance_region_2
         bits: 1
+        latex: \text{SF}_2
       - name: ionospheric_disturbance_region_3
         bits: 1
+        latex: \text{SF}_3
       - name: ionospheric_disturbance_region_4
         bits: 1
+        latex: \text{SF}_4
       - name: ionospheric_disturbance_region_5
         bits: 1
-      - latex: \text{BGD}
+        latex: \text{SF}_5
+      - name: broadcast_group_delay
+        latex: \text{BGD}
         bits: 10
+        shift: -32
+        signed: true
+        unit: s
       - latex: \text{E5a}_{\text{HS}}
         bits: 2
       - &weekNumber
