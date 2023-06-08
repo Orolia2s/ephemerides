@@ -42,12 +42,12 @@ Clock parameters
 ||issue_of_data_clock (msb)|2|||
 ||l2p_data_flag|1|||
 ||_ignored_|87|||
-|$T_{GD}$|group_delay_differential|8|$2^{-31}$|$\mathrm{s}$|
+|$T_{GD}$|group_delay_differential|$^*8$|$2^{-31}$|$\mathrm{s}$|
 ||issue_of_data_clock (lsb)|8|||
 |$t_{oc}$|time_of_clock|16|$2^{4}$|$\mathrm{s}$|
-|$a_{f2}$|clock_drift_rate_correction|8|$2^{-55}$|$\mathrm{\frac{1}{s}}$|
-|$a_{f1}$|clock_drift_correction|16|$2^{-43}$|$\mathrm{}$|
-|$a_{f0}$|clock_bias_correction|22|$2^{-31}$|$\mathrm{s}$|
+|$a_{f2}$|clock_drift_rate_correction|$^*8$|$2^{-55}$|$\mathrm{\frac{1}{s}}$|
+|$a_{f1}$|clock_drift_correction|$^*16$|$2^{-43}$|$\mathrm{}$|
+|$a_{f0}$|clock_bias_correction|$^*22$|$2^{-31}$|$\mathrm{s}$|
 ||_ignored_|2|||
 
 ## Subframe 2
@@ -59,12 +59,12 @@ Ephemeris (1/2)
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
 ||issue_of_data_ephemeris|8|||
-|$C_{rs}$|orbit_radius_sine_correction|16|$2^{-5}$|$\mathrm{m}$|
-|$\Delta n$|mean_motion_difference|16|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
-|$M_0$|mean_anomaly|32|$2^{-31}$|$\mathrm{semicircle}$|
-|$C_{uc}$|argument_of_latitude_cosine_correction|16|$2^{-29}$|$\mathrm{rad}$|
+|$C_{rs}$|orbit_radius_sine_correction|$^*16$|$2^{-5}$|$\mathrm{m}$|
+|$\Delta n$|mean_motion_difference|$^*16$|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
+|$M_0$|mean_anomaly|$^*32$|$2^{-31}$|$\mathrm{semicircle}$|
+|$C_{uc}$|argument_of_latitude_cosine_correction|$^*16$|$2^{-29}$|$\mathrm{rad}$|
 |$e$|eccentricity|32|$2^{-33}$||
-|$C_{us}$|argument_of_latitude_sine_correction|16|$2^{-29}$|$\mathrm{rad}$|
+|$C_{us}$|argument_of_latitude_sine_correction|$^*16$|$2^{-29}$|$\mathrm{rad}$|
 |$\sqrt{A}$|square_root_of_semi_major_axis|32|$2^{-19}$|$\mathrm{m^{1/2}}$|
 |$t_{oe}$|ephemeris_reference_time|16|$2^{4}$|$\mathrm{s}$|
 ||fit_interval_flag|1|||
@@ -79,15 +79,15 @@ Ephemeris (2/2)
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|$C_{ic}$|inclination_angle_cosine_correction|16|$2^{-29}$|$\mathrm{rad}$|
-|$\Omega_0$|ascending_node_longitude|32|$2^{-31}$|$\mathrm{semicircle}$|
-|$C_{is}$|inclination_angle_sine_correction|16|$2^{-29}$|$\mathrm{rad}$|
-|$i_0$|inclination_angle|32|$2^{-31}$|$\mathrm{semicircle}$|
-|$C_{rc}$|orbit_radius_cosine_correction|16|$2^{-5}$|$\mathrm{m}$|
-|$\omega$|argument_of_perigee|32|$2^{-31}$|$\mathrm{semicircle}$|
-|$\dot{\Omega}$|rate_of_right_ascension|24|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
+|$C_{ic}$|inclination_angle_cosine_correction|$^*16$|$2^{-29}$|$\mathrm{rad}$|
+|$\Omega_0$|ascending_node_longitude|$^*32$|$2^{-31}$|$\mathrm{semicircle}$|
+|$C_{is}$|inclination_angle_sine_correction|$^*16$|$2^{-29}$|$\mathrm{rad}$|
+|$i_0$|inclination_angle|$^*32$|$2^{-31}$|$\mathrm{semicircle}$|
+|$C_{rc}$|orbit_radius_cosine_correction|$^*16$|$2^{-5}$|$\mathrm{m}$|
+|$\omega$|argument_of_perigee|$^*32$|$2^{-31}$|$\mathrm{semicircle}$|
+|$\dot{\Omega}$|rate_of_right_ascension|$^*24$|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
 ||issue_of_data_ephemeris|8|||
-|$\dot{i}$|rate_of_inclination_angle|14|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
+|$\dot{i}$|rate_of_inclination_angle|$^*14$|$2^{-43}$|$\mathrm{\frac{semicircle}{s}}$|
 ||_ignored_|2|||
 
 ## Subframe 4
@@ -102,16 +102,16 @@ Almanac for satellites 25 through 32
 |:------:|:---|---:|:-----|:--:|
 |$e$|eccentricity|16|$2^{-21}$||
 |$t_{oa}$|almanac_reference_time|8||$\mathrm{s}$|
-|$\delta_i$|orbit_reference_incliation_correction|16|$2^{-14}$||
-|$\dot{\Omega}$|rate_of_right_ascension|16|$2^{-38}$||
+|$\delta_i$|orbit_reference_incliation_correction|$^*16$|$2^{-14}$||
+|$\dot{\Omega}$|rate_of_right_ascension|$^*16$|$2^{-38}$||
 ||satellite_health|8|||
 |$\sqrt{A}$|square_root_of_semi_major_axis|24|$2^{-11}$|$\mathrm{m^{1/2}}$|
-|$\Omega_0$|longitude_of_ascending_node_of_orbit_plane|24|$2^{-23}$||
-|$\omega$|argument_of_perigee|24|$2^{-23}$||
-|$M_0$|mean_anomaly|24|$2^{-23}$|$\mathrm{semicircle}$|
-|$a_{f0}$|clock_bias_correction (msb)|8|$2^{-20}$|$\mathrm{s}$|
-|$a_{f1}$|clock_drift_correction|11|$2^{-38}$|$\mathrm{}$|
-|$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
+|$\Omega_0$|longitude_of_ascending_node_of_orbit_plane|$^*24$|$2^{-23}$||
+|$\omega$|argument_of_perigee|$^*24$|$2^{-23}$||
+|$M_0$|mean_anomaly|$^*24$|$2^{-23}$|$\mathrm{semicircle}$|
+|$a_{f0}$|clock_bias_correction (msb)|$^*8$|$2^{-20}$|$\mathrm{s}$|
+|$a_{f1}$|clock_drift_correction|$^*11$|$2^{-38}$|$\mathrm{}$|
+|$a_{f0}$|clock_bias_correction (lsb)|$^*3$|$2^{-20}$|$\mathrm{s}$|
 ||_ignored_|2|||
 
 ### Page 52
@@ -173,22 +173,22 @@ Ionospheric and UTC data
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|$\alpha_0$|alpha_0|8|$2^{-30}$|$\mathrm{s}$|
-|$\alpha_1$|alpha_1|8|$2^{-27}$|$\mathrm{\frac{s}{semicircle}}$|
-|$\alpha_2$|alpha_2|8|$2^{-24}$|$\mathrm{\frac{s}{semicircle^{2}}}$|
-|$\alpha_3$|alpha_3|8|$2^{-24}$|$\mathrm{\frac{s}{semicircle^{3}}}$|
-|$\beta_0$|beta_0|8|$2^{11}$|$\mathrm{s}$|
-|$\beta_1$|beta_1|8|$2^{14}$|$\mathrm{\frac{s}{semicircle}}$|
-|$\beta_2$|beta_2|8|$2^{16}$|$\mathrm{\frac{s}{semicircle^{2}}}$|
-|$\beta_3$|beta_3|8|$2^{16}$|$\mathrm{\frac{s}{semicircle^{3}}}$|
-|$A_1$|utc_drift_correction|24|$2^{-50}$|$\mathrm{}$|
-|$A_0$|utc_bias_correction|32|$2^{-30}$|$\mathrm{s}$|
+|$\alpha_0$|alpha_0|$^*8$|$2^{-30}$|$\mathrm{s}$|
+|$\alpha_1$|alpha_1|$^*8$|$2^{-27}$|$\mathrm{\frac{s}{semicircle}}$|
+|$\alpha_2$|alpha_2|$^*8$|$2^{-24}$|$\mathrm{\frac{s}{semicircle^{2}}}$|
+|$\alpha_3$|alpha_3|$^*8$|$2^{-24}$|$\mathrm{\frac{s}{semicircle^{3}}}$|
+|$\beta_0$|beta_0|$^*8$|$2^{11}$|$\mathrm{s}$|
+|$\beta_1$|beta_1|$^*8$|$2^{14}$|$\mathrm{\frac{s}{semicircle}}$|
+|$\beta_2$|beta_2|$^*8$|$2^{16}$|$\mathrm{\frac{s}{semicircle^{2}}}$|
+|$\beta_3$|beta_3|$^*8$|$2^{16}$|$\mathrm{\frac{s}{semicircle^{3}}}$|
+|$A_1$|utc_drift_correction|$^*24$|$2^{-50}$|$\mathrm{}$|
+|$A_0$|utc_bias_correction|$^*32$|$2^{-30}$|$\mathrm{s}$|
 |$t_{ot}$|utc_reference_time|8|$2^{12}$|$\mathrm{s}$|
 |$\text{WN}_t$|utc_week_number|8|||
-|$\Delta t_{LS}$|leap_seconds_delta|8||$\mathrm{s}$|
+|$\Delta t_{LS}$|leap_seconds_delta|$^*8$||$\mathrm{s}$|
 |$\text{WN}_{LSF}$|future_leap_seconds_week_number|8|||
 |$\text{DN}$|future_leap_seconds_day_number|8|||
-|$\Delta t_{LSF}$|future_leap_seconds_delta|8||$\mathrm{s}$|
+|$\Delta t_{LSF}$|future_leap_seconds_delta|$^*8$||$\mathrm{s}$|
 ||_ignored_|16|||
 
 ### Page 63
@@ -254,16 +254,16 @@ Almanac for satellites 1 through 24
 |:------:|:---|---:|:-----|:--:|
 |$e$|eccentricity|16|$2^{-21}$||
 |$t_{oa}$|almanac_reference_time|8||$\mathrm{s}$|
-|$\delta_i$|orbit_reference_incliation_correction|16|$2^{-14}$||
-|$\dot{\Omega}$|rate_of_right_ascension|16|$2^{-38}$||
+|$\delta_i$|orbit_reference_incliation_correction|$^*16$|$2^{-14}$||
+|$\dot{\Omega}$|rate_of_right_ascension|$^*16$|$2^{-38}$||
 ||satellite_health|8|||
 |$\sqrt{A}$|square_root_of_semi_major_axis|24|$2^{-11}$|$\mathrm{m^{1/2}}$|
-|$\Omega_0$|longitude_of_ascending_node_of_orbit_plane|24|$2^{-23}$||
-|$\omega$|argument_of_perigee|24|$2^{-23}$||
-|$M_0$|mean_anomaly|24|$2^{-23}$|$\mathrm{semicircle}$|
-|$a_{f0}$|clock_bias_correction (msb)|8|$2^{-20}$|$\mathrm{s}$|
-|$a_{f1}$|clock_drift_correction|11|$2^{-38}$|$\mathrm{}$|
-|$a_{f0}$|clock_bias_correction (lsb)|3|$2^{-20}$|$\mathrm{s}$|
+|$\Omega_0$|longitude_of_ascending_node_of_orbit_plane|$^*24$|$2^{-23}$||
+|$\omega$|argument_of_perigee|$^*24$|$2^{-23}$||
+|$M_0$|mean_anomaly|$^*24$|$2^{-23}$|$\mathrm{semicircle}$|
+|$a_{f0}$|clock_bias_correction (msb)|$^*8$|$2^{-20}$|$\mathrm{s}$|
+|$a_{f1}$|clock_drift_correction|$^*11$|$2^{-38}$|$\mathrm{}$|
+|$a_{f0}$|clock_bias_correction (lsb)|$^*3$|$2^{-20}$|$\mathrm{s}$|
 ||_ignored_|2|||
 
 ### Page 51

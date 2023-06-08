@@ -222,7 +222,7 @@ formats:
         bits: 8
         latex: \Delta{}t_{Ls}
       - bits: 8
-        latex: t_0t
+        latex: t_{0t}
       - bits: 8
         latex: \text{WN}_{0t}
       - name: future_leap_seconds_week_number
@@ -233,7 +233,7 @@ formats:
         latex: \text{DN}
       - name: future_leap_seconds_delta
         bits: 8
-        latex: \Delta{}t_{text{LSF}}
+        latex: \Delta{}t_{\text{LSF}}
       - bits: 8
         latex: t_{0G}
       - name: gps_bias_correction

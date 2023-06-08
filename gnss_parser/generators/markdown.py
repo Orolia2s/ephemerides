@@ -7,7 +7,7 @@ def field_to_markdown(self):
     cells.append(self.name if self.name else '_ignored_')
     if self.half:
         cells[-1] += f' ({self.half})'
-    cells.append(str(self.bits))
+    cells.append(f'$^*{self.bits}$' if self.signed else str(self.bits))
     cells.append(str(self.factor) if self.factor else f'$2^{{{self.shift}}}$' if self.shift else '')
     cells.append(f'{self.unit:latex}' if self.unit else '')
     return '|'.join(cells + [''])
