@@ -22,7 +22,7 @@ formats:
     fields:
       - name: satellite_id
         bits: 6
-        latex: \text{SV}_{ID}
+        latex: \text{SV}_{\text{ID}}
       - &issueOfDataNav
         name: issue_of_data_ephemeris
         bits: 10
@@ -57,9 +57,9 @@ formats:
         bits: 1
       - name: ionospheric_disturbance_region_5
         bits: 1
-      - latex: BGD
+      - latex: \text{BGD}
         bits: 10
-      - latex: \text{E5a}_{HS}
+      - latex: \text{E5a}_{\text{HS}}
         bits: 2
       - &weekNumber
         name: week_number
@@ -69,7 +69,7 @@ formats:
         name: time_of_week
         bits: 20
         latex: \text{TOW}
-      - latex: \text{E5a}_{DVS}
+      - latex: \text{E5a}_{\text{DVS}}
         bits: 1
       - bits: 26
   - subframe: 2
@@ -123,5 +123,5 @@ formats:
         latex: C_{rs}
       - name: ephemeris_reference_time
         bits: 14
-        latex: t_{0e}
+        latex: t_{oe}
       - bits: 8
