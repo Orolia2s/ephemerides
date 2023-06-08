@@ -11,7 +11,7 @@ from more_itertools import grouper
 
 from astropy.units import Unit
 
-from gnss_parser import ensure_fields, import_fields, Ordering, SingleWordBitReaderMsb, complementary_half
+from gnss_parser import ensure_fields, import_fields, Ordering, SingleWordBitReaderMsb, complementary_half, twos_complement
 
 class Field:
     """
@@ -38,6 +38,8 @@ class Field:
             return
         if self.value != None and self.value != value:
             logging.warning(f'Field "{self.name}" didn\'t have expected value of {self.value}, instead: {value}')
+        if self.signed:
+            value = twos_complement(value, self.bits)
         if self.shift:
             value *= 2 ** self.shift
         if self.factor:

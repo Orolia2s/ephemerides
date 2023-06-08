@@ -1,6 +1,6 @@
 from .subscribers.ephemerides import ephemeris
 from .generators.markdown import format_to_markdown
-from .bits import Ordering, SingleWordBitReaderMsb, xor_bits, complementary_half
+from .bits import Ordering, SingleWordBitReaderMsb, xor_bits, complementary_half, twos_complement
 from .constellations import Constellation
 from .yaml import import_fields, ensure_fields
 from .format import GnssFormat

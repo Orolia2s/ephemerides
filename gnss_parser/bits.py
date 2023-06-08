@@ -4,6 +4,15 @@ Functions and types related to bit manipulation
 
 from enum import Enum
 
+def twos_complement(integer: int, bits: int) -> int:
+    """
+    Apply 2s complement with the specified amount of bits
+    """
+    sign_bit = 1 << (bits - 1)
+    if integer & sign_bit:
+        return integer - (1 << bits)
+    return integer
+
 def xor_bits(integer: int):
     """
     Apply an exclusive or on all bits of the number.
