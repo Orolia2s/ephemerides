@@ -24,7 +24,7 @@ Signal health status, GST and Data validity status
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-|$\text{SV}_{ID}$|satellite_id|6|||
+|$\text{SV}_{\text{ID}}$|satellite_id|6|||
 |$\text{IOD}_{\text{nav}}$|issue_of_data_ephemeris|10|||
 |$t_{oc}$|time_of_clock|14|||
 |$a_{f0}$|clock_bias_correction|31|||
@@ -39,11 +39,11 @@ Signal health status, GST and Data validity status
 ||ionospheric_disturbance_region_3|1|||
 ||ionospheric_disturbance_region_4|1|||
 ||ionospheric_disturbance_region_5|1|||
-|$BGD$|_ignored_|10|||
-|$\text{E5a}_{HS}$|_ignored_|2|||
+|$\text{BGD}$|_ignored_|10|||
+|$\text{E5a}_{\text{HS}}$|_ignored_|2|||
 |$\text{WN}$|week_number|12|||
 |$\text{TOW}$|time_of_week|20|||
-|$\text{E5a}_{DVS}$|_ignored_|1|||
+|$\text{E5a}_{\text{DVS}}$|_ignored_|1|||
 ||_ignored_|26|||
 
 ## Subframe 2
@@ -80,5 +80,5 @@ Ephemeris (2/3) and GST
 |$C_{us}$|argument_of_latitude_sine_correction|16|||
 |$C_{rc}$|orbit_radius_cosine_correction|16|||
 |$C_{rs}$|orbit_radius_sine_correction|16|||
-|$t_{0e}$|ephemeris_reference_time|14|||
+|$t_{oe}$|ephemeris_reference_time|14|||
 ||_ignored_|8|||
