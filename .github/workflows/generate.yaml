@@ -1,0 +1,33 @@
+name: GenerateDoc
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  MarkdownICDs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Generate Markdown ICDs
+        run: |
+          make clean
+          make
+      - name: Commit change
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: Antoine Gagniere
+          author_email: antoine.gagniere@orolia2s.com
+          message: "(Update generated ICDs)"
+          add: '*.md'
+        env:
+          GIHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
