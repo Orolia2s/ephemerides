@@ -96,14 +96,14 @@ Ephemeris (3/3), GST-UTC conversion, GST-GPS conversion and TOW
 |$\text{IOD}_{\text{nav}}$|issue_of_data_ephemeris|10|||
 |$C_{ic}$|inclination_angle_cosine_correction|$^*16$|$2^{-29}$|$\mathrm{rad}$|
 |$C_{is}$|inclination_angle_sine_correction|$^*16$|$2^{-29}$|$\mathrm{rad}$|
-|$A_0$|galileo_bias_correction|32|||
-|$A_1$|galileo_drift_correction|24|||
-|$\Delta{}t_{Ls}$|leap_seconds_delta|8|||
-|$t_{0t}$|_ignored_|8|||
-|$\text{WN}_{0t}$|_ignored_|8|||
+|$A_0$|galileo_bias_correction|$^*32$|$2^{-30}$|$\mathrm{s}$|
+|$A_1$|galileo_drift_correction|$^*24$|$2^{-50}$|$\mathrm{}$|
+|$\Delta{}t_{\text{LS}}$|leap_seconds_delta|$^*8$||$\mathrm{s}$|
+|$t_{0t}$|utc_reference_time_of_week|8|60 * 60|$\mathrm{s}$|
+|$\text{WN}_{0t}$|utc_reference_week_number|8|||
 |$\text{WN}_{\text{LSF}}$|future_leap_seconds_week_number|8|||
 |$\text{DN}$|future_leap_seconds_day_number|3|||
-|$\Delta{}t_{\text{LSF}}$|future_leap_seconds_delta|8|||
+|$\Delta{}t_{\text{LSF}}$|future_leap_seconds_delta|$^*8$||$\mathrm{s}$|
 |$t_{0G}$|_ignored_|8|||
 |$A_{0G}$|gps_bias_correction|16|||
 |$A_{1G}$|gps_drift_correction|12|||

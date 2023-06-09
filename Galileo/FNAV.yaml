@@ -214,16 +214,28 @@ formats:
         latex: C_{is}
       - name: galileo_bias_correction
         bits: 32
+        shift: -30
+        signed: true
+        unit: s
         latex: A_0
       - name: galileo_drift_correction
         bits: 24
+        shift: -50
+        signed: true
+        unit: s / s
         latex: A_1
       - name: leap_seconds_delta
         bits: 8
-        latex: \Delta{}t_{Ls}
-      - bits: 8
+        signed: true
+        unit: s
+        latex: \Delta{}t_{\text{LS}}
+      - name: utc_reference_time_of_week
+        bits: 8
+        factor: 60 * 60
+        unit: s
         latex: t_{0t}
-      - bits: 8
+      - name: utc_reference_week_number
+        bits: 8
         latex: \text{WN}_{0t}
       - name: future_leap_seconds_week_number
         bits: 8
@@ -233,6 +245,8 @@ formats:
         latex: \text{DN}
       - name: future_leap_seconds_delta
         bits: 8
+        signed: true
+        unit: s
         latex: \Delta{}t_{\text{LSF}}
       - bits: 8
         latex: t_{0G}
