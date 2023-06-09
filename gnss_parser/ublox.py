@@ -9,8 +9,10 @@ from more_itertools import grouper
 from gnss_parser import Constellation, xor_bits, SingleWordBitReaderMsb
 
 message_from_ublox = {
-    (Constellation.GPS, 0): 'LNAV-L', # L1 C/A (Coarse Acquisition)
-    (Constellation.BeiDou, 0): 'D1', # L1 C/A (Coarse Acquisition)
+    (Constellation.GPS, 0): 'LNAV-L',   # L1 C/A (Coarse Acquisition)
+    (Constellation.BeiDou, 0): 'D1',    # B1I D1
+    (Constellation.BeiDou, 2): 'D1',    # B2I D1
+    (Constellation.Galileo, 3): 'FNAV', # E5aI
 }
 
 keep_22_lsb =  0x3fffff

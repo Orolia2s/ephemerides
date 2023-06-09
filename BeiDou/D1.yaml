@@ -102,13 +102,19 @@ formats:
         shift: 16
         unit: s / semicircle3
         latex: \beta_3
-      - name: A_0
+      - name: clock_drift_rate_correction
+        bits: 11
+        signed: true
+        shift: -66
+        unit: s / s2
+        latex: A_2
+      - name: clock_bias_correction
         bits: 24
         signed: true
         shift: -33
         latex: A_0
         unit: s
-      - name: A_1
+      - name: clock_drift_correction
         bits: 22
         signed: true
         shift: -50
@@ -209,6 +215,12 @@ formats:
         signed: true
         shift: -43
         unit: semicircle / s
+      - name: ascending_node_longitude
+        bits: 32
+        shift: -31
+        signed: true
+        unit: semicircle
+        latex: \Omega_0
       - name: argument_of_perigee
         latex: \omega
         bits: 32
