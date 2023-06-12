@@ -1,6 +1,6 @@
 SHELL         := /bin/bash
 
-YAML_ICDS     != find GPS BeiDou Galileo -name '*.yaml'
+YAML_ICDS     != find GPS BeiDou Galileo GLONASS -name '*.yaml'
 MARKDOWN      := $(YAML_ICDS:.yaml=.md)
 
 VENV_NAME     := ephemerides
