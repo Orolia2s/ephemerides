@@ -5,6 +5,10 @@ metadata:
 frame_count: 1
 subframe_count: 5
 order: msb_first
+header:
+  - name: idle_chip
+    bits: 1
+    value: 0
 page_geader:
   - name: page_id
     bits: 4
