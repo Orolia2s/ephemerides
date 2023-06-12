@@ -20,7 +20,8 @@ def parser_to_markdown(self):
 
 def format_to_markdown(self):
     lines = [f'# {self.constellation} {self.message}\n']
-    lines.append(self.description)
+    if self.description:
+        lines.append(self.description)
     lines.append('## Header')
     lines.append(parser_to_markdown(self.header))
     if hasattr(self, 'page_header'):
@@ -31,7 +32,8 @@ def format_to_markdown(self):
         if isinstance(value, dict):
             for subkey, subvalue in sorted(value.items()):
                 lines.append(f'\n### {subkey[1]}')
-                lines.append(f'\n{subvalue[1]}')
+                if subvalue[1]:
+                    lines.append(f'\n{subvalue[1]}')
                 lines.append(parser_to_markdown(subvalue[0]))
         else:
             lines.append(f'\n{value[1]}')
