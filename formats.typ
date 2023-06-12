@@ -37,7 +37,7 @@
 
 	[
 		== #data.metadata.message
-		#data.metadata.description.replace(regex("[[:space:]]+"), " ")
+		#data.metadata.at("description", default: "").replace(regex("[[:space:]]+"), " ")
 	]
 
 	locate(loc => {
@@ -68,46 +68,75 @@
 
 	let fields(contents) = {
 		let latex(s) = {
-			let matches = s.split(regex("[[:blank:]]"))
-			if matches.len() == 1 {
-				let match = s.match(regex("^([^_]+)_(\{\w+\}|\w)$"))
+			let match = s.match(regex("^([^_]+)_(\{.+\}|\w)$"))
+			if match != none {
+				[$#latex(match.captures.at(0))_#latex(match.captures.at(1).trim(regex("\{|\}")))$]
+			} else {
+				match = s.match(regex("^\\\\sqrt\{(.+)\}$"))
 				if match != none {
-					[$#latex(match.captures.at(0))_#latex(match.captures.at(1).trim(regex("\{|\}")))$]
+					[$sqrt(#latex(match.captures.at(0)))$]
 				} else {
-					match = s.match(regex("^\\\\sqrt\{(.+)\}$"))
+					match = s.match(regex("^\\\\dot\{(.+)\}$"))
 					if match != none {
-						[$sqrt(#latex(match.captures.at(0)))$]
+						[$accent(#latex(match.captures.at(0)), dot)$]
 					} else {
-						match = s.match(regex("^\\\\dot\{(.+)\}$"))
+						match = s.match(regex("^\\\\text\{(.+)\}$"))
 						if match != none {
-							[$accent(#latex(match.captures.at(0)), dot)$]
+							[$#latex(match.captures.at(0))$]
 						} else {
-							match = s.match(regex("\\\\text\{([^}]+)\}"))
+							match = s.match(regex("^([^']+)('+)$"))
 							if match != none {
-								[$#latex(match.captures.at(0))$]
-							} else {
-								if s == "\\alpha" {
-									[$alpha$]
-								} else if s == "\\beta" {
-									[$beta$]
-								} else if s == "\\Delta" {
-									[$Delta$]
-								} else if s == "\\delta" {
-									[$delta$]
-								} else if s == "\\Omega" {
-									[$Omega$]
-								} else if s == "\\omega" {
-									[$omega$]
+								let primes = match.captures.at(1)
+								let symbol = if primes.len() == 1 {
+									sym.prime
+								} else if primes.len() == 2 {
+									sym.prime.double
+								} else if primes.len() == 3 {
+									sym.prime.triple
+								} else if primes.len() == 4 {
+									sym.prime.quad
 								} else {
-									[$#s$]
+									primes
+								}
+								[$#latex(match.captures.at(0))#symbol$]
+							} else {
+								let matches = s.split(regex("[[:blank:]]"))
+								if matches.len() == 1 {
+									if s == "\\alpha" {
+										[$alpha$]
+									} else if s == "\\beta" {
+										[$beta$]
+									} else if s == "\\Delta" {
+										[$Delta$]
+									} else if s == "\\delta" {
+										[$delta$]
+									} else if s == "\\epsilon" {
+										[$epsilon$]
+									} else if s == "\\Epsilon" {
+										[$Epsilon$]
+									} else if s == "\\lambda" {
+										[$lambda$]
+									} else if s == "\\Lambda" {
+										[$Lambda$]
+									} else if s == "\\tau" {
+										[$tau$]
+									} else if s == "\\Tau" {
+										[$Tau$]
+									} else if s == "\\Omega" {
+										[$Omega$]
+									} else if s == "\\omega" {
+										[$omega$]
+									} else {
+										[$#s$]
+									}
+								} else {
+									for match in matches {
+										latex(match)
+									}
 								}
 							}
 						}
 					}
-				}
-			} else {
-				for match in matches {
-					latex(match)
 				}
 			}
 		}
@@ -310,3 +339,6 @@
 		At the time of writing, the next rollover should occur on (Sunday) January 2, 2163 at 00:00:00.
 	]),
 ))
+#pagebreak()
+= GLONASS
+#format("GLONASS/L1OC")

@@ -1,0 +1,277 @@
+kind: GNSS_format
+metadata:
+  constellation: GLONASS
+  message: L1OC
+frame_count: 1
+subframe_count: 5
+order: msb_first
+page_geader:
+  - name: page_id
+    bits: 4
+formats:
+  - subframe: 1
+    pages: [1]
+    description: Satellite's X data and date
+    fields: &x
+      - bits: 2
+      - name: time_interval_duration
+        bits: 2
+      - name: hour
+        bits: 5
+        unit: h
+      - name: minute
+        bits: 6
+        unit: min
+      - name: second
+        bits: 1
+        factor: 30
+        unit: s
+      - name: x_speed
+        latex: x'
+        bits: 24
+        signed: true
+        shift: -20
+        unit: km/s
+      - name: x_acceleration
+        latex: x''
+        bits: 5
+        signed: true
+        shift: -30
+        unit: km/s2
+      - name: x
+        latex: x
+        bits: 27
+        signed: true
+        shift: -11
+        unit: km
+  - subframe: 1
+    pages: [2]
+    description: Satellite's Y data and time interval
+    fields: &y
+      - name: satellite_health_B
+        bits: 3
+      - name: time_interval_parity
+        bits: 1
+      - name: time_interval_index
+        bits: 7
+      - bits: 5
+      - name: y_speed
+        latex: y'
+        bits: 24
+        signed: true
+        shift: -20
+        unit: km/s
+      - name: y_acceleration
+        latex: y''
+        bits: 5
+        signed: true
+        shift: -30
+        unit: km/s2
+      - name: y
+        latex: y
+        bits: 27
+        signed: true
+        shift: -11
+        unit: km
+  - subframe: 1
+    pages: [3]
+    description: Satellite's Z data and other data
+    fields: &z
+      - name: almanac_for_satellites
+        bits: 1
+      - name: carrier_frequency_deviation
+        bits: 11
+        signed: true
+        shift: -40
+      - bits: 1
+      - name: c_computation_location
+        bits: 1
+      - name: gps_computation_location
+        bits: 1
+      - name: satellite_health_l
+        bits: 1
+      - name: z_speed
+        latex: z'
+        bits: 24
+        signed: true
+        shift: -20
+        unit: km/s
+      - name: z_acceleration
+        latex: z''
+        bits: 5
+        signed: true
+        shift: -30
+        unit: km/s2
+      - name: z
+        latex: z
+        bits: 27
+        signed: true
+        shift: -11
+        unit: km
+  - subframe: 1
+    pages: [4]
+    description: Other data
+    fields: &other
+      - name: satellite_to_glonass_time_correction
+        bits: 22
+        signed: true
+        shift: -30
+        unit: s
+      - name: navigation_aviation_time_difference
+        bits: 5
+        signed: true
+        shift: -30
+        unit: s
+      - name: age_of_data
+        bits: 5
+      - bits: 14
+      - name: is_ephemeris_present
+        bits: 1
+      - name: user_range_accuracy_index
+        bits: 4
+      - bits: 3
+      - name: day_number
+        bits: 11
+        unit: day
+      - name: transmitting_satellite
+        bits: 5
+      - name: transmitting_satellite_type
+        bits: 2
+  - subframe: 1
+    pages: [5]
+    description: Almanac global data
+    fields: &almanac_global
+      - name: day_number_almanac
+        bits: 11
+      - name: utc_correction
+        latex: \tau_{C}
+        bits: 32
+        signed: true
+        shift: -31
+        unit: s
+      - bits: 1
+      - name: leap_year_interval_number
+        bits: 5
+      - name: gps_correction
+        latex: \tau_{GPS}
+        bits: 22
+        signed: true
+        shift: -30
+        unit: day
+      - name: satellite_health_l
+        bits: 1
+  - subframe: 1
+    pages: [6, 8, 10, 12, 14]
+    description: Almanac (1/2)
+    fields: &almanac_1
+      - name: satellite_operability
+        bits: 1
+      - name: satellite_type
+        bits: 2
+      - name: satellite_id
+        latex: n
+        bits: 5
+      - name: glonass_correction
+        latex: \tau_n
+        bits: 10
+        shift: -18
+        unit: s
+      - name: longitude_of_first_ascending_node
+        latex: \lambda_n
+        bits: 21
+        signed: true
+        shift: -20
+        unit: semicircle
+      - name: inclination_angle_correction
+        latex: \Delta i_n
+        bits: 18
+        signed: true
+        shift: -20
+        unit: semicircle
+      - name: eccentricity
+        latex: \epsilon_n
+        bits: 15
+        shift: -20
+  - subframe: 1
+    pages: [7, 9, 11, 13, 15]
+    description: Almanac (2/2)
+    fields: &almanac_2
+      - name: argument_of_perigee
+        latex: \omega_n
+        bits: 16
+        signed: true
+        shift: -15
+        unit: semicircle
+      - name: time_of_first_ascending_node
+        latex: t_{\lambda n}
+        bits: 21
+        shift: -5
+        unit: s
+      - name: revolution_period
+        latex: \Delta T_n
+        bits: 22
+        signed: true
+        shift: -9
+        unit: s/revolution
+      - name: revolution_period_drift
+        latex: \Delta T_n'
+        bits: 7
+        signed: true
+        shift: -14
+        unit: s/revolution2
+      - name: carrier_frequency_number
+        bits: 5
+      - name: satellite_health_l
+        bits: 1
+  - subframe: 5
+    pages: [1]
+    description: Satellite's X data and date
+    fields: *x
+  - subframe: 5
+    pages: [2]
+    description: Satellite's Y data and time interval
+    fields: *y
+  - subframe: 5
+    pages: [3]
+    description: Satellite's Z data and other data
+    fields: *z
+  - subframe: 5
+    pages: [4]
+    description: Other data
+    fields: *other
+  - subframe: 5
+    pages: [5]
+    description: Almanac global data
+    fields: *almanac_global
+  - subframe: 5
+    pages: [6, 8, 10, 12]
+    description: Almanac (1/2)
+    fields: *almanac_1
+  - subframe: 5
+    pages: [7, 9, 11, 13]
+    description: Almanac (2/2)
+    fields: *almanac_2
+  - subframe: 5
+    pages: [14]
+    fields:
+      - name: utc_ut1_bias_correction
+        latex: B_1
+        bits: 11
+        signed: true
+        shift: -10
+        unit: s
+      - name: utc_ut1_drift_correction
+        latex: B_2
+        bits: 10
+        signed: true
+        shift: -16
+        unit: s
+      - name: leap_second_notification
+        bits: 2
+      - bits: 50
+  - subframe: 5
+    pages: [15]
+    fields:
+      - bits: 71
+      - name: satellite_health_l
+        bits: 1
