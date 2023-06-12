@@ -5,6 +5,10 @@ metadata:
 frame_count: 1
 subframe_count: 5
 order: msb_first
+header:
+  - name: idle_chip
+    bits: 1
+    value: 0
 page_geader:
   - name: page_id
     bits: 4
@@ -212,13 +216,13 @@ formats:
         bits: 22
         signed: true
         shift: -9
-        unit: s/revolution
+        unit: s / cycle
       - name: revolution_period_drift
         latex: \Delta T_n'
         bits: 7
         signed: true
         shift: -14
-        unit: s/revolution2
+        unit: s / cycle2
       - name: carrier_frequency_number
         bits: 5
       - name: satellite_health_l
@@ -268,7 +272,7 @@ formats:
         unit: s
       - name: leap_second_notification
         bits: 2
-      - bits: 50
+      - bits: 49
   - subframe: 5
     pages: [15]
     fields:
