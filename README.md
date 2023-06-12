@@ -36,7 +36,7 @@ but this is often an inconvenient way to represent an orbit,
 which is why Keplerian elements are commonly used instead.
 (source: [Orbital elements](https://en.wikipedia.org/wiki/Orbital_elements))
 
-Here are the 6 traditional Keplerian elements:
+Here are the 6 traditional Keplerian elements, along with a reference time:
 
 | Notation | Name | Description |
 |:--------:|:-----|:------------|
@@ -55,18 +55,21 @@ Here are the parameters actually transmitted:
 - $e$
 - $\sqrt{A}$
 - $i$
-- $\dot{i}$
+- $\dot{i}$ the derivatove of $i$
 - $\Omega$
-- $\dot{\Omega}$
+- $\dot{\Omega}$ the derivative of $\Omega$
 - $\omega$
 - $M$ Mean anomaly
-- $\Delta_n$ Mean motion difference
+- $\Delta_n$ the mean motion difference
+
+The mean anomaly M is a mathematically convenient fictitious "angle" which varies linearly with time, but which does not correspond to a real geometric angle.
+The mean motion can be seen as the derivative of the mean motion.
 
 To find the mean motion:
-```math
-n_0 = \sqrt(\frac{\mu}{A^3})
-n   = n_0 + \Delta_n
-```
+
+$$ n_0 = \sqrt{\frac{\mu}{A^3}} $$
+
+$$ n   = n_0 + \Delta_n $$
 
 ## Ordering
 
