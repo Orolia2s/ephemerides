@@ -413,6 +413,7 @@ formats:
         signed: true
         factor: 0.1
         unit: ns/s
+      - bits: 58
   - subframe: 5
     pages: [10]
     description: UTC data
