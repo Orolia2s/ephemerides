@@ -35,6 +35,10 @@ page_header:
     value: 0b01
   - name: page_id
     bits: 6
+ublox:
+  - words: [[1, 10]]
+    discard_msb: 2 # 30 bits word stored on 32 bits
+    keep: 24 # 24 data bits, 6 parity bits
 formats:
   - subframe: 1
     description: Clock parameters

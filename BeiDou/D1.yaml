@@ -23,6 +23,13 @@ page_header:
   - bits: 1
   - name: page_id
     bits: 7
+ublox:
+  - words: [1]
+    discard_msb: 2 # A 30 bit word stored on 32 bits
+    keep: 26 # 26 information bits, 4 parity bits
+  - words: [[2, 10]]
+    discard_msb: 2 # A 30 bit word stored on 32 bits
+    keep: 22 # 22 information bits, 8 parity bits
 formats:
   - subframe: 1
     description: Ionospheric and time data
