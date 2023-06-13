@@ -12,6 +12,12 @@ header:
 page_header:
   - name: page_id
     bits: 4
+ublox:
+  - words: [[1, 2]]
+    keep: 32
+  - words: [3]
+    discard: 19
+    keep: 13
 formats:
   - subframe: 1
     pages: [1]

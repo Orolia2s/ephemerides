@@ -14,6 +14,12 @@ header:
   - name: subframe_id
     bits: 6
     latex: \text{Type}
+ublox:
+  - words: [[1, 6]]
+    keep: 32
+  - words: [7]
+    discard: 10
+    keep: 22
 formats:
   - subframe: 1
     description: |

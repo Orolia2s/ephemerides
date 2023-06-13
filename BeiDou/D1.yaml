@@ -23,6 +23,13 @@ page_header:
   - bits: 1
   - name: page_id
     bits: 7
+ublox:
+  - words: [1]
+    discard: 4
+    keep: 26
+  - words: [[2, 10]]
+    discard: 8
+    keep: 22
 formats:
   - subframe: 1
     description: Ionospheric and time data
