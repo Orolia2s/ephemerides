@@ -12,8 +12,8 @@ message_from_ublox = {
     (Constellation.BeiDou, 0): 'D1',    # B1I D1
     #(Constellation.BeiDou, 2): 'D1',    # B2I D1
     (Constellation.Galileo, 3): 'FNAV', # E5aI
-    (Constellation.GLONASS, 0): 'L1OC', # L1
-    #(Constellation.GLONASS, 2): 'L1OC', # L2
+    (Constellation.GLONASS, 0): 'L1OF', # L1
+    #(Constellation.GLONASS, 2): 'L1OF', # L2
 }
 
 def little_endian_32(byte_array: bytes) -> list[int]:
@@ -92,11 +92,11 @@ def extract_data_GLONASS(byte_array: bytes) -> int:
         total = append_lsb(32, word, total)
     # 3rd word: 13 information bits, 8 parity bits and 11 padding bits
     total = append_lsb(13, discard_lsb(8 + 11, words[2]), total)
-    return SingleWordBitReaderMsb(total, 85)
+    return SingleWordBitReaderMsb(total, 77)
 
 reader_from_ublox = {
     'LNAV-L': parity_LNAVL,
     'D1': extract_data_D1,
     'FNAV': extract_data_FNAV,
-    'L1OC': extract_data_GLONASS,
+    'L1OF': extract_data_GLONASS,
 }

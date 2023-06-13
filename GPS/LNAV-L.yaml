@@ -8,7 +8,6 @@ metadata:
 frame_count: 25
 subframe_count: 5
 word_count: 10
-data_bits_per_word: [0, 24]
 order: msb_first
 header:
   - name: preamble
