@@ -9,7 +9,7 @@ header:
   - name: idle_chip
     bits: 1
     value: 0
-page_geader:
+page_header:
   - name: page_id
     bits: 4
 formats:

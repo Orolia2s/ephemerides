@@ -8,6 +8,14 @@
 |:------:|:---|---:|:-----|:--:|
 |`0`|idle_chip|1|||
 
+## Header extension for paged subframes
+
+4 bits mapped as follows:
+
+|notation|name|bits|factor|unit|
+|:------:|:---|---:|:-----|:--:|
+||page_id|4|||
+
 ## Subframe 1
 
 ### Page 1

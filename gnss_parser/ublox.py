@@ -92,6 +92,7 @@ def extract_data_GLONASS(byte_array: bytes) -> int:
         total = append_lsb(32, word, total)
     # 3rd word: 13 information bits, 8 parity bits and 11 padding bits
     total = append_lsb(13, discard_lsb(8 + 11, words[2]), total)
+    return SingleWordBitReaderMsb(total, 85)
 
 reader_from_ublox = {
     'LNAV-L': parity_LNAVL,
