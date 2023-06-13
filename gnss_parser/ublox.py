@@ -11,10 +11,13 @@ from gnss_parser import Constellation, xor_bits, SingleWordBitReaderMsb
 message_from_ublox = {
     (Constellation.GPS, 0): 'LNAV-L',   # L1 C/A (Coarse Acquisition)
     (Constellation.BeiDou, 0): 'D1',    # B1I D1
-    (Constellation.BeiDou, 2): 'D1',    # B2I D1
+    #(Constellation.BeiDou, 2): 'D1',    # B2I D1
     (Constellation.Galileo, 3): 'FNAV', # E5aI
+    (Constellation.GLONASS, 0): 'L1OC', # L1
+    #(Constellation.GLONASS, 2): 'L1OC', # L2
 }
 
+keep_13_lsb =    0x1fff
 keep_22_lsb =  0x3fffff
 keep_24_lsb =  0xffffff
 keep_26_lsb = 0x3ffffff
@@ -86,6 +89,17 @@ def extract_data_FNAV(byte_array: bytes) -> int:
     total <<= 22
     total += (words[6] >> 10) & keep_22_lsb
     return SingleWordBitReaderMsb(total, 214)
+
+def extract_data_GLONASS(byte_array: bytes) -> int:
+    words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
+    total = 0
+    # 2 words in full
+    for word in words[:2]:
+        total <<= 32
+        total += word
+    # 3rd word: 13 information bits, 8 parity bits and 11 padding bits
+    total <<= 13
+    total += (words[2] >> 19) & keep_13_lsb
 
 reader_from_ublox = {
     'LNAV-L': parity_LNAVL,

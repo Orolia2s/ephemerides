@@ -38,8 +38,9 @@ if __name__ == '__main__':
 
     # Read ublox stream using formats
     if cli_args.output:
+        generate = {'md': format_to_markdown}[cli_args.output]
         for name, format in formats.items():
-            print(format_to_markdown(format))
+            print(generate(format))
         exit(0)
     if cli_args.serial:
         stream = Serial(cli_args.serial, 115200, timeout = 3)
