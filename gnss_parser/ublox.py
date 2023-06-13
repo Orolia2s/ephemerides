@@ -2,11 +2,10 @@
 Ublox-specific
 """
 
-import logging
-
 from more_itertools import grouper
 
-from gnss_parser import Constellation, xor_bits, SingleWordBitReaderMsb, keep_lsb, append_lsb, discard_lsb
+from gnss_parser import (Constellation, xor_bits, SingleWordBitReaderMsb,
+                         keep_lsb, append_lsb, discard_lsb)
 
 message_from_ublox = {
     (Constellation.GPS, 0): 'LNAV-L',   # L1 C/A (Coarse Acquisition)
@@ -17,6 +16,14 @@ message_from_ublox = {
     #(Constellation.GLONASS, 2): 'L1OC', # L2
 }
 
+def little_endian_32(byte_array: bytes) -> list[int]:
+    """
+    Converts an array of bytes into an array of 32bits integers,
+    considering they were represented as little endian.
+    """
+    return [int.from_bytes(four, 'little')
+            for four in grouper(byte_array, 4, incomplete = 'strict')]
+
 def parity_LNAVL(byte_array: bytes) -> int:
     """
     Hamming Code (32, 26)
@@ -26,7 +33,7 @@ def parity_LNAVL(byte_array: bytes) -> int:
     The 2 MSBs are not zero, they are the 2 LSBs of the last word.
     Also, the 24 data bits require no inversion, it has already been done by ublox.
     """
-    words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
+    words = little_endian_32(byte_array)
     total = 0
     previous_29 = 0
     previous_30 = 0
@@ -53,19 +60,19 @@ def extract_data_D1(byte_array: bytes) -> int:
     """
     BeiDou D1
     """
-    words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
+    words = little_endian_32(byte_array)
     # First word: 26 information bits, 4 parity bits
     total = keep_lsb(26, discard_lsb(4, words[0]))
     # words 2-10: 22 information bits, 8 parity bits
     for word in words[1:]:
-        total = append_lsb(22, discard_lsb(8), total)
+        total = append_lsb(22, discard_lsb(8, word), total)
     return SingleWordBitReaderMsb(total, 26 + 9 * 22)
 
 def extract_data_FNAV(byte_array: bytes) -> int:
     """
     Galileo F-band message
     """
-    words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
+    words = little_endian_32(byte_array)
     total = 0
     # 6 first words in full
     for word in words[:6]:
@@ -75,7 +82,10 @@ def extract_data_FNAV(byte_array: bytes) -> int:
     return SingleWordBitReaderMsb(total, 214)
 
 def extract_data_GLONASS(byte_array: bytes) -> int:
-    words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
+    """
+    GLONASS L1 or L2 OC
+    """
+    words = little_endian_32(byte_array)
     total = 0
     # 2 words in full
     for word in words[:2]:

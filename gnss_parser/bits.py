@@ -3,6 +3,7 @@ Functions and types related to bit manipulation
 """
 
 from enum import Enum
+from functools import cache
 
 def twos_complement(integer: int, bits: int) -> int:
     """
@@ -31,17 +32,26 @@ complementary_half = {'msb': 'lsb', 'lsb': 'msb'}
 
 @cache
 def lsb(count: int) -> int:
+    """
+    Creates a mask with the _count_ LSBs on
+    """
     if count <= 1:
         return count
     return (lsb(count - 1) << 1) | 1
 
 def keep_lsb(count: int, number: int) -> int:
+    """
+    Return _number_, only keeping the _count_ LSBs
+    """
     return number & lsb(count)
 
 def discard_lsb(count: int, number: int) -> int:
     return number >> count
 
 def append_lsb(count: int, source: int, destination: int) -> int:
+    """
+    Return _destination_, with the _count_ LSBs of _source_ appended as LSBs
+    """
     return (destination << count) | keep_lsb(count, source)
 
 class BitReader:
