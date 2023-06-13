@@ -6,7 +6,7 @@ import logging
 
 from more_itertools import grouper
 
-from gnss_parser import Constellation, xor_bits, SingleWordBitReaderMsb
+from gnss_parser import Constellation, xor_bits, SingleWordBitReaderMsb, keep_lsb, append_lsb, discard_lsb
 
 message_from_ublox = {
     (Constellation.GPS, 0): 'LNAV-L',   # L1 C/A (Coarse Acquisition)
@@ -16,11 +16,6 @@ message_from_ublox = {
     (Constellation.GLONASS, 0): 'L1OC', # L1
     #(Constellation.GLONASS, 2): 'L1OC', # L2
 }
-
-keep_13_lsb =    0x1fff
-keep_22_lsb =  0x3fffff
-keep_24_lsb =  0xffffff
-keep_26_lsb = 0x3ffffff
 
 def parity_LNAVL(byte_array: bytes) -> int:
     """
@@ -36,30 +31,22 @@ def parity_LNAVL(byte_array: bytes) -> int:
     previous_29 = 0
     previous_30 = 0
     for word in words:
-        b25 = word & (0b111011000111110011010010 << 6)
-        b26 = word & (0b011101100011111001101001 << 6)
-        b27 = word & (0b101110110001111100110100 << 6)
-        b28 = word & (0b010111011000111110011010 << 6)
-        b29 = word & (0b101011101100011111001101 << 6)
-        b30 = word & (0b001011011110101000100111 << 6)
-        if previous_29:
-            b25 |= 1
-            b27 |= 1
-            b30 |= 1
-        if previous_30:
-            b26 |= 1
-            b28 |= 1
-            b29 |= 1
+        b25 = (word & (0b111011000111110011010010 << 6)) | previous_29
+        b26 = (word & (0b011101100011111001101001 << 6)) | previous_30
+        b27 = (word & (0b101110110001111100110100 << 6)) | previous_29
+        b28 = (word & (0b010111011000111110011010 << 6)) | previous_30
+        b29 = (word & (0b101011101100011111001101 << 6)) | previous_30
+        b30 = (word & (0b001011011110101000100111 << 6)) | previous_29
         parity = sum(xor_bits(t) << p for p, t in enumerate([b30, b29, b28, b27, b26, b25]))
-        ublox_parity = word & 0x3f
+        ublox_parity = keep_lsb(6, word)
         if previous_30:
-            ublox_parity = ~ublox_parity & 0x3f
+            ublox_parity = keep_lsb(6, ~ublox_parity)
         if parity != ublox_parity:
-            raise Exception(f'Wrong parity: {parity:06b} vs {ublox_parity & 0x3f:06b}')
-        previous_30 = parity & 1
-        previous_29 = (parity & 2) >> 1
-        total <<= 24
-        total += (word >> 6) & keep_24_lsb
+            raise Exception(f'Wrong parity: {parity:06b} vs {ublox_parity:06b}')
+        previous_30 = keep_lsb(1, parity)
+        previous_29 = keep_lsb(1, discard_lsb(1, parity))
+        # 24 information bits, 6 parity bits
+        total = append_lsb(24, discard_lsb(6, word), total)
     return SingleWordBitReaderMsb(total, 10 * 24)
 
 def extract_data_D1(byte_array: bytes) -> int:
@@ -68,11 +55,10 @@ def extract_data_D1(byte_array: bytes) -> int:
     """
     words = [int.from_bytes(four, 'little') for four in grouper(byte_array, 4, incomplete = 'strict')]
     # First word: 26 information bits, 4 parity bits
-    total = (words[0] >> 4) & keep_26_lsb
+    total = keep_lsb(26, discard_lsb(4, words[0]))
     # words 2-10: 22 information bits, 8 parity bits
     for word in words[1:]:
-        total <<= 22
-        total += (word >> 8) & keep_22_lsb
+        total = append_lsb(22, discard_lsb(8), total)
     return SingleWordBitReaderMsb(total, 26 + 9 * 22)
 
 def extract_data_FNAV(byte_array: bytes) -> int:
@@ -83,11 +69,9 @@ def extract_data_FNAV(byte_array: bytes) -> int:
     total = 0
     # 6 first words in full
     for word in words[:6]:
-        total <<= 32
-        total += word
+        total = append_lsb(32, word, total)
     # 7th word: 22 information bits, 10 parity bits
-    total <<= 22
-    total += (words[6] >> 10) & keep_22_lsb
+    total = append_lsb(22, discard_lsb(10, words[6]), total)
     return SingleWordBitReaderMsb(total, 214)
 
 def extract_data_GLONASS(byte_array: bytes) -> int:
@@ -95,14 +79,13 @@ def extract_data_GLONASS(byte_array: bytes) -> int:
     total = 0
     # 2 words in full
     for word in words[:2]:
-        total <<= 32
-        total += word
+        total = append_lsb(32, word, total)
     # 3rd word: 13 information bits, 8 parity bits and 11 padding bits
-    total <<= 13
-    total += (words[2] >> 19) & keep_13_lsb
+    total = append_lsb(13, discard_lsb(8 + 11, words[2]), total)
 
 reader_from_ublox = {
     'LNAV-L': parity_LNAVL,
     'D1': extract_data_D1,
     'FNAV': extract_data_FNAV,
+    'L1OC': extract_data_GLONASS,
 }

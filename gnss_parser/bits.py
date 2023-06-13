@@ -29,6 +29,21 @@ class Ordering(Enum):
 
 complementary_half = {'msb': 'lsb', 'lsb': 'msb'}
 
+@cache
+def lsb(count: int) -> int:
+    if count <= 1:
+        return count
+    return (lsb(count - 1) << 1) | 1
+
+def keep_lsb(count: int, number: int) -> int:
+    return number & lsb(count)
+
+def discard_lsb(count: int, number: int) -> int:
+    return number >> count
+
+def append_lsb(count: int, source: int, destination: int) -> int:
+    return (destination << count) | keep_lsb(count, source)
+
 class BitReader:
     """
     Abstract class
@@ -61,19 +76,3 @@ class SingleWordBitReaderMsb(BitReader):
         for mask in (1 << i for i in range(self.size - 1, -1, -1)):
             self.count += 1
             yield bool(self.data & mask)
-
-'''
-class WordArrayBitReaderMsbFirst(BitReader):
-
-    def __init__(self, words: bytes, data_bits: range):
-        self.data = words
-        self.range = range(data_bits[0], data_bits[1])
-        self.count = 0
-        self.iter = iter(self)
-
-    def __iter__(self):
-        for word in self.data:
-            for mask in (1 << shift for shift in range(29 - self.range.start, 29 - self.range.stop, -1)):
-                self.count += 1
-                yield bool(word & mask)
-'''
