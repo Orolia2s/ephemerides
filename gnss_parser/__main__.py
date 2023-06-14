@@ -14,9 +14,8 @@ import yaml
 from serial import Serial
 from pyubx2 import UBXReader
 
-from gnss_parser import (GnssFormat, ensure_fields, message_from_ublox,
-                         reader_from_ublox, Constellation,
-                         format_to_markdown, accumulate)
+from gnss_parser import Constellation
+from gnss_parser.formats import GnssFormatHandler
 
 if __name__ == '__main__':
     cli_parser = argparse.ArgumentParser(prog = 'Ephemerides',
@@ -63,13 +62,4 @@ if __name__ == '__main__':
     for _, ublox_message in reader:
         if ublox_message.identity != 'RXM-SFRBX':
             continue
-        constellation = Constellation(ublox_message.gnssId)
-        message = message_from_ublox.get((constellation, ublox_message.sigId), '(Unsupported)')
-        if message not in formats:
-            continue
-        try:
-            header, page_header, parsed = formats[message].parse_ublox_subframe(reader_from_ublox[message](ublox_message.payload[8:]))
-            # print(f'Subframe of SV {ublox_message.svId}', parsed)
-            accumulate(message, ublox_message.svId, header.subframe_id, page_header.page_id if page_header else None, header.time_of_week, parsed)
-        except Exception as err:
-            logging.exception(err)
+        print(ublox_message)

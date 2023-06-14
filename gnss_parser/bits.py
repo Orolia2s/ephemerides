@@ -56,24 +56,7 @@ def append_lsb(count: int, source: int, destination: int) -> int:
 
 class BitReader:
     """
-    Abstract class
-    """
-
-    iter = None
-
-    def read(self, count: int) -> int:
-        """
-        Read a field of the specified width
-        """
-        result = 0
-        for _, bit in zip(range(count), self.iter):
-            result <<= 1
-            result += bit
-        return result
-
-class SingleWordBitReaderMsb(BitReader):
-    """
-    A single integer containing all the bits
+    An integer that can be read bit by bit
     """
 
     def __init__(self, word: int, size: int):
@@ -86,3 +69,13 @@ class SingleWordBitReaderMsb(BitReader):
         for mask in (1 << i for i in range(self.size - 1, -1, -1)):
             self.count += 1
             yield bool(self.data & mask)
+
+    def read(self, count: int) -> int:
+        """
+        Read a field of the specified width
+        """
+        result = 0
+        for _, bit in zip(range(count), self.iter):
+            result <<= 1
+            result += bit
+        return result

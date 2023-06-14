@@ -1,5 +1,4 @@
-from gnss_format import ensure_fields
-
+from gnss_format.yaml import ensure_fields
 
 class GnssFormatHandler:
 
