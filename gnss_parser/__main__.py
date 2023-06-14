@@ -18,13 +18,6 @@ from gnss_parser import (GnssFormat, ensure_fields, message_from_ublox,
                          reader_from_ublox, Constellation,
                          format_to_markdown, accumulate)
 
-def interpret(obj: dict[str]):
-    """
-    Interpret an object created from a YAML file
-    """
-    ensure_fields('top level', obj, ['kind'])
-    return {'GNSS_format': GnssFormat}[obj['kind']](obj)
-
 if __name__ == '__main__':
     cli_parser = argparse.ArgumentParser(prog = 'Ephemerides',
         description = 'Parse yaml ICD files, to generate code or parse ublox stream',
@@ -44,22 +37,24 @@ if __name__ == '__main__':
     logging.basicConfig(level = logging.DEBUG if cli_args.verbose else logging.INFO)
     logging.info('Starting Ephemerides Generator with arguments: %s', str(cli_args))
 
+    handler = GnssFormatHandler()
+
     # Parse ICDs to define formats
-    formats = {}
     for file_name in cli_args.files:
         try:
             with open(file_name, encoding='utf8') as f:
-                format_parser = interpret(yaml.safe_load(f))
-                formats[format_parser.message] = format_parser
+                handler.parse_icd(yaml.safe_load(f))
         except Exception as err:
             logging.exception(err)
 
-    # Read ublox stream using formats
+    # Generate documentation / code from ICDs
     if cli_args.output:
         generate = {'md': format_to_markdown}[cli_args.output]
         for name, format in formats.items():
             print(generate(format))
         sys.exit(0)
+
+    # Read ublox stream using formats
     if cli_args.serial:
         stream = Serial(cli_args.serial, 115200, timeout = 3)
     else:
