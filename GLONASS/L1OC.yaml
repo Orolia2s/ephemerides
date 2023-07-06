@@ -147,6 +147,7 @@ formats:
     fields: &almanac_global
       - name: day_number_almanac
         bits: 11
+        unit: day
       - name: utc_correction
         latex: \tau_{C}
         bits: 32
@@ -154,8 +155,10 @@ formats:
         shift: -31
         unit: s
       - bits: 1
-      - name: leap_year_interval_number
+      - name: four_year_interval_number
         bits: 5
+        factor: 4
+        unit: year
       - name: gps_correction
         latex: \tau_{GPS}
         bits: 22
@@ -270,7 +273,7 @@ formats:
         signed: true
         shift: -16
         unit: s
-      - name: leap_second_notification
+      - name: four_year_intervalnd_notification
         bits: 2
       - bits: 49
   - subframe: 5

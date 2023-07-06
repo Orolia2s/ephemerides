@@ -16,6 +16,7 @@
 #show link: underline
 
 #align(center + horizon, text(size: 4em, weight: "bold", title))
+#align(center, datetime.today().display("[day padding:none] [month repr:long] [year]"))
 #align(bottom, outline(indent: true, depth: 2))
 #pagebreak()
 
@@ -261,10 +262,17 @@
 	}
 }
 
+
+#let DATE_DISPLAY = "([weekday repr:long]) [month repr:long] [day padding:none], [year] [hour]:[minute]:[second]"
+
 = GPS
 #format("GPS/LNAV-L", notes: (
 	([GPS Time], [
-		The GPS Time (GPST) is a continuous time scale (no _leap seconds_) starting on (Sunday) January 6, 1980 at 00:00:00.
+		#let start = datetime(year: 1980, month: 1, day: 6, hour: 0, minute: 0, second: 0)
+		#let last_rollover = datetime(year: 2019, month: 4, day: 7, hour: 0, minute: 0, second: 0)
+		#let next_rollover = datetime(year: 2038, month: 11, day: 21, hour: 0, minute: 0, second: 0)
+
+		The GPS Time (GPST) is a continuous time scale (no _leap seconds_) starting on #start.display(DATE_DISPLAY).
 
 		To compute the date from the LNAV-L message, two values are needed:
 		- the *week number (WN)* found in the subframe 1
@@ -278,8 +286,8 @@
 
 		The week number is a count defined as the number of weeks that have occured since the zero time-point.
 		But this value is broadcast on 10 bits, meaning that every 1024 weeks (about 19.7 years) the transmitted value _rolls over_ to 0 again.
-		At the time of writing, the last rollover occurred on *(Sunday) April 7, 2019* at *00:00:00*.
-		The next one is planned on (Sunday) November 21, 2038 at 00:00:00.
+		At the time of writing, the last rollover occurred on *#last_rollover.display(DATE_DISPLAY)*.
+		The next one is planned on #next_rollover.display(DATE_DISPLAY).
 	]),
 	([`page_id` to documented page ID mapping], [
 		While the ICD mentions page IDs ranging from 1 to 25, the effectively transmitted IDs (in the `page_id` fields) range from 1 to 63.
@@ -319,14 +327,19 @@
 		#emoji.warning *The page IDs used in this document are `page_id` values*, not ICD page IDs!
 	]),
 ))
+
 #pagebreak()
 = Galileo
 #format("Galileo/FNAV")
+
 #pagebreak()
 = BeiDou
 #format("BeiDou/D1", notes: (
 	([BeiDou Time], [
-		The BeiDou Time (BDT) is a continuous time scale (no _leap seconds_) starting on *(Sunday) January 1, 2006* at *00:00:00*.
+		#let start = datetime(year: 2006, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+		#let next_rollover = datetime(year: 2163, month: 1, day: 2, hour: 0, minute: 0, second: 0)
+
+		The BeiDou Time (BDT) is a continuous time scale (no _leap seconds_) starting on *#start.display(DATE_DISPLAY)*.
 
 		To compute the date from the D1 message, two values are needed:
 		- the *week number (WN)* found in the subframe 1
@@ -336,9 +349,27 @@
 
 		The week number is a count defined as the number of weeks that have occurred since the zero time-point.
 		But this value is broadcast on 13 bits, meaning that every 8192 weeks (157.5 years) the transmitted value _rolls over_ to 0 again.
-		At the time of writing, the next rollover should occur on (Sunday) January 2, 2163 at 00:00:00.
+		At the time of writing, the next rollover should occur on #next_rollover.display(DATE_DISPLAY).
 	]),
 ))
+
 #pagebreak()
 = GLONASS
-#format("GLONASS/L1OC")
+#format("GLONASS/L1OC", notes: (
+	([GLONASS Time], [
+		#let start = datetime(year: 1996, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+
+		The GLONASS Time (GLONASST) is a time scale implementing _leap seconds_ (like UTC) starting on *#start.display(DATE_DISPLAY)*.
+		$ "GLONASST" = "UTC"_"(SU)" + 0300 $
+
+		To compute the date from the L1OC message, several values are needed:
+		- the *four-year interval number* found in all subframes, page 5
+		- the *day number* found in all subframes, page 4
+		- the *hour*, *minute* and *second* found in all subframes, page 1
+
+		The four-year interval number is defined as the number of four-year intervals that have occurred since 1996.
+		At the time of writing, this value is equal to #{ calc.floor((datetime.today().year() - 1996) / 4) }.
+
+		The day number is defined as the number of days that have occurred since the beginning of the current four-year interval.
+	]),
+))
