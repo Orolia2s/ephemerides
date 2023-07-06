@@ -96,10 +96,10 @@ Almanac global data
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||day_number_almanac|11|||
+||day_number_almanac|11||$\mathrm{d}$|
 |$\tau_{C}$|utc_correction|$^*32$|$2^{-31}$|$\mathrm{s}$|
 ||_ignored_|1|||
-||leap_year_interval_number|5|||
+||four_year_interval_number|5|4|$\mathrm{yr}$|
 |$\tau_{GPS}$|gps_correction|$^*22$|$2^{-30}$|$\mathrm{d}$|
 ||satellite_health_l|1|||
 
@@ -214,10 +214,10 @@ Almanac global data
 
 |notation|name|bits|factor|unit|
 |:------:|:---|---:|:-----|:--:|
-||day_number_almanac|11|||
+||day_number_almanac|11||$\mathrm{d}$|
 |$\tau_{C}$|utc_correction|$^*32$|$2^{-31}$|$\mathrm{s}$|
 ||_ignored_|1|||
-||leap_year_interval_number|5|||
+||four_year_interval_number|5|4|$\mathrm{yr}$|
 |$\tau_{GPS}$|gps_correction|$^*22$|$2^{-30}$|$\mathrm{d}$|
 ||satellite_health_l|1|||
 
@@ -260,7 +260,7 @@ Almanac (2/2)
 |:------:|:---|---:|:-----|:--:|
 |$B_1$|utc_ut1_bias_correction|$^*11$|$2^{-10}$|$\mathrm{s}$|
 |$B_2$|utc_ut1_drift_correction|$^*10$|$2^{-16}$|$\mathrm{s}$|
-||leap_second_notification|2|||
+||four_year_intervalnd_notification|2|||
 ||_ignored_|49|||
 
 ### Page 15
