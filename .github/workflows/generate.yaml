@@ -28,6 +28,6 @@ jobs:
           author_name: Antoine Gagniere
           author_email: antoine.gagniere@orolia2s.com
           message: "(Update generated ICDs)"
-          add: '*.md'
+          add: "['BeiDou', 'GLONASS', 'GPS', 'Galileo']"
         env:
           GIHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
