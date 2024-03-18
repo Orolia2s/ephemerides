@@ -1,3 +1,6 @@
+#import "@preview/mitex:0.2.2": mi
+#import "@preview/bytefield:0.0.4": *
+
 #let title = "GNSS navigation messages"
 #set document(
 	title: title,
@@ -68,99 +71,45 @@
 	}
 
 	let fields(contents) = {
-		let latex(s) = {
-			let match = s.match(regex("^([^_]+)_(\{.+\}|\w)$"))
-			if match != none {
-				[$#latex(match.captures.at(0))_#latex(match.captures.at(1).trim(regex("\{|\}")))$]
-			} else {
-				match = s.match(regex("^\\\\sqrt\{(.+)\}$"))
-				if match != none {
-					[$sqrt(#latex(match.captures.at(0)))$]
+		let display_name(field) = {
+			let name = field.at("name", default: none)
+			if name == none {
+				if "bits" in field and field.len() == 1 {
+					text(style: "italic", "Reserved")
 				} else {
-					match = s.match(regex("^\\\\dot\{(.+)\}$"))
-					if match != none {
-						[$accent(#latex(match.captures.at(0)), dot)$]
-					} else {
-						match = s.match(regex("^\\\\text\{(.+)\}$"))
-						if match != none {
-							[$#latex(match.captures.at(0))$]
-						} else {
-							match = s.match(regex("^([^']+)('+)$"))
-							if match != none {
-								let primes = match.captures.at(1)
-								let symbol = if primes.len() == 1 {
-									sym.prime
-								} else if primes.len() == 2 {
-									sym.prime.double
-								} else if primes.len() == 3 {
-									sym.prime.triple
-								} else if primes.len() == 4 {
-									sym.prime.quad
-								} else {
-									primes
-								}
-								[$#latex(match.captures.at(0))#symbol$]
-							} else {
-								let matches = s.split(regex("[[:blank:]]"))
-								if matches.len() == 1 {
-									if s == "\\alpha" {
-										[$alpha$]
-									} else if s == "\\beta" {
-										[$beta$]
-									} else if s == "\\Delta" {
-										[$Delta$]
-									} else if s == "\\delta" {
-										[$delta$]
-									} else if s == "\\epsilon" {
-										[$epsilon$]
-									} else if s == "\\Epsilon" {
-										[$Epsilon$]
-									} else if s == "\\lambda" {
-										[$lambda$]
-									} else if s == "\\Lambda" {
-										[$Lambda$]
-									} else if s == "\\tau" {
-										[$tau$]
-									} else if s == "\\Tau" {
-										[$Tau$]
-									} else if s == "\\Omega" {
-										[$Omega$]
-									} else if s == "\\omega" {
-										[$omega$]
-									} else {
-										[$#s$]
-									}
-								} else {
-									for match in matches {
-										latex(match)
-									}
-								}
-							}
-						}
-					}
+					text(red)[_Unnamed_]
 				}
+			} else {
+				raw(name)
 			}
 		}
-	
+
+		bytefield(
+			bpr: 16,
+			bitheader(
+				autofill: "bounds",
+				0, 15,
+			),
+			..contents.map((field) => {
+				let name = field.at("name", default: none)
+				let reserved = name == none and "bits" in field and field.len() == 1
+				bits(
+					field.bits,
+					fill: if reserved { gray } else { none },
+				)[#if reserved { "" } else if "latex" in field { mi(field.latex) } else { display_name(field) }]
+			}).flatten()
+		)
+
 		table(
 			columns: (auto, 1fr, auto, auto, auto),
 			align: (col, row) => (center, left, center, center, center).at(col),
 			[*Symbol*], [*Field name*], [*Bits*], [*Factor*], [*Unit*],
 			..contents.map((field) => (
 				if "latex" in field {
-					latex(field.latex)
+					mi(field.latex)
 				},
 				{
-					let name = field.at("name", default: none)
-					if name == none {
-						if "bits" in field and field.len() == 1 {
-							text(style: "italic", "Reserved")
-						} else {
-							text(red)[_Unnamed_]
-						}
-					} else {
-						raw(name)
-					}
+					display_name(field)
 					if "half" in field {
 						[ (#upper(field.half))]
 					}
