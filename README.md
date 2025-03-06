@@ -32,10 +32,8 @@ For now only one message type per constellation has been transcribed:
 | ✔️ | Galileo | F/NAV | E5a-I | | [gsc-europa.eu/Galileo_OS_SIS_ICD_v2.1.pdf](https://www.gsc-europa.eu/sites/default/files/sites/all/files/Galileo_OS_SIS_ICD_v2.1.pdf) section 4.2
 | | Galileo | I/NAV | E5b-I, E1-B | | [gsc-europa.eu/Galileo_OS_SIS_ICD_v2.1.pdf](https://www.gsc-europa.eu/sites/default/files/sites/all/files/Galileo_OS_SIS_ICD_v2.1.pdf) section 4.3
 | ✔️ | Glonass | | L1, L2 | | [unavco.org/ICD_GLONASS_5.0_en.pdf](https://www.unavco.org/help/glossary/docs/ICD_GLONASS_5.0_(2002)_en.pdf)
-| ✔️ | BeiDou | D1 | B3I | MEO/IGSO | [beidou.gov.cn/ICD/OpenServiceSignalB3I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201806/P020180608516798097666.pdf) 5.2
-| | BeiDou | D2 | B3I | GEO | [beidou.gov.cn/ICD/OpenServiceSignalB3I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201806/P020180608516798097666.pdf) 5.3
-| | BeiDou | D1 | B1I | MEO/IGSO | [beidou.gov.cn/ICD/OpenServiceSignalB1I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201902/P020190227702348791891.pdf) 5.2
-| | BeiDou | D2 | B1I | GEO | [beidou.gov.cn/ICD/OpenServiceSignalB1I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201902/P020190227702348791891.pdf) 5.3
+| ✔️ | BeiDou | D1 | B1I, B3I | MEO/IGSO | [beidou.gov.cn/ICD/OpenServiceSignalB1I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201902/P020190227702348791891.pdf) [beidou.gov.cn/ICD/OpenServiceSignalB3I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201806/P020180608516798097666.pdf) 5.2
+| | BeiDou | D2 | B1I, B3I | GEO | [beidou.gov.cn/ICD/OpenServiceSignalB1I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201902/P020190227702348791891.pdf) [beidou.gov.cn/ICD/OpenServiceSignalB3I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201806/P020180608516798097666.pdf) 5.3
 | | BeiDou | B-CNAV1 | B1C | | [beidou.gov.cn/ICD/OpenServiceSignalB1C.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201806/P020180608519640359959.pdf)
 | | BeiDou | B-CNAV2 | B2a | | [beidou.gov.cn/ICD/OpenServiceSignalB2a.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201806/P020180608518432765621.pdf)
 | | BeiDou | B-CNAV3 | B2b-I | | [beidou.gov.cn/ICD/OpenServiceSignalB2b.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/202008/P020231201537880833625.pdf)
@@ -99,6 +97,15 @@ $$ n_0 = \sqrt{\frac{\mu}{A^3}} $$
 
 $$ n   = n_0 + \Delta_n $$
 
-## Ordering
+## GNSS Receivers
+
+For now only u-blox receivers are supported, but the YAMLs are agnostic of the receiver, as they describe the raw message as it is emitted by the satellites.
+Receiver specific code is needed to get the raw messages, and a next step would be to describe how bits are grouped by each receiver in dedicated YAML.
+
+### u-blox
+
+For a list of GNSS messages supported by F10 receivers, see [u-blox.com/u-blox-F10-SPG-6.00_InterfaceDescription_UBX.pdf](https://content.u-blox.com/sites/default/files/documents/u-blox-F10-SPG-6.00_InterfaceDescription_UBX-23002975.pdf) 1.5.4 page 15. To get raw messages we use the `RXM-SFRBX` messages. The general words layout per constellation is described in [u-blox.com/ZED-F9T_IntegrationManual_UBX.pdf](https://content.u-blox.com/sites/default/files/ZED-F9T_IntegrationManual_UBX-21040375.pdf) from page 57 to 64
+
+#### Ordering
 
 Regardless of the order bits are transmitted from the satellite to the receiver, ublox gives us the subframes as an array of 4-bytes little-endian unsigned integers
