@@ -1,6 +1,7 @@
 // LTeX: enabled=false
 
-#import "@preview/mitex:0.2.5": *
+#import "@preview/bytefield:0.0.7": *
+#import "@preview/mitex:0.2.5": mi
 
 #set document(
   title: [Ephemerides --- GNSS navigations messages],
@@ -35,11 +36,21 @@
     }
 
 
+    box(bytefield(
+      bpr: 32,
+      bitheader("bytes"),
+      ..contents.enumerate().map(((i, field)) => bits(
+        field.bits,
+        fill: if (not "name" in field) and "bits" in field and field.len() == 1 { gray } else { white },
+        if "latex" in field { mi(field.latex) } else { [\##(i + 1)] }
+      ))
+    ))
     table(
-      columns: (auto, 1fr, auto, auto, auto),
-      align: (col, row) => (center, left, center, center, center).at(col),
-      [*Symbol*], [*Field name*], [*Bits*], [*Factor*], [*Unit*],
-      ..contents.map((field) => (
+      columns: (auto, auto, 1fr, auto, auto, auto),
+      align: (col, row) => (center, center, left, center, center, center).at(col),
+      [*\#*], [*Symbol*], [*Field name*], [*Bits*], [*Factor*], [*Unit*],
+      ..contents.enumerate().map(((i, field)) => (
+        [#(i + 1)],
         if "latex" in field {
           mi(field.latex)
         },
@@ -63,7 +74,7 @@
   let data = yaml(file)
   assert.eq(data.kind, "GNSS_format", message: file + " should be a 'GNSS_format' kind")
 
-  set heading(offset: heading_depth + 1)
+  set heading(offset: heading_depth)
 
   heading(data.metadata.message)
   par(data.metadata.at("description", default: "").replace(regex("[[:space:]]+"), " "))
@@ -104,10 +115,6 @@
         } else {
           none
         }
-        if first {
-          [== Subframe #page.subframe#if page.description != none [: #page.description] #label(data.metadata.message + ".s" + str(page.subframe))]
-          first = false
-        }
         let pages = page.at("pages", default: ())
           .map((item) => (item,).flatten())
         let display_pages = pages
@@ -117,6 +124,11 @@
             [#item.first()]
           })
           .join(", ", last: " and ")
+
+        if first {
+          [== Subframe #page.subframe#if subframe.len() <= 1 and pages.len() == 0 and page.description != none [: #page.description] #label(data.metadata.message + ".s" + str(page.subframe))]
+          first = false
+        }
         if pages.len() > 0 {
           let label = label(data.metadata.message + ".s" + str(page.subframe) + "p" + str(pages.first().first()))
           if pages.len() == 1 {
