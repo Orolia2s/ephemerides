@@ -79,13 +79,13 @@ formats:
         bits: 8
         signed: true
         shift: -24
-        unit: s / semicircle2
+        unit: s / semicircle^2
         latex: \alpha_2
       - name: alpha_3
         bits: 8
         signed: true
         shift: -24
-        unit: s / semicircle3
+        unit: s / semicircle^3
         latex: \alpha_3
       - name: beta_0
         bits: 8
@@ -103,19 +103,19 @@ formats:
         bits: 8
         signed: true
         shift: 16
-        unit: s / semicircle2
+        unit: s / semicircle^2
         latex: \beta_2
       - name: beta_3
         bits: 8
         signed: true
         shift: 16
-        unit: s / semicircle3
+        unit: s / semicircle^3
         latex: \beta_3
       - name: clock_drift_rate_correction
         bits: 11
         signed: true
         shift: -66
-        unit: s / s2
+        unit: s / s^2
         latex: A_2
       - name: clock_bias_correction
         bits: 24
@@ -178,7 +178,7 @@ formats:
         latex: \sqrt{A}
         bits: 32
         shift: -19
-        unit: m(1/2)
+        unit: m^(1/2)
       - name: reference_time_ephemeris
         latex: t_{oe}
         bits: 2
@@ -245,7 +245,7 @@ formats:
         latex: \sqrt{A}
         bits: 24
         shift: -11
-        unit: m(1/2)
+        unit: m^(1/2)
       - name: clock_drift_correction
         latex: a_{f1}
         bits: 11

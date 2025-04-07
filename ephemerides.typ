@@ -2,6 +2,7 @@
 
 #import "@preview/bytefield:0.0.7": *
 #import "@preview/mitex:0.2.5": mi
+#import "@preview/unify:0.7.1": unit, add-unit
 
 #set document(
   title: [Ephemerides --- GNSS navigations messages],
@@ -19,6 +20,9 @@
 
 #set page(numbering: "1")
 
+
+#add-unit("semicircle", "semicircle", "#sym.pi")
+#add-unit("solar flux", "sfu", "\"sfu\"")
 
 #let format(file, notes: (), heading_depth: 1) = {
   let fields(contents) = {
@@ -64,7 +68,7 @@
         } else if "shift" in field {
           [$2^#int(field.shift)$]
         },
-        field.at("unit", default: "")
+        unit(field.at("unit", default: ""))
       ))
       .flatten()
     )

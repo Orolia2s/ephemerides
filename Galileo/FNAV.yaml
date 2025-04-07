@@ -55,7 +55,7 @@ formats:
         bits: 6
         shift: -59
         signed: true
-        unit: s / s2
+        unit: s / s^2
         latex: a_{f2}
       - latex: \text{SISA}
         bits: 8
@@ -75,7 +75,7 @@ formats:
         bits: 14
         shift: -15
         signed: true
-        unit: sfu / deg2
+        unit: sfu / deg^2
       - name: ionospheric_disturbance_region_1
         bits: 1
         latex: \text{SF}_1
@@ -133,7 +133,7 @@ formats:
       - name: square_root_of_semi_major_axis
         bits: 32
         shift: -19
-        unit: m(1/2)
+        unit: m^(1/2)
         latex: \sqrt{A}
       - name: ascending_node_longitude
         bits: 32

@@ -55,7 +55,7 @@ formats:
         bits: 5
         signed: true
         shift: -30
-        unit: km/s2
+        unit: km/s^2
       - name: x
         latex: x
         bits: 27
@@ -84,7 +84,7 @@ formats:
         bits: 5
         signed: true
         shift: -30
-        unit: km/s2
+        unit: km/s^2
       - name: y
         latex: y
         bits: 27
@@ -119,7 +119,7 @@ formats:
         bits: 5
         signed: true
         shift: -30
-        unit: km/s2
+        unit: km/s^2
       - name: z
         latex: z
         bits: 27
@@ -239,7 +239,7 @@ formats:
         bits: 7
         signed: true
         shift: -14
-        unit: s / cycle2
+        unit: s / cycle^2
       - name: carrier_frequency_number
         bits: 5
       - name: satellite_health_l
