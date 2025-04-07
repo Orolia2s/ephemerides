@@ -79,7 +79,7 @@ formats:
         signed: true
         latex: a_{f2}
         shift: -55
-        unit: s/s2
+        unit: s/s^2
       - name: clock_drift_correction
         bits: 16
         signed: true
@@ -136,7 +136,7 @@ formats:
         bits: 32
         latex: \sqrt{A}
         shift: -19
-        unit: m(1/2)
+        unit: m^(1/2)
       - name: ephemeris_reference_time
         bits: 16
         latex: t_{oe}
@@ -229,7 +229,7 @@ formats:
         bits: 24
         latex: \sqrt{A}
         shift: -11
-        unit: m(1/2)
+        unit: m^(1/2)
       - name: longitude_of_ascending_node_of_orbit_plane
         bits: 24
         signed: true
@@ -358,13 +358,13 @@ formats:
         signed: true
         latex: \alpha_2
         shift: -24
-        unit: s / semicircle2
+        unit: s / semicircle^2
       - name: alpha_3
         bits: 8
         signed: true
         latex: \alpha_3
         shift: -24
-        unit: s / semicircle3
+        unit: s / semicircle^3
       - name: beta_0
         bits: 8
         signed: true
@@ -382,13 +382,13 @@ formats:
         signed: true
         latex: \beta_2
         shift: 16
-        unit: s / semicircle2
+        unit: s / semicircle^2
       - name: beta_3
         bits: 8
         signed: true
         latex: \beta_3
         shift: 16
-        unit: s / semicircle3
+        unit: s / semicircle^3
       - name: utc_drift_correction
         bits: 24
         signed: true
