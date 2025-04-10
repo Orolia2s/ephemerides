@@ -24,6 +24,7 @@ fn BitReader(comptime word_count: usize, comptime WordType: type) type {
             } else {
                 self.current_bit -= 1;
             }
+            self.bit_consumed += 1;
             return result;
         }
 
@@ -44,9 +45,14 @@ fn BitReader(comptime word_count: usize, comptime WordType: type) type {
 test BitReader {
     var reader: BitReader(4, u16) = .init(.{ 0xcafe, 0xbabe, 0xdead, 0xbeef });
     try std.testing.expectEqual(0xc, reader.consume(4, u8));
+    try std.testing.expectEqual(4, reader.bit_consumed);
     try std.testing.expectEqual(0xaf, reader.consume(8, u8));
+    try std.testing.expectEqual(12, reader.bit_consumed);
     try std.testing.expectEqual(0xeBabe, reader.consume(20, u32));
+    try std.testing.expectEqual(32, reader.bit_consumed);
     try std.testing.expectEqual(0xdead, reader.consume(16, u16));
+    try std.testing.expectEqual(48, reader.bit_consumed);
     try std.testing.expectEqual(0xbee, reader.consume(12, u12));
     try std.testing.expectError(error.NotEnoughBits, reader.consume(5, u16));
+    try std.testing.expectEqual(64, reader.bit_consumed);
 }
