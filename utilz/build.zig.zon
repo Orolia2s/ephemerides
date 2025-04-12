@@ -1,0 +1,12 @@
+.{
+    .name = .ephemerides_utilities,
+    .version = "0.0.0",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "root.zig",
+        "bit_reader.zig",
+    },
+    .fingerprint = 0xeb6f1054c564ecb2,
+}
