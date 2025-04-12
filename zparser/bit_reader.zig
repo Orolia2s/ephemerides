@@ -3,8 +3,6 @@ const std = @import("std");
 fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type {
     return struct {
         words: [word_count]WordType,
-        current_word: u16 = 0,
-        current_bit: u8 = @bitSizeOf(WordType) - 1,
         bit_consumed: u16 = 0,
 
         const Self = @This();
@@ -14,27 +12,22 @@ fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type {
         }
 
         pub fn next(self: *Self) ?bool {
-            if (self.current_word == self.words.len)
+            const word = @divTrunc(self.bit_consumed, @bitSizeOf(WordType));
+            const bit = @bitSizeOf(WordType) - 1 - @mod(self.bit_consumed, @bitSizeOf(WordType));
+
+            if (word == self.words.len)
                 return null;
-            const mask: WordType = std.math.shl(WordType, 1, self.current_bit);
-            const result = (self.words[self.current_word] & mask) != 0;
-            if (self.current_bit == 0) {
-                self.current_word += 1;
-                self.current_bit = @bitSizeOf(WordType) - 1;
-            } else {
-                self.current_bit -= 1;
-            }
+            const mask: WordType = std.math.shl(WordType, 1, bit);
             self.bit_consumed += 1;
-            return result;
+            return (self.words[word] & mask) != 0;
         }
 
         pub fn consume(self: *Self, count: u8, comptime Target: type) !Target {
             var result: Target = 0;
 
             for (0..count) |_| {
-                const bit = self.next() orelse return error.NotEnoughBits;
                 result <<= 1;
-                if (bit)
+                if (self.next() orelse return error.NotEnoughBits)
                     result += 1;
             }
             return result;
