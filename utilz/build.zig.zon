@@ -1,7 +1,12 @@
 .{
     .name = .ephemerides_utilities,
     .version = "0.0.0",
-    .dependencies = .{},
+    .dependencies = .{
+        .ublox_parser = .{
+            .url = "git+https://github.com/Orolia2s/ublox_parser?ref=master#91c781c774710b486a5d2180b3b0be6d944ecc46",
+            .hash = "ublox_parser-0.2.0-PxZKDF_QAACLBvWx8MCyE11VAJEiBfb_4A1bRsXIPaSO",
+        },
+    },
     .paths = .{
         "build.zig",
         "build.zig.zon",
