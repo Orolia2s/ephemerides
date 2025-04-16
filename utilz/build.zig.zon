@@ -3,8 +3,12 @@
     .version = "0.0.0",
     .dependencies = .{
         .ublox_parser = .{
-            .url = "git+https://github.com/Orolia2s/ublox_parser?ref=master#91c781c774710b486a5d2180b3b0be6d944ecc46",
-            .hash = "ublox_parser-0.2.0-PxZKDF_QAACLBvWx8MCyE11VAJEiBfb_4A1bRsXIPaSO",
+            .url = "git+https://github.com/Orolia2s/ublox_parser?ref=master#e629e1d83c492fd01cb35ae347d8c8341a3ed0ca",
+            .hash = "ublox_parser-0.2.0-PxZKDGDQAADZsK9DkRewZXwbBpnDVwJmEzqJmoQTerJz",
+        },
+        .libo2s = .{
+            .url = "git+https://github.com/Orolia2s/libo2s?ref=master#7a93413a89950172f3e3014292ca262088a92424",
+            .hash = "libo2s-1.8.0-fUXQWARdAgCOQK3opSCTO3GHpLywrX4Q2tsEm---EAZr",
         },
     },
     .paths = .{
@@ -12,6 +16,7 @@
         "build.zig.zon",
         "root.zig",
         "bit_reader.zig",
+        "ublox_loop.zig",
     },
     .fingerprint = 0xeb6f1054c564ecb2,
 }
