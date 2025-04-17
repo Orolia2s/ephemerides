@@ -1,0 +1,17 @@
+.{
+    .name = .ephemerides,
+    .version = "0.0.0",
+    .fingerprint = 0x2ac1e71fa3f0eddd,
+    .minimum_zig_version = "0.14.0",
+    .dependencies = .{
+        .ephemerides_utilities = .{
+            .url = "../../utilz/",
+            .hash = "ephemerides_utilities-0.0.0-suxkxe4bAAAIw2RUgQy1X2bOehYXz5BsLYJjG02QdVyx",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}

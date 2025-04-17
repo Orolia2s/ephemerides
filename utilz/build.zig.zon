@@ -10,6 +10,10 @@
             .url = "git+https://github.com/Orolia2s/libo2s?ref=master#7a93413a89950172f3e3014292ca262088a92424",
             .hash = "libo2s-1.8.0-fUXQWARdAgCOQK3opSCTO3GHpLywrX4Q2tsEm---EAZr",
         },
+        .blackmagic = .{
+            .url = "git+https://github.com/agagniere/blackmagic?ref=0.3#690b1ff6f0c4fb4f50309812ba92763dda25c3dc",
+            .hash = "blackmagic-0.3.0-62-rPHh8AAA6W8P_uPYJmbaoX4S6gKm9ctZfb6L-wDoX",
+        },
     },
     .paths = .{
         "build.zig",
