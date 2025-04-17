@@ -1,17 +1,32 @@
 const std = @import("std");
 
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{ .preferred_optimize_mode = .ReleaseSafe });
 
     const ublox = b.dependency("ublox_parser", .{ .target = target });
     const o2s = b.dependency("libo2s", .{ .target = target });
+    const blackmagic = b.dependency("blackmagic", .{});
+
+    const include_all = b.addWriteFile("ublox.h",
+        \\#include <ublox_enums.h>
+        \\#include <ublox_messages.h>
+        \\#include <ublox_reader.h>
+    );
+
     const bind = b.addTranslateC(.{
-        .root_source_file = ublox.path("include/ublox_reader.h"),
+        .root_source_file = try include_all.getDirectory().join(arena.allocator(), "ublox.h"),
         .target = target,
         .optimize = optimize,
     });
+    bind.addIncludePath(ublox.path("include"));
     bind.addIncludePath(o2s.path("include"));
+    bind.addIncludePath(blackmagic.path("include"));
+    const generated = b.addInstallFile(bind.getOutput(), "translated.zig");
+    b.getInstallStep().dependOn(&generated.step);
 
     const utils = b.addModule("utilz", .{
         .root_source_file = b.path("root.zig"),
