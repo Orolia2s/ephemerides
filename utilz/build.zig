@@ -15,6 +15,7 @@ pub fn build(b: *std.Build) !void {
         \\#include <ublox_enums.h>
         \\#include <ublox_messages.h>
         \\#include <ublox_reader.h>
+        \\#include <fcntl.h>
     );
 
     const bind = b.addTranslateC(.{

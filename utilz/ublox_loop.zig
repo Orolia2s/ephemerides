@@ -10,13 +10,14 @@ const ReadUbloxOptions = struct {
 };
 
 /// Parse all RXM-SFRBX messages from the specified file.
-pub fn read_ublox_from(path: []const u8, options: ReadUbloxOptions) !void {
+pub fn read_ublox_from(path: [:0]const u8, options: ReadUbloxOptions) !void {
     var file: o2s.ifstream_t = undefined;
     if (options.is_serial_port) {
-        const port: o2s.serial_port_t = o2s.serial_open_readwrite(path);
-        errdefer o2s.serial_close(&port);
-        o2s.serial_make_raw(&port, options.baudrate orelse return error.missingBaudrateForSerialPort);
-        file = port.file;
+        unreachable;
+        //const port: o2s.serial_port_t = o2s.serial_open_readwrite(path);
+        //errdefer o2s.serial_close(&port);
+        //o2s.serial_make_raw(&port, options.baudrate orelse return error.missingBaudrateForSerialPort);
+        //file = port.file;
     } else {
         file = o2s.file_open(path, o2s.O_RDONLY);
     }
@@ -26,11 +27,13 @@ pub fn read_ublox_from(path: []const u8, options: ReadUbloxOptions) !void {
     defer o2s.ublox_reader_close(&ublox_reader);
 
     o2s.ublox_subscribe(&ublox_reader, &ublox_callback);
-    o2s.ublox_reader_loop(&ublox_reader);
+    if (!o2s.ublox_reader_loop(&ublox_reader))
+        return error.UnableToStartTimer;
 }
 
-export fn ublox_callback(message: *o2s.ublox_message_t) callconv(.C) void {
+export fn ublox_callback(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
+    const message: *o2s.ublox_message_t = c_message;
     if (message.ublox_class == o2s.RXM and message.type == o2s.SFRBX) {
-        std.debug.print("Got one");
+        std.debug.print("Got one", .{});
     }
 }

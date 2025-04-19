@@ -11,8 +11,8 @@
             .hash = "libo2s-1.8.0-fUXQWARdAgCOQK3opSCTO3GHpLywrX4Q2tsEm---EAZr",
         },
         .blackmagic = .{
-            .url = "git+https://github.com/agagniere/blackmagic?ref=0.3#690b1ff6f0c4fb4f50309812ba92763dda25c3dc",
-            .hash = "blackmagic-0.3.0-62-rPHh8AAA6W8P_uPYJmbaoX4S6gKm9ctZfb6L-wDoX",
+            .url = "git+https://github.com/agagniere/blackmagic?ref=master#c04a70e1b3b241e586d0843143abb31fa961bf73",
+            .hash = "blackmagic-0.3.2-62-rPOiIAAAtn7i9hsubYgehquX28IvYWyNUggzQDdV7",
         },
     },
     .paths = .{
