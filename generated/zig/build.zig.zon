@@ -5,8 +5,7 @@
     .minimum_zig_version = "0.14.0",
     .dependencies = .{
         .ephemerides_utilities = .{
-            .url = "../../utilz/",
-            .hash = "ephemerides_utilities-0.0.0-suxkxe4bAAAIw2RUgQy1X2bOehYXz5BsLYJjG02QdVyx",
+            .path = "../../utilz",
         },
     },
     .paths = .{
