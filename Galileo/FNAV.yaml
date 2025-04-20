@@ -9,16 +9,18 @@ metadata:
 
     Note that compared to the ICD, the notion of page and subframe has been swapped here
 subframe_count: 12
+ublox:
+  signal: 3
+  layout:
+    - words: [[1, 6]]
+      keep: 32
+    - words: [7]
+      keep: 22 # 214 information bits
 order: msb_first
 header:
   - name: subframe_id
     bits: 6
     latex: \text{Type}
-ublox:
-  - words: [[1, 6]]
-    keep: 32
-  - words: [7]
-    keep: 22 # 214 information bits
 formats:
   - subframe: 1
     description: |
