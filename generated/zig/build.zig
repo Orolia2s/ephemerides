@@ -13,7 +13,7 @@ pub fn build(b: *std.Build) void {
     });
     exe_mod.addImport("utils", utils.module("utilz"));
     const exe = b.addExecutable(.{
-        .name = "zig",
+        .name = "ephemerides",
         .root_module = exe_mod,
     });
     b.installArtifact(exe);
