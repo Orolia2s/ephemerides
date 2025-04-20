@@ -27,7 +27,10 @@ class RangeList:
         for element in iterable:
             if isinstance(element, list):
                 self.as_list += range(element[0], element[1] + 1)
-                self.human_readable += [f'{element[0]} to {element[1]}']
+                self.human_readable.append(f'{element[0]} to {element[1]}')
+            else:
+                self.as_list.append(element)
+                self.human_readable.append(str(element))
         self.as_set = set(self.as_list)
 
     def __str__(self):
@@ -37,22 +40,25 @@ class UbloxLayout(namedtuple('UbloxLayout', ['words', 'discard_msb', 'keep'])):
     @classmethod
     def from_icd(cls, icd: dict):
         ensure_fields('ublox layout element', icd, ['words', 'keep'])
-        return cls(words=icd['words'], keep=icd['keep'], discard_msb=icd.get('discard_msb', None))
+        return cls(words=RangeList(icd['words']), keep=icd['keep'], discard_msb=icd.get('discard_msb', 0))
 
 class Ublox:
     def __init__(self, signal: int, layout: list[UbloxLayout]):
         self.signal = signal
-        self.words = {}
+        self.layout = layout
+        self.per_word = {}
         for x in layout:
-            words = RangeList(x.words)
-            for word in words.as_list:
-                self.words[word] = x
-        self.upper_bound = 1 + max(self.words.keys())
+            for word in x.words.as_list:
+                self.per_word[word] = x
+        self.upper_bound = 1 + max(self.per_word.keys())
 
     @classmethod
     def from_icd(cls, icd: dict):
         ensure_fields('ublox', icd, ['signal', 'layout'])
-        return cls(signal=icd['signal'], layout=map(UbloxLayout.from_icd, icd['layout']))
+        return cls(signal=icd['signal'], layout=list(map(UbloxLayout.from_icd, icd['layout'])))
+
+    def __str__(self):
+        return f'[signal: {self.signal}, layout: {self.layout}]'
 
 def little_endian_32(byte_array: bytes) -> list[int]:
     """

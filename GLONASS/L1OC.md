@@ -7,6 +7,15 @@ Translation from the ICD to the YAML:
   - frame -> subframe
   - string -> page
 
+## Ublox words layout
+
+GLONASS L1OC corresponds to gnssId 6, sigId 0
+
+Words|MSB skipped|Data bits|LSB skipped
+:-|-:|-:|-:
+1 to 2|0|32|0
+3|0|13|19
+
 ## Header
 
 1 bits mapped as follows:

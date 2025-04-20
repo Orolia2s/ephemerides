@@ -6,6 +6,15 @@ and other system messages, such as almanacs and health status messages.
 
 Note that compared to the ICD, the notion of page and subframe has been swapped here
 
+## Ublox words layout
+
+Galileo FNAV corresponds to gnssId 2, sigId 3
+
+Words|MSB skipped|Data bits|LSB skipped
+:-|-:|-:|-:
+1 to 6|0|32|0
+7|0|22|10
+
 ## Header
 
 6 bits mapped as follows:
