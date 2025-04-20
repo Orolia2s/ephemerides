@@ -2,11 +2,14 @@
 Ublox-specific
 """
 
+from collections import namedtuple
+
 from more_itertools import grouper
 
 from gnss_parser import Constellation
 from gnss_parser.bits import (SingleWordBitReaderMsb, append_lsb, discard_lsb,
                               keep_lsb, xor_bits)
+from gnss_parser.yaml import ensure_fields
 
 message_from_ublox = {
     (Constellation.GPS, 0): 'LNAV-L',   # L1 C/A (Coarse Acquisition)
@@ -16,6 +19,40 @@ message_from_ublox = {
     (Constellation.GLONASS, 0): 'L1OF', # L1
     #(Constellation.GLONASS, 2): 'L1OF', # L2
 }
+
+class RangeList:
+    def __init__(self, iterable):
+        self.as_list = []
+        self.human_readable = []
+        for element in iterable:
+            if isinstance(element, list):
+                self.as_list += range(element[0], element[1] + 1)
+                self.human_readable += [f'{element[0]} to {element[1]}']
+        self.as_set = set(self.as_list)
+
+    def __str__(self):
+        return ', '.join(self.human_readable)
+
+class UbloxLayout(namedtuple('UbloxLayout', ['words', 'discard_msb', 'keep'])):
+    @classmethod
+    def from_icd(cls, icd: dict):
+        ensure_fields('ublox layout element', icd, ['words', 'keep'])
+        return cls(words=icd['words'], keep=icd['keep'], discard_msb=icd.get('discard_msb', None))
+
+class Ublox:
+    def __init__(self, signal: int, layout: list[UbloxLayout]):
+        self.signal = signal
+        self.words = {}
+        for x in layout:
+            words = RangeList(x.words)
+            for word in words.as_list:
+                self.words[word] = x
+        self.upper_bound = 1 + max(self.words.keys())
+
+    @classmethod
+    def from_icd(cls, icd: dict):
+        ensure_fields('ublox', icd, ['signal', 'layout'])
+        return cls(signal=icd['signal'], layout=map(UbloxLayout.from_icd, icd['layout']))
 
 def little_endian_32(byte_array: bytes) -> list[int]:
     """
