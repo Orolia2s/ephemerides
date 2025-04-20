@@ -1,83 +1,25 @@
-"""
-Code related to parsing binary and interpreting it as a sequence of fields of varying widths
-"""
-
-import sys
 import logging
-
-from types import SimpleNamespace
+import sys
 from collections import defaultdict
+
 from more_itertools import grouper
 
-from astropy.units import Unit
+from gnss_parser.bits import (Ordering, SingleWordBitReaderMsb,
+                              complementary_half, twos_complement)
+from gnss_parser.field import FieldArray
+from gnss_parser.yaml import ensure_fields, import_fields
 
-from gnss_parser import ensure_fields, import_fields, Ordering, SingleWordBitReaderMsb, complementary_half, twos_complement
-
-class Field:
-    """
-    Represents a single field.
-    No name would represent padding of reserved
-    """
-    def __init__(self, field: dict[str]):
-        ensure_fields('format list element', field, ['bits'])
-        import_fields(self, field, ['name', 'bits', 'value', 'latex', 'shift', 'unit', 'half', 'signed', 'factor'])
-        if self.unit:
-            self.unit = Unit(self.unit)
-        if self.factor and self.shift:
-            raise Exception("Can't have both factor and shift !")
-        if self.half:
-            assert self.half in complementary_half, 'Half can only be ' + ' or '.join(complementary_half)
-            if not self.name:
-                raise Exception('Split field without name !')
-
-    def parse(self, reader, destination):
-        value = reader.read(self.bits)
-        if self.half:
-            logging.debug(f'Found the {self.half} half of {self.name} : {value:0{self.bits}b}')
-            destination.halves[self.name][self.half] = (value, self)
-            return
-        if self.value != None and self.value != value:
-            logging.warning(f'Field "{self.name}" didn\'t have expected value of {self.value}, instead: {value}')
-        if self.signed:
-            value = twos_complement(value, self.bits)
-        if self.shift:
-            value *= 2 ** self.shift
-        if self.factor:
-            value *= self.factor
-        if self.unit:
-            value *= self.unit
-        if self.name:
-            # print(f'\t{self.name}: {value}')
-            setattr(destination, self.name, value)
-
-class Parser:
-    """
-    Represent a continuous sequence of fields
-    """
-
-    def __init__(self, fields: list[dict[str]]):
-        self.fields = list(map(Field, fields))
-        self.bit_count = sum(f.bits for f in self.fields)
-
-    def parse(self, reader):
-        result = SimpleNamespace()
-        result.halves = defaultdict(dict)
-        for field in self.fields:
-            field.parse(reader, result)
-        return result
 
 class GnssFormat:
-    """
-    """
 
     def __init__(self, icd: dict[str]):
         ensure_fields('top level', icd, ['header', 'formats', 'metadata', 'order'])
         ensure_fields('metadata', icd['metadata'], ['constellation', 'message'])
         import_fields(self, icd['metadata'], ['constellation', 'message', 'description'])
 
-        self.header = Parser(icd['header'])
+        self.header = FieldArray.from_icd(icd['header'])
         if 'page_header' in icd:
-            self.page_header = Parser(icd['page_header'])
+            self.page_header = FieldArray.from_icd(icd['page_header'])
 
         self.order = Ordering[icd['order']]
 
@@ -86,7 +28,7 @@ class GnssFormat:
         for format in icd['formats']:
             ensure_fields('format', format, ['subframe', 'fields'])
             subframe = format['subframe']
-            parser = Parser(format['fields'])
+            parser = FieldArray.from_icd(format['fields'])
             description = format['description'] if 'description' in format else None
             if 'pages' in format:
                 pages = set()

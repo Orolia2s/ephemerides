@@ -4,6 +4,7 @@ Yaml specific code
 
 import logging
 
+
 def ensure_fields(location: str, obj: dict[str], fields: list[str]):
     """
     Raise an exception if one of the expected fields is missing

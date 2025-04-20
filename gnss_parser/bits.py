@@ -5,6 +5,7 @@ Functions and types related to bit manipulation
 from enum import Enum
 from functools import cache
 
+
 def twos_complement(integer: int, bits: int) -> int:
     """
     Apply 2s complement with the specified amount of bits

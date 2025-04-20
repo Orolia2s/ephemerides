@@ -3,11 +3,11 @@ Handle subframes accross time, calling subscribers when sufficient data has been
 """
 
 import logging
-
 from collections import defaultdict
 from types import SimpleNamespace
 
-from gnss_parser import Constellation, ephemeris
+from gnss_parser.constellations import Constellation
+from gnss_parser.subscribers.ephemerides import ephemeris
 
 storage = {}
 
