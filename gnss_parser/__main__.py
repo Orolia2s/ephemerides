@@ -9,14 +9,16 @@ python -m gnss_parser
 import argparse
 import logging
 import sys
+
 import yaml
-
-from serial import Serial
 from pyubx2 import UBXReader
+from serial import Serial
 
-from gnss_parser import (GnssFormat, ensure_fields, message_from_ublox,
-                         reader_from_ublox, Constellation,
-                         format_to_markdown, accumulate)
+from gnss_parser import (GnssFormat, accumulate, format_to_markdown,
+                         message_from_ublox, reader_from_ublox)
+from gnss_parser.constellations import Constellation
+from gnss_parser.yaml import ensure_fields
+
 
 def interpret(obj: dict[str]):
     """

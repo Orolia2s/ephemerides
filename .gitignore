@@ -1,2 +1,5 @@
 *.pdf
 *.pyc
+.python-version
+.zig-cache
+zig-out

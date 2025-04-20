@@ -2,9 +2,10 @@
 GNSS specific code
 """
 
-from enum import Enum
+from enum import IntEnum
 
-class Constellation(Enum):
+
+class Constellation(IntEnum):
     """
     GNSS system list, that conveniently corresponds to ublox representation
     """

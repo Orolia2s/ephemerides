@@ -4,8 +4,9 @@ Ublox-specific
 
 from more_itertools import grouper
 
-from gnss_parser import (Constellation, xor_bits, SingleWordBitReaderMsb,
-                         keep_lsb, append_lsb, discard_lsb)
+from gnss_parser import Constellation
+from gnss_parser.bits import (SingleWordBitReaderMsb, append_lsb, discard_lsb,
+                              keep_lsb, xor_bits)
 
 message_from_ublox = {
     (Constellation.GPS, 0): 'LNAV-L',   # L1 C/A (Coarse Acquisition)
