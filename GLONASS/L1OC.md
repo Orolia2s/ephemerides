@@ -1,5 +1,12 @@
 # GLONASS L1OC
 
+Transmitted on the L1 sub-band (~1.6 GHz)
+
+Translation from the ICD to the YAML:
+  - superframe -> frame
+  - frame -> subframe
+  - string -> page
+
 ## Header
 
 1 bits mapped as follows:

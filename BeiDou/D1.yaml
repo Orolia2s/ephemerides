@@ -3,10 +3,19 @@ metadata:
   constellation: BeiDou
   message: D1
   description: |
-    Sent on the B3I signal (1269.520 MHz)
+    Sent on the B1I (1561.098 MHz) and B3I signals (1269.520 MHz)
 frame_count: 24
 subframe_count: 5
 word_count: 10
+ublox:
+  signal: 0
+  layout:
+    - words: [1]
+      discard_msb: 2 # A 30 bit word stored on 32 bits
+      keep: 26 # 26 information bits, 4 parity bits
+    - words: [[2, 10]]
+      discard_msb: 2 # A 30 bit word stored on 32 bits
+      keep: 22 # 22 information bits, 8 parity bits
 order: msb_first
 header:
   - name: preamble
@@ -23,13 +32,6 @@ page_header:
   - bits: 1
   - name: page_id
     bits: 7
-ublox:
-  - words: [1]
-    discard_msb: 2 # A 30 bit word stored on 32 bits
-    keep: 26 # 26 information bits, 4 parity bits
-  - words: [[2, 10]]
-    discard_msb: 2 # A 30 bit word stored on 32 bits
-    keep: 22 # 22 information bits, 8 parity bits
 formats:
   - subframe: 1
     description: Ionospheric and time data

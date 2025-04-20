@@ -2,8 +2,22 @@ kind: GNSS_format
 metadata:
   constellation: GLONASS
   message: L1OC
+  description: |
+    Transmitted on the L1 sub-band (~1.6 GHz)
+
+    Translation from the ICD to the YAML:
+      - superframe -> frame
+      - frame -> subframe
+      - string -> page
 frame_count: 1
 subframe_count: 5
+ublox:
+  signal: 0
+  layout:
+    - words: [[1, 2]]
+      keep: 32
+    - words: [3]
+      keep: 13 # 77 data bits
 order: msb_first
 header:
   - name: idle_chip
@@ -12,11 +26,6 @@ header:
 page_header:
   - name: page_id
     bits: 4
-ublox:
-  - words: [[1, 2]]
-    keep: 32
-  - words: [3]
-    keep: 13 # 77 data bits
 formats:
   - subframe: 1
     pages: [1]
