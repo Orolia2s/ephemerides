@@ -34,6 +34,9 @@ pub fn read_ublox_from(path: [:0]const u8, options: ReadUbloxOptions) !void {
 export fn ublox_callback(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
     const message: *o2s.ublox_message_t = c_message;
     if (message.ublox_class == o2s.RXM and message.type == o2s.SFRBX) {
-        std.debug.print("Got one", .{});
+        const subframe: *o2s.struct_ublox_navigation_data = @ptrCast(message);
+        std.debug.assert(subframe.word_count * @sizeOf(u32) + @sizeOf(o2s.struct_ublox_navigation_data) - @sizeOf(o2s.struct_ublox_header) == message.length);
+        std.debug.print("Got one: {any}\n", .{subframe});
+        std.log.info("Received a subframe of {s}, {}\n", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), subframe.signal });
     }
 }
