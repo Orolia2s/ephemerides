@@ -2,6 +2,14 @@
 
 Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
 
+## Ublox words layout
+
+GPS LNAV-L corresponds to gnssId 0, sigId 0
+
+Words|MSB skipped|Data bits|LSB skipped
+:-|-:|-:|-:
+1 to 10|2|24|6
+
 ## Header
 
 48 bits mapped as follows:

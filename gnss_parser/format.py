@@ -6,6 +6,7 @@ from more_itertools import grouper
 
 from gnss_parser.bits import (Ordering, SingleWordBitReaderMsb,
                               complementary_half, twos_complement)
+from gnss_parser.constellations import Constellation
 from gnss_parser.field import FieldArray
 from gnss_parser.ublox import Ublox
 from gnss_parser.yaml import ensure_fields, import_fields
@@ -18,6 +19,7 @@ class GnssFormat:
         ensure_fields('metadata', icd['metadata'], ['constellation', 'message'])
         import_fields(self, icd['metadata'], ['constellation', 'message', 'description'])
 
+        self.constellation = Constellation[self.constellation]
         self.ublox = Ublox.from_icd(icd['ublox']) if 'ublox' in icd else None
         self.header = FieldArray.from_icd(icd['header'])
         if 'page_header' in icd:
