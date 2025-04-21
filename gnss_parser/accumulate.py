@@ -71,15 +71,12 @@ def accumulate(message_type: str, satellite: int, subframe: int, page: int | Non
 
     key = (subframe, page) if page else subframe
     storage[message_type][satellite][key] = message
-    print(f'{message_type} > {satellite} > {key}')
-    print('-' * 30)
 
     for sought_subframes, callback in subscribers[message_type].items():
         sought_subframes = set(sought_subframes)
         if key not in sought_subframes:
             continue
         stored_subframes = storage[message_type][satellite]
-        print(f'In {message_type}, we are looking for {sought_subframes} for satellite {satellite} : {set(stored_subframes.keys())}')
+        logging.debug(f'In {message_type}, we are looking for {sought_subframes} for satellite {satellite} : {set(stored_subframes.keys())}')
         if sought_subframes <= stored_subframes.keys():
             callback(merge(list(stored_subframes[key] for key in sought_subframes)))
-            print()
