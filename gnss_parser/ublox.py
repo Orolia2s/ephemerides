@@ -9,32 +9,8 @@ from more_itertools import grouper
 from gnss_parser import Constellation
 from gnss_parser.bits import (SingleWordBitReaderMsb, append_lsb, discard_lsb,
                               keep_lsb, xor_bits)
-from gnss_parser.yaml import ensure_fields
+from gnss_parser.yaml import RangeList, ensure_fields
 
-message_from_ublox = {
-    (Constellation.GPS, 0): 'LNAV-L',   # L1 C/A (Coarse Acquisition)
-    (Constellation.BeiDou, 0): 'D1',    # B1I D1
-    #(Constellation.BeiDou, 2): 'D1',    # B2I D1
-    (Constellation.Galileo, 3): 'FNAV', # E5aI
-    (Constellation.GLONASS, 0): 'L1OF', # L1
-    #(Constellation.GLONASS, 2): 'L1OF', # L2
-}
-
-class RangeList:
-    def __init__(self, iterable):
-        self.as_list = []
-        self.human_readable = []
-        for element in iterable:
-            if isinstance(element, list):
-                self.as_list += range(element[0], element[1] + 1)
-                self.human_readable.append(f'{element[0]} to {element[1]}')
-            else:
-                self.as_list.append(element)
-                self.human_readable.append(str(element))
-        self.as_set = set(self.as_list)
-
-    def __str__(self):
-        return ', '.join(self.human_readable)
 
 class UbloxLayout(namedtuple('UbloxLayout', ['words', 'discard_msb', 'keep'])):
     @classmethod

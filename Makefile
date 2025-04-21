@@ -23,7 +23,7 @@ clean:
 
 $(MARKDOWN): %.md: %.yaml | $(VENV_ACTIVATE)
 	test -z "${VIRTUAL_ENV}" && source $|
-	python -m gnss_parser $< -o md > $@
+	python -m gnss_parser -v $< -o md > $@
 
 $(VENV_ACTIVATE): requirements.txt
 	test -d $(VENV_PATH) || python3 -m venv --prompt $(VENV_NAME) --upgrade-deps $(VENV_PATH)
