@@ -23,3 +23,29 @@ def import_fields(destination, source: dict[str], fields: list[str]):
     extras = source.keys() - set(fields)
     if extras:
         logging.warning(f'Ignored extra fields: {extras}')
+
+class RangeList:
+    """
+    [3, 5, [7, 10]] -> {3, 5, 7, 8, 9, 10}, "3, 5, 7 to 10"
+    """
+
+    def __init__(self, iterable):
+        self.as_list = []
+        self.human_readable = []
+        for element in iterable:
+            if isinstance(element, list):
+                self.as_list += range(element[0], element[1] + 1)
+                self.human_readable.append(f'{element[0]} to {element[1]}')
+            else:
+                self.as_list.append(element)
+                self.human_readable.append(str(element))
+        self.as_set = set(self.as_list)
+
+    def __iter__(self):
+        return self.as_list.__iter__()
+
+    def __contains__(self, element):
+        return self.as_set.__contains__(element)
+
+    def __str__(self):
+        return ', '.join(self.human_readable)

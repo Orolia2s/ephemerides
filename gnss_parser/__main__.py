@@ -14,18 +14,10 @@ import yaml
 from pyubx2 import UBXReader
 from serial import Serial
 
-from gnss_parser import (GnssFormat, accumulate, format_to_markdown,
-                         message_from_ublox, reader_from_ublox)
+from gnss_parser import GnssFormatHandler, accumulate, reader_from_ublox
 from gnss_parser.constellations import Constellation
+from gnss_parser.generators.markdown import handler_to_markdown
 from gnss_parser.yaml import ensure_fields
-
-
-def interpret(obj: dict[str]):
-    """
-    Interpret an object created from a YAML file
-    """
-    ensure_fields('top level', obj, ['kind'])
-    return {'GNSS_format': GnssFormat}[obj['kind']](obj)
 
 if __name__ == '__main__':
     cli_parser = argparse.ArgumentParser(prog = 'Ephemerides',
@@ -36,8 +28,8 @@ if __name__ == '__main__':
                        help = 'a file to parse as ublox stream')
     group.add_argument('-s', '--serial', type = str,
                        help = 'the serial port to listen to')
-    group.add_argument('-o', '--output', choices = ['md'],
-                       help = 'Instead of parsing, generate to sdtin in the language provided')
+    group.add_argument('-o', '--output', choices = ['md', 'zig'],
+                       help = 'Instead of parsing, generate to sdtout in the language provided')
     cli_parser.add_argument('files', metavar = 'FILE', type = str, nargs = '+',
                             help = 'a yaml file to process')
     cli_parser.add_argument('-v', '--verbose', action='store_true')
@@ -46,22 +38,23 @@ if __name__ == '__main__':
     logging.basicConfig(level = logging.DEBUG if cli_args.verbose else logging.INFO)
     logging.info('Starting Ephemerides Generator with arguments: %s', str(cli_args))
 
+    handler = GnssFormatHandler()
+
     # Parse ICDs to define formats
-    formats = {}
     for file_name in cli_args.files:
         try:
             with open(file_name, encoding='utf8') as f:
-                format_parser = interpret(yaml.safe_load(f))
-                formats[format_parser.message] = format_parser
+                handler.parse_icd(yaml.safe_load(f))
         except Exception as err:
             logging.exception(err)
 
-    # Read ublox stream using formats
+    # Generate documentation / code from ICDs
     if cli_args.output:
-        generate = {'md': format_to_markdown}[cli_args.output]
-        for name, format in formats.items():
-            print(generate(format))
+        generate = {'md': handler_to_markdown}[cli_args.output]
+        print(generate(handler))
         sys.exit(0)
+
+    # Read ublox stream using formats
     if cli_args.serial:
         stream = Serial(cli_args.serial, 115200, timeout = 3)
     else:
@@ -70,13 +63,8 @@ if __name__ == '__main__':
     for _, ublox_message in reader:
         if ublox_message.identity != 'RXM-SFRBX':
             continue
-        constellation = Constellation(ublox_message.gnssId)
-        message = message_from_ublox.get((constellation, ublox_message.sigId), '(Unsupported)')
-        if message not in formats:
-            continue
         try:
-            header, page_header, parsed = formats[message].parse_ublox_subframe(reader_from_ublox[message](ublox_message.payload[8:]))
-            # print(f'Subframe of SV {ublox_message.svId}', parsed)
+            header, page_header, parsed = handler.parse_ublox_subframe(ublox_message.gnssId, ublox_message.sigId, reader_from_ublox[message](ublox_message.payload[8:]))
             accumulate(message, ublox_message.svId, header.subframe_id, page_header.page_id if page_header else None, header.time_of_week, parsed)
         except Exception as err:
             logging.exception(err)
