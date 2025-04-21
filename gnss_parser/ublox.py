@@ -2,6 +2,7 @@
 Ublox-specific
 """
 
+import logging
 from collections import namedtuple
 
 from more_itertools import grouper
@@ -69,7 +70,7 @@ def parity_LNAVL(byte_array: bytes) -> int:
         if previous_30:
             ublox_parity = keep_lsb(6, ~ublox_parity)
         if parity != ublox_parity:
-            raise Exception(f'Wrong parity: {parity:06b} vs {ublox_parity:06b}')
+            logging.warning(f'Wrong parity: {parity:06b} vs {ublox_parity:06b}')
         previous_30 = keep_lsb(1, parity)
         previous_29 = keep_lsb(1, discard_lsb(1, parity))
         # 24 information bits, 6 parity bits

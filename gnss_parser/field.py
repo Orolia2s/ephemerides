@@ -1,9 +1,10 @@
 import logging
+from collections import defaultdict
 from types import SimpleNamespace
 
 from astropy.units import Unit
 
-from gnss_parser.bits import complementary_half
+from gnss_parser.bits import complementary_half, twos_complement
 from gnss_parser.yaml import ensure_fields, import_fields
 
 
@@ -62,3 +63,10 @@ class FieldArray:
     @classmethod
     def from_icd(cls, icd: list[dict[str]]):
         return cls(list(map(Field.from_icd, icd)))
+
+    def parse(self, reader):
+        result = SimpleNamespace()
+        result.halves = defaultdict(dict)
+        for field in self.fields:
+            field.parse(reader, result)
+        return result
