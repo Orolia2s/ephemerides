@@ -13,7 +13,7 @@ markdown: $(MARKDOWN)
 
 run: $(YAML_ICDS) | $(VENV_ACTIVATE)
 	test -z "${VIRTUAL_ENV}" && source $|
-	sudo -E $(VENV_PATH)/bin/python -m gnss_parser $^ -s /dev/ttyACM0 -v
+	sudo -E $(VENV_PATH)/bin/python -m gnss_parser $(addprefix -I ,$^) parse /dev/ttyACM0 --serial
 
 clean:
 #	$(RM) -r $(VENV_PATH)
@@ -23,7 +23,7 @@ clean:
 
 $(MARKDOWN): %.md: %.yaml | $(VENV_ACTIVATE)
 	test -z "${VIRTUAL_ENV}" && source $|
-	python -m gnss_parser -v $< -o md > $@
+	python -m gnss_parser --verbose --icd $< translate md > $@
 
 $(VENV_ACTIVATE): requirements.txt
 	test -d $(VENV_PATH) || python3 -m venv --prompt $(VENV_NAME) --upgrade-deps $(VENV_PATH)

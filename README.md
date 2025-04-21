@@ -91,16 +91,9 @@ Here are the parameters actually transmitted:
 The mean anomaly M is a mathematically convenient fictitious "angle" which varies linearly with time, but which does not correspond to a real geometric angle.
 The mean motion can be seen as the derivative of the mean anomaly.
 
-To find the mean motion:
-
-$$ n_0 = \sqrt{\frac{\mu}{A^3}} $$
-
-$$ n   = n_0 + \Delta_n $$
-
 ## GNSS Receivers
 
 For now only u-blox receivers are supported, but the YAMLs are agnostic of the receiver, as they describe the raw message as it is emitted by the satellites.
-Receiver specific code is needed to get the raw messages, and a next step would be to describe how bits are grouped by each receiver in dedicated YAML.
 
 ### u-blox
 
@@ -108,4 +101,4 @@ For a list of GNSS messages supported by F10 receivers, see [u-blox.com/u-blox-F
 
 #### Ordering
 
-Regardless of the order bits are transmitted from the satellite to the receiver, ublox gives us the subframes as an array of 4-bytes little-endian unsigned integers
+Regardless of the order bits are transmitted from the satellite to the receiver, ublox provides the subframes as an array of 4-bytes little-endian unsigned integers

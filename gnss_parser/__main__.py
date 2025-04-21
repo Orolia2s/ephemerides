@@ -21,18 +21,17 @@ from gnss_parser.yaml import ensure_fields
 
 if __name__ == '__main__':
     cli_parser = argparse.ArgumentParser(prog = 'Ephemerides',
-        description = 'Parse yaml ICD files, to generate code or parse ublox stream',
+        description = 'Read yaml ICD files, to generate code or parse ublox stream',
         epilog = 'Orolia 2S')
-    group = cli_parser.add_mutually_exclusive_group(required = True)
-    group.add_argument('-f', '--file', type = str,
-                       help = 'a file to parse as ublox stream')
-    group.add_argument('-s', '--serial', type = str,
-                       help = 'the serial port to listen to')
-    group.add_argument('-o', '--output', choices = ['md', 'zig'],
-                       help = 'Instead of parsing, generate to sdtout in the language provided')
-    cli_parser.add_argument('files', metavar = 'FILE', type = str, nargs = '+',
-                            help = 'a yaml file to process')
-    cli_parser.add_argument('-v', '--verbose', action='store_true')
+    cli_parser.add_argument('-v', '--verbose', action='store_true', help = 'Display debug logs')
+    cli_parser.add_argument('-I', '--icd', dest = 'icds', metavar = 'FILE', type = str, action = 'append', required = True, help = 'Provide an input YAML ICD. This option can be specified multiple times')
+    subparsers = cli_parser.add_subparsers(required = True, dest = 'subcommand')
+    translate = subparsers.add_parser('translate', help = 'Translate the ICDs to a desired format and exit')
+    translate.add_argument('format', choices = ('md', 'zig'), help = 'Generate ICDs to stdout in the language provided')
+    parse_ubx = subparsers.add_parser('parse', help = 'Parse a stream of ublox messages')
+    parse_ubx.add_argument('path', type = str, help = 'The path of a file to parse as ublox stream')
+    parse_ubx.add_argument('-s', '--serial', action = 'store_true', help = 'The file to parse is a serial port and must be configured')
+    parse_ubx.add_argument('-b', '--baudrate', metavar = 'INT', type = int, default = 115200, help = 'Specify the baudrate to use when configuring the serial port. Defaults to 115200')
     cli_args = cli_parser.parse_args()
 
     logging.basicConfig(level = logging.DEBUG if cli_args.verbose else logging.INFO)
@@ -41,7 +40,7 @@ if __name__ == '__main__':
     handler = GnssFormatHandler()
 
     # Parse ICDs to define formats
-    for file_name in cli_args.files:
+    for file_name in cli_args.icds:
         try:
             with open(file_name, encoding='utf8') as f:
                 handler.parse_icd(yaml.safe_load(f))
@@ -49,16 +48,16 @@ if __name__ == '__main__':
             logging.exception(err)
 
     # Generate documentation / code from ICDs
-    if cli_args.output:
-        generate = {'md': handler_to_markdown}[cli_args.output]
+    if cli_args.subcommand == 'translate':
+        generate = {'md': handler_to_markdown}[cli_args.format]
         print(generate(handler))
         sys.exit(0)
 
     # Read ublox stream using formats
     if cli_args.serial:
-        stream = Serial(cli_args.serial, 115200, timeout = 3)
+        stream = Serial(cli_args.path, cli_args.baudrate, timeout = 3)
     else:
-        stream = open(cli_args.file, 'rb')
+        stream = open(cli_args.path, 'rb')
     reader = UBXReader(stream, protfilter = 2)
     for _, ublox_message in reader:
         if ublox_message.identity != 'RXM-SFRBX':
