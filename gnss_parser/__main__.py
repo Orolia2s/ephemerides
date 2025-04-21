@@ -68,6 +68,6 @@ if __name__ == '__main__':
             message, header, page_header, parsed = handler.parse_ublox_subframe(ublox_message.gnssId, ublox_message.sigId, ublox_message.payload[8:])
             if cli_args.dump:
                 print(format_as_json(message, ublox_message.svId, header, page_header, parsed), end='\n---\n')
-            accumulate(message, ublox_message.svId, header.subframe_id, page_header.page_id if page_header else None, header.time_of_week, parsed)
+            accumulate(message, ublox_message.svId, header.subframe_id, page_header.page_id if page_header else None, header.time_of_week if hasattr(header, 'time_of_week') else None, parsed)
         except Exception as err:
             logging.exception(err)
