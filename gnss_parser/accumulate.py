@@ -18,6 +18,9 @@ subscribers = {
     'D1': {
         (2, 3): ephemeris
     },
+    'FNAV': {
+        (2, 3): ephemeris,
+    }
 }
 
 def merge(messages: list[SimpleNamespace]) -> SimpleNamespace:

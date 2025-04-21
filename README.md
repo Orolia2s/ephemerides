@@ -97,7 +97,7 @@ For now only u-blox receivers are supported, but the YAMLs are agnostic of the r
 
 ### u-blox
 
-For a list of GNSS messages supported by F10 receivers, see [u-blox.com/u-blox-F10-SPG-6.00_InterfaceDescription_UBX.pdf](https://content.u-blox.com/sites/default/files/documents/u-blox-F10-SPG-6.00_InterfaceDescription_UBX-23002975.pdf) 1.5.4 page 15. To get raw messages we use the `RXM-SFRBX` messages. The general words layout per constellation is described in [u-blox.com/ZED-F9T_IntegrationManual_UBX.pdf](https://content.u-blox.com/sites/default/files/ZED-F9T_IntegrationManual_UBX-21040375.pdf) from page 57 to 64
+For a list of GNSS messages supported by F9P receivers, see [u-blox.com/u-blox-F9-HPG-1.51_InterfaceDescription.pdf](https://content.u-blox.com/sites/default/files/documents/u-blox-F9-HPG-1.51_InterfaceDescription_UBXDOC-963802114-13124.pdf) section 1.5.4 page 20. To get raw messages we use the `RXM-SFRBX` messages. The general words layout per constellation is described in [u-blox.com/ZED-F9P_IntegrationManual_UBX.pdf](https://content.u-blox.com/sites/default/files/ZED-F9P_IntegrationManual_UBX-18010802.pdf) from page 74 to 81
 
 #### Ordering
 
