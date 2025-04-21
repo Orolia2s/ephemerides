@@ -18,6 +18,7 @@ from gnss_parser import GnssFormatHandler, accumulate
 from gnss_parser.constellations import Constellation
 from gnss_parser.generators.markdown import handler_to_markdown
 from gnss_parser.yaml import ensure_fields
+from gnss_parser.to_json import format_as_json
 
 if __name__ == '__main__':
     cli_parser = argparse.ArgumentParser(prog = 'Ephemerides',
@@ -32,6 +33,7 @@ if __name__ == '__main__':
     parse_ubx.add_argument('path', type = str, help = 'The path of a file to parse as ublox stream')
     parse_ubx.add_argument('-s', '--serial', action = 'store_true', help = 'The file to parse is a serial port and must be configured')
     parse_ubx.add_argument('-b', '--baudrate', metavar = 'INT', type = int, default = 115200, help = 'Specify the baudrate to use when configuring the serial port. Defaults to 115200')
+    parse_ubx.add_argument('-d', '--dump', action = 'store_true', help = 'In addition to parsing, output a yaml stream of parsed messages to stdout')
     cli_args = cli_parser.parse_args()
 
     logging.basicConfig(level = logging.DEBUG if cli_args.verbose else logging.INFO)
@@ -64,6 +66,8 @@ if __name__ == '__main__':
             continue
         try:
             message, header, page_header, parsed = handler.parse_ublox_subframe(ublox_message.gnssId, ublox_message.sigId, ublox_message.payload[8:])
+            if cli_args.dump:
+                print(format_as_json(message, ublox_message.svId, header, page_header, parsed), end='\n---\n')
             accumulate(message, ublox_message.svId, header.subframe_id, page_header.page_id if page_header else None, header.time_of_week, parsed)
         except Exception as err:
             logging.exception(err)
