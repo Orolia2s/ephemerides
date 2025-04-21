@@ -9,7 +9,7 @@ from gnss_parser.bits import (Ordering, SingleWordBitReaderMsb,
                               complementary_half, twos_complement)
 from gnss_parser.constellations import Constellation
 from gnss_parser.field import FieldArray
-from gnss_parser.ublox import Ublox
+from gnss_parser.ublox import Ublox, reader_from_ublox
 from gnss_parser.yaml import RangeList, ensure_fields, import_fields
 
 
@@ -29,12 +29,13 @@ class GnssFormatHandler:
             self.ublox_mapping[message.constellation.value, message.ublox.signal] = message.name
 
     def parse_subframe(self, message_name: str, reader):
-        return self.messages[message_name].parse_subframe()
+        return self.messages[message_name].parse_subframe(reader)
 
-    def parse_ublox_subframe(self, gnssId: int, sigId: int, reader):
+    def parse_ublox_subframe(self, gnssId: int, sigId: int, words: bytes):
         if (gnssId, sigId) not in self.ublox_mapping:
             raise Exception(f'Unknown ublox (consellation, signal) combination ({gnssId}, {sigId})')
-        return self.parse_subframe(self.ublox_mapping[gnssId, sigId], reader)
+        message = self.ublox_mapping[gnssId, sigId]
+        return message, *self.parse_subframe(message, reader_from_ublox[message](words))
 
 class GnssFormat(SimpleNamespace):
 

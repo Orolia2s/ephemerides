@@ -14,7 +14,7 @@ import yaml
 from pyubx2 import UBXReader
 from serial import Serial
 
-from gnss_parser import GnssFormatHandler, accumulate, reader_from_ublox
+from gnss_parser import GnssFormatHandler, accumulate
 from gnss_parser.constellations import Constellation
 from gnss_parser.generators.markdown import handler_to_markdown
 from gnss_parser.yaml import ensure_fields
@@ -58,13 +58,13 @@ if __name__ == '__main__':
     if cli_args.serial:
         stream = Serial(cli_args.serial, 115200, timeout = 3)
     else:
-        stream = open(cli_args.file, 'rb', encoding='utf8')
+        stream = open(cli_args.file, 'rb')
     reader = UBXReader(stream, protfilter = 2)
     for _, ublox_message in reader:
         if ublox_message.identity != 'RXM-SFRBX':
             continue
         try:
-            header, page_header, parsed = handler.parse_ublox_subframe(ublox_message.gnssId, ublox_message.sigId, reader_from_ublox[message](ublox_message.payload[8:]))
+            message, header, page_header, parsed = handler.parse_ublox_subframe(ublox_message.gnssId, ublox_message.sigId, ublox_message.payload[8:])
             accumulate(message, ublox_message.svId, header.subframe_id, page_header.page_id if page_header else None, header.time_of_week, parsed)
         except Exception as err:
             logging.exception(err)
