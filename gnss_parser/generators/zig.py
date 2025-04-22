@@ -71,9 +71,10 @@ class ZigFunction(ZigWriter):
         tokens = []
         if self.public:
             tokens.append('pub')
-        tokens += ['fn', Zig.identifier(self.name), '(', ', '.join(map(ZigVariable.argdef, self.arguments)), ')', '->', self.return_type, '{']
+        tokens += ['fn', Zig.identifier(self.name), '(', ', '.join(map(ZigVariable.argdef, self.arguments)), ')', self.return_type, '{']
         self.empty_line()
         super().write_line(' '.join(tokens))
+        return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         super().write_line('}')
@@ -84,15 +85,14 @@ def handler_to_zig(self, output: TextIO):
     writer.empty_line()
     writer.const('SkippingBitReader', 'utilz.SkippingBitReader')
     for _, message in sorted(self.messages.items()):
-        writer.empty_line()
         format_to_zig(message, writer)
     with writer.function('main', [], 'void', True) as main:
         pass
 
 def format_to_zig(self, writer: ZigWriter):
-    writer.comment(f'Code for {self.name}')
     if self.ublox:
         ublox_to_zig(self.ublox, self.name, writer)
+
 
 def ublox_to_zig(self, message_name: str, writer: ZigWriter):
     to_skip = [self.per_word[i].discard_msb for i in range(1, self.count + 1)]

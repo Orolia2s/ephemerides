@@ -34,6 +34,6 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     });
-    utils.addImport("o2s", bind.createModule());
+    utils.addImport("o2s", bind.addModule("o2s"));
     utils.linkLibrary(ublox.artifact("ublox_parser"));
 }
