@@ -20,13 +20,16 @@ pub fn read_ublox_from(path: [:0]const u8, options: ReadUbloxOptions) !void {
         //file = port.file;
     } else {
         file = o2s.file_open(path, o2s.O_RDONLY);
+        if (!file.opened)
+            return error.UnableToOpenFile;
     }
     defer o2s.file_close(&file);
 
     var ublox_reader = o2s.ublox_reader_init(&file.stream);
     defer o2s.ublox_reader_close(&ublox_reader);
 
-    o2s.ublox_subscribe(&ublox_reader, &ublox_callback);
+    if (!o2s.ublox_subscribe(&ublox_reader, &ublox_callback))
+        return error.OutOfMemory;
     if (!o2s.ublox_reader_loop(&ublox_reader))
         return error.UnableToStartTimer;
 }
