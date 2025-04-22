@@ -12,6 +12,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
     exe_mod.addImport("utils", utils.module("utilz"));
+    exe_mod.addImport("o2s", utils.module("o2s"));
     const exe = b.addExecutable(.{
         .name = "ephemerides",
         .root_module = exe_mod,

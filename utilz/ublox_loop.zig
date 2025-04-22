@@ -2,11 +2,17 @@ const std = @import("std");
 
 const o2s = @import("o2s");
 
+const UbloxCallback = *const fn (message: [*c]o2s.ublox_message_t) callconv(.C) void;
+
 const ReadUbloxOptions = struct {
     /// If this is true, the stream will be considered infinite, and the port will be configured
     is_serial_port: bool,
     /// If the file is a serial port, its baudrate needs to be configured
     baudrate: ?i64 = null,
+    /// Function to call everytime a message is received
+    callback: UbloxCallback = default_callback,
+    // ...
+    timeout_ms: u32 = 1000,
 };
 
 /// Parse all RXM-SFRBX messages from the specified file.
@@ -27,19 +33,19 @@ pub fn read_ublox_from(path: [:0]const u8, options: ReadUbloxOptions) !void {
 
     var ublox_reader = o2s.ublox_reader_init(&file.stream);
     defer o2s.ublox_reader_close(&ublox_reader);
+    ublox_reader.timeout_ms = options.timeout_ms;
 
-    if (!o2s.ublox_subscribe(&ublox_reader, &ublox_callback))
+    if (!o2s.ublox_subscribe(&ublox_reader, options.callback))
         return error.OutOfMemory;
     if (!o2s.ublox_reader_loop(&ublox_reader))
         return error.UnableToStartTimer;
 }
 
-export fn ublox_callback(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
+export fn default_callback(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
     const message: *o2s.ublox_message_t = c_message;
     if (message.ublox_class == o2s.RXM and message.type == o2s.SFRBX) {
         const subframe: *o2s.struct_ublox_navigation_data = @ptrCast(message);
         std.debug.assert(subframe.word_count * @sizeOf(u32) + @sizeOf(o2s.struct_ublox_navigation_data) - @sizeOf(o2s.struct_ublox_header) == message.length);
-        std.debug.print("Got one: {any}\n", .{subframe});
-        std.log.info("Received a subframe of {s}, {}\n", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), subframe.signal });
+        std.log.info("Received a subframe of {s}, {}: {any}\n", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), subframe.signal, subframe });
     }
 }

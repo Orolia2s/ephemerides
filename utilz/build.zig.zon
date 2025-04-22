@@ -3,8 +3,8 @@
     .version = "0.0.0",
     .dependencies = .{
         .ublox_parser = .{
-            .url = "git+https://github.com/Orolia2s/ublox_parser?ref=master#dd4685f6de5a1ca5593a320ce629df5b65df9958",
-            .hash = "ublox_parser-0.2.1-PxZKDHPSAAAmYxI2qzIoQUIg-KeLKjdSsjGw18uCbpVJ",
+            .url = "git+https://github.com/Orolia2s/ublox_parser?ref=master#4a4c8fc1f60150f0ba32c8aff75e290f91f79dbb",
+            .hash = "ublox_parser-0.2.1-PxZKDBjTAABIrYhqBXXGMuJV1xlXw9swCcMyVv5N2X2j",
         },
         .libo2s = .{
             .url = "git+https://github.com/Orolia2s/libo2s?ref=master#7a93413a89950172f3e3014292ca262088a92424",
