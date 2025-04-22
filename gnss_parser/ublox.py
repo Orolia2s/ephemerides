@@ -25,9 +25,9 @@ class Ublox:
         self.layout = layout
         self.per_word = {}
         for x in layout:
-            for word in x.words.as_list:
+            for word in x.words:
                 self.per_word[word] = x
-        self.upper_bound = 1 + max(self.per_word.keys())
+        self.count = max(self.per_word.keys())
 
     @classmethod
     def from_icd(cls, icd: dict):

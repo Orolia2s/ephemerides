@@ -17,6 +17,7 @@ from serial import Serial
 from gnss_parser import GnssFormatHandler, accumulate
 from gnss_parser.constellations import Constellation
 from gnss_parser.generators.markdown import handler_to_markdown
+from gnss_parser.generators.zig import handler_to_zig
 from gnss_parser.yaml import ensure_fields
 from gnss_parser.to_json import format_as_json
 
@@ -51,7 +52,7 @@ if __name__ == '__main__':
 
     # Generate documentation / code from ICDs
     if cli_args.subcommand == 'translate':
-        generate = {'md': handler_to_markdown}[cli_args.format]
+        generate = {'md': handler_to_markdown, 'zig': handler_to_zig}[cli_args.format]
         print(generate(handler))
         sys.exit(0)
 
