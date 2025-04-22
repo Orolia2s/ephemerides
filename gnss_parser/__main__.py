@@ -52,8 +52,11 @@ if __name__ == '__main__':
 
     # Generate documentation / code from ICDs
     if cli_args.subcommand == 'translate':
-        generate = {'md': handler_to_markdown, 'zig': handler_to_zig}[cli_args.format]
-        print(generate(handler))
+        match cli_args.format:
+            case 'md':
+                print(handler_to_markdown(handler))
+            case 'zig':
+                handler_to_zig(handler, sys.stdout)
         sys.exit(0)
 
     # Read ublox stream using formats
