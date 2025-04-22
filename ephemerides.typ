@@ -83,7 +83,15 @@
             } else if "shift" in field {
               [$2^#int(field.shift)$]
             },
-            unit(field.at("unit", default: "")),
+            {
+              let u = field.at("unit", default: "")
+              let match = u.match(regex("^(.+)\^\(1/2\)$"))
+              if match != none {
+                $sqrt(#match.captures.first())$
+              } else {
+                unit(u)
+              }
+            },
           ))
         .flatten()
     )
