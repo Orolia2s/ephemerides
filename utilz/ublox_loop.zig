@@ -1,7 +1,7 @@
 const std = @import("std");
 const o2s = @import("o2s");
 
-const UbloxCallback = *const fn (message: [*c]o2s.ublox_message_t) callconv(.C) void;
+pub const UbloxCallback = *const fn (message: [*c]o2s.ublox_message_t) callconv(.C) void;
 
 const ReadUbloxOptions = struct {
     /// If this is true, the stream will be considered infinite, and the port will be configured
@@ -48,7 +48,7 @@ pub fn read_ublox_from(path: [:0]const u8, options: ReadUbloxOptions) !void {
         return error.UnableToStartTimer;
 }
 
-export fn default_callback(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
+fn default_callback(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
     const message: *o2s.ublox_message_t = c_message;
     var string: o2s.string_t = o2s.ublox_header_tostring(message);
     defer o2s.string_clear(&string);
