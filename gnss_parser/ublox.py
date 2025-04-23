@@ -119,5 +119,5 @@ reader_from_ublox = {
     'LNAV-L': parity_LNAVL,
     'D1': extract_data_D1,
     'FNAV': extract_data_FNAV,
-    'L1OF': extract_data_GLONASS,
+    'L1OC': extract_data_GLONASS,
 }

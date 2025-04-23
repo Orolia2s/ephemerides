@@ -72,6 +72,8 @@ class GnssFormat(SimpleNamespace):
     def parse_subframe(self, reader):
         header = self.header.parse(reader)
         len_header = reader.count
+        if not hasattr(header, 'subframe_id'):
+            raise Exception('No subframe ID in header')
         logging.debug(f'Parsed the header and consumed {len_header} bits ({self.header.bit_count}). It indicated the subframe is {header.subframe_id}')
         if (header.subframe_id, None) in self.formats:
             logging.debug(f'Parsed a total of {reader.count} bits')

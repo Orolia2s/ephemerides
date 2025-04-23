@@ -11,7 +11,7 @@ import logging
 import sys
 
 import yaml
-from pyubx2 import UBXReader
+from pyubx2 import UBXReader, UBX_PROTOCOL
 from serial import Serial
 
 from gnss_parser import GnssFormatHandler, accumulate
@@ -64,8 +64,9 @@ if __name__ == '__main__':
         stream = Serial(cli_args.path, cli_args.baudrate, timeout = 3)
     else:
         stream = open(cli_args.path, 'rb')
-    reader = UBXReader(stream, protfilter = 2)
-    for _, ublox_message in reader:
+    reader = UBXReader(stream, protfilter = UBX_PROTOCOL)
+
+    for raw, ublox_message in reader:
         if ublox_message.identity != 'RXM-SFRBX':
             continue
         try:
