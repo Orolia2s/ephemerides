@@ -1,5 +1,4 @@
 const std = @import("std");
-
 const o2s = @import("o2s");
 
 const UbloxCallback = *const fn (message: [*c]o2s.ublox_message_t) callconv(.C) void;
@@ -11,30 +10,38 @@ const ReadUbloxOptions = struct {
     baudrate: ?i64 = null,
     /// Function to call everytime a message is received
     callback: UbloxCallback = default_callback,
-    // ...
+    /// Exit if no valid messages were received for this number of milliseconds
     timeout_ms: u32 = 1000,
 };
 
+const SerialPort = opaque {};
+extern fn serial_new_readwrite(filename: [*:0]const u8) *SerialPort;
+extern fn serial_make_raw(port: *SerialPort, baudrate: i64) bool;
+
 /// Parse all RXM-SFRBX messages from the specified file.
 pub fn read_ublox_from(path: [:0]const u8, options: ReadUbloxOptions) !void {
-    var file: o2s.ifstream_t = undefined;
+    var file: *o2s.ifstream_t = undefined;
+
     if (options.is_serial_port) {
-        unreachable;
-        //const port: o2s.serial_port_t = o2s.serial_open_readwrite(path);
-        //errdefer o2s.serial_close(&port);
-        //o2s.serial_make_raw(&port, options.baudrate orelse return error.missingBaudrateForSerialPort);
-        //file = port.file;
+        file = @alignCast(@ptrCast(serial_new_readwrite(path)));
     } else {
-        file = o2s.file_open(path, o2s.O_RDONLY);
-        if (!file.opened)
-            return error.UnableToOpenFile;
+        file = try std.heap.c_allocator.create(o2s.ifstream_t);
+        file.* = o2s.file_open(path, o2s.O_RDONLY);
     }
-    defer o2s.file_close(&file);
+    defer {
+        o2s.file_close(file);
+        std.heap.c_allocator.destroy(file);
+    }
+
+    if (!file.opened)
+        return error.UnableToOpenFile;
+    if (options.is_serial_port and !serial_make_raw(@ptrCast(file), options.baudrate orelse return error.missingBaudrateForSerialPort))
+        return error.UnableToConfigurePort;
 
     var ublox_reader = o2s.ublox_reader_init(&file.stream);
     defer o2s.ublox_reader_close(&ublox_reader);
-    ublox_reader.timeout_ms = options.timeout_ms;
 
+    ublox_reader.timeout_ms = options.timeout_ms;
     if (!o2s.ublox_subscribe(&ublox_reader, options.callback))
         return error.OutOfMemory;
     if (!o2s.ublox_reader_loop(&ublox_reader))
@@ -43,9 +50,7 @@ pub fn read_ublox_from(path: [:0]const u8, options: ReadUbloxOptions) !void {
 
 export fn default_callback(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
     const message: *o2s.ublox_message_t = c_message;
-    if (message.ublox_class == o2s.RXM and message.type == o2s.SFRBX) {
-        const subframe: *o2s.struct_ublox_navigation_data = @ptrCast(message);
-        std.debug.assert(subframe.word_count * @sizeOf(u32) + @sizeOf(o2s.struct_ublox_navigation_data) - @sizeOf(o2s.struct_ublox_header) == message.length);
-        std.log.info("Received a subframe of {s}, {}: {any}\n", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), subframe.signal, subframe });
-    }
+    var string: o2s.string_t = o2s.ublox_header_tostring(message);
+    defer o2s.string_clear(&string);
+    std.log.debug("Received a message: {s}", .{o2s.string_to_cstring(&string)});
 }
