@@ -3,16 +3,16 @@
     .version = "0.0.0",
     .dependencies = .{
         .ublox_parser = .{
-            .url = "git+https://github.com/Orolia2s/ublox_parser?ref=master#c75407a9b14f71f4d134da4e872b42918e34d892",
-            .hash = "ublox_parser-0.2.1-PxZKDBjTAAC1rn4TEVahovG-KrfV9u0wxIgjPh8BoJEJ",
+            .url = "git+https://github.com/Orolia2s/ublox_parser?ref=master#3075fb07c8f2f268b16abd056e0157b08f385165",
+            .hash = "ublox_parser-0.2.1-PxZKDEvUAAAEYD1z3UWj-lCB1MIure593LNE2vkg43TJ",
         },
         .libo2s = .{
             .url = "git+https://github.com/Orolia2s/libo2s?ref=master#4f8d0d34273e18f8ba5abdfc74be89734ad14688",
             .hash = "libo2s-1.8.1-fUXQWD1fAgDOam8NRqokrgW9_cOwbwxXZoF-8SOpyfPe",
         },
         .blackmagic = .{
-            .url = "git+https://github.com/agagniere/blackmagic?ref=master#c04a70e1b3b241e586d0843143abb31fa961bf73",
-            .hash = "blackmagic-0.3.2-62-rPOiIAAAtn7i9hsubYgehquX28IvYWyNUggzQDdV7",
+            .url = "git+https://github.com/agagniere/blackmagic?ref=master#e1e8feeaab0bc6eec7e3756f2b6af5f611f23927",
+            .hash = "blackmagic-0.3.3-62-rPPPjAACHWzrF2rm5xTx7dHpRs1jVi-EO-2uVutA9",
         },
         .args = .{
             .url = "git+https://github.com/ikskuh/zig-args?ref=master#9425b94c103a031777fdd272c555ce93a7dea581",
