@@ -10,6 +10,7 @@ pub fn build(b: *std.Build) !void {
     const ublox = b.dependency("ublox_parser", .{ .target = target });
     const o2s = b.dependency("libo2s", .{ .target = target });
     const blackmagic = b.dependency("blackmagic", .{});
+    const argsParser = b.dependency("args", .{ .target = target, .optimize = optimize });
 
     const include_all = b.addWriteFile("ublox.h",
         \\#include <ublox_enums.h>
@@ -34,6 +35,28 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     });
-    utils.addImport("o2s", bind.addModule("o2s"));
+    const o2z = bind.addModule("o2s");
+    utils.addImport("o2s", o2z);
     utils.linkLibrary(ublox.artifact("ublox_parser"));
+
+    const exe = b.addExecutable(.{
+        .name = "ublox_dumper",
+        .root_source_file = b.path("main.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    exe.root_module.addImport("utils", utils);
+    exe.root_module.addImport("o2s", o2z);
+    exe.root_module.addImport("args", argsParser.module("args"));
+    b.getInstallStep().dependOn(&b.addInstallArtifact(exe, .{}).step);
+
+    { // Run
+        const run_step = b.step("run", "Run the app");
+        const run_cmd = b.addRunArtifact(exe);
+
+        if (b.args) |args| {
+            run_cmd.addArgs(args);
+        }
+        run_step.dependOn(&run_cmd.step);
+    }
 }

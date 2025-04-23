@@ -14,6 +14,10 @@
             .url = "git+https://github.com/agagniere/blackmagic?ref=master#c04a70e1b3b241e586d0843143abb31fa961bf73",
             .hash = "blackmagic-0.3.2-62-rPOiIAAAtn7i9hsubYgehquX28IvYWyNUggzQDdV7",
         },
+        .args = .{
+            .url = "git+https://github.com/ikskuh/zig-args?ref=master#9425b94c103a031777fdd272c555ce93a7dea581",
+            .hash = "args-0.0.0-CiLiqv_NAAC97fGpk9hS2K681jkiqPsWP6w3ucb_ctGH",
+        },
     },
     .paths = .{
         "build.zig",
