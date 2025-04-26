@@ -18,16 +18,16 @@ const Options = struct {
 
     pub const shorthands = .{ .b = "baudrate", .m = "mode", .h = "help" };
     pub const meta = .{
-        .usage_summary = "PATH [-b UINT] [-m (header|message)]",
+        .usage_summary = "PATH [-b UINT] [-m {header|message|constellation|satellite}]",
         .full_text = "Parse ublox stream",
         .option_docs = .{
             .baudrate = "The specified path is a serial port and must be configured with this baudrate",
             .mode =
             \\What to output:
-            \\                      'header' to dump class, type and length of all messages,
-            \\                      'message' to show ublox content of all messages",
-            \\                      'constellation' to show how many subframe have been received per constellation,
-            \\                      'satellite' to show how many subframe have been received per satellite per constellation (2D table),
+            \\                     'header' to dump class, type and length of all messages,
+            \\                     'message' to show ublox content of all messages",
+            \\                     'constellation' to show how many subframe have been received per constellation,
+            \\                     'satellite' to show how many subframe have been received per satellite per constellation (2D table),
             ,
             .help = "Print this help",
         },
@@ -111,7 +111,7 @@ fn dump_message(message: *o2s.ublox_message_t) !void {
     try buffered_out.flush();
 }
 
-var constellation_count: std.AutoHashMap(o2s.ublox_constellation, u32) = .init(gpa);
+var constellation_count: std.AutoArrayHashMapUnmanaged(o2s.ublox_constellation, u32) = .empty;
 
 fn c_count_constellations(message: [*c]o2s.ublox_message_t) callconv(.C) void {
     if (message.*.ublox_class != o2s.RXM or message.*.type != o2s.SFRBX)
@@ -120,7 +120,7 @@ fn c_count_constellations(message: [*c]o2s.ublox_message_t) callconv(.C) void {
 }
 fn count_constellations(subframe: *o2s.struct_ublox_navigation_data) !void {
     {
-        const entry = try constellation_count.getOrPutValue(subframe.constellation, 0);
+        const entry = try constellation_count.getOrPutValue(gpa, subframe.constellation, 0);
         entry.value_ptr.* += 1;
     }
 
