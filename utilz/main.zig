@@ -2,10 +2,12 @@ const std = @import("std");
 const o2s = @import("o2s");
 const utils = @import("utils");
 const argsParser = @import("args");
+const terminal = @import("ansi_term");
 
 const Mode = enum {
     header,
     message,
+    constellation,
 };
 
 const Options = struct {
@@ -25,15 +27,19 @@ const Options = struct {
     };
 };
 
+var buffered_out = std.io.bufferedWriter(std.io.getStdOut().writer());
+const out = buffered_out.writer();
+
+var gpa_instance: std.heap.GeneralPurposeAllocator(.{}) = .{};
+const gpa = gpa_instance.allocator();
+
 fn get_callback(mode: Mode) utils.UbloxCallback {
     return switch (mode) {
         .header => dump_header,
         .message => dump_message,
+        .constellation => c_count_constellations,
     };
 }
-
-var buffered_out = std.io.bufferedWriter(std.io.getStdOut().writer());
-const out = buffered_out.writer();
 
 fn dump_header(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
     const message: *o2s.ublox_message_t = c_message;
@@ -68,16 +74,37 @@ fn dump_message(c_message: [*c]o2s.ublox_message_t) callconv(.C) void {
 
     out.writeByte('{') catch unreachable;
     out.print("{s}", .{o2s.string_to_cstring(&string)}) catch unreachable;
-    _ = out.write("}\n---\n") catch unreachable;
+    out.writeAll("}\n---\n") catch unreachable;
     buffered_out.flush() catch unreachable;
 }
 
-pub fn main() !void {
-    var gpa: std.heap.GeneralPurposeAllocator(.{}) = .{};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
+var constellation_count: std.AutoHashMap(o2s.ublox_constellation, u32) = .init(gpa);
 
-    const options = try argsParser.parseForCurrentProcess(Options, allocator, .print);
+fn c_count_constellations(message: [*c]o2s.ublox_message_t) callconv(.C) void {
+    if (message.*.ublox_class != o2s.RXM or message.*.type != o2s.SFRBX)
+        return;
+    count_constellations(@ptrCast(message)) catch unreachable;
+}
+fn count_constellations(subframe: *o2s.struct_ublox_navigation_data) !void {
+    {
+        const entry = try constellation_count.getOrPutValue(subframe.constellation, 0);
+        entry.value_ptr.* += 1;
+    }
+
+    try terminal.cursor.setCursorColumn(out, 0);
+    var ite = constellation_count.iterator();
+    while (ite.next()) |entry| {
+        try terminal.format.updateStyle(out, .{ .font_style = .{ .bold = entry.key_ptr.* == subframe.constellation } }, null);
+        try out.print("{s}: {}, ", .{ o2s.ublox_constellation_to_cstring(entry.key_ptr.*), entry.value_ptr.* });
+    }
+    //try out.writeByte('\n');
+    try buffered_out.flush();
+}
+
+pub fn main() !void {
+    defer _ = gpa_instance.deinit();
+
+    const options = try argsParser.parseForCurrentProcess(Options, gpa, .print);
     defer options.deinit();
 
     if (options.options.help) {
