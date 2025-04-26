@@ -43,8 +43,10 @@ $ zig build run -- /dev/ttyACM0 --baudrate 115200  --mode message
 ```
 
 Don't hesitate to pipe the output to [yq](https://github.com/mikefarah/yq) to make it more readable
-```console
-$ zig build run -- /dev/ttyACM0 --baudrate 115200  --mode message | yq -P
+```shell
+zig build run -- /dev/ttyACM0 --baudrate 115200  --mode message | yq -P
+```
+```yaml
 group: MON
 type: RF
 length: 52
