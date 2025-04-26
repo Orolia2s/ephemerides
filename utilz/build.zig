@@ -11,6 +11,7 @@ pub fn build(b: *std.Build) !void {
     const o2s = b.dependency("libo2s", .{ .target = target });
     const blackmagic = b.dependency("blackmagic", .{});
     const argsParser = b.dependency("args", .{ .target = target, .optimize = optimize });
+    const ansiterm = b.dependency("ansi_term", .{ .target = target, .optimize = optimize });
 
     const include_all = b.addWriteFile("ublox.h",
         \\#include <ublox_enums.h>
@@ -48,6 +49,7 @@ pub fn build(b: *std.Build) !void {
     exe.root_module.addImport("utils", utils);
     exe.root_module.addImport("o2s", o2z);
     exe.root_module.addImport("args", argsParser.module("args"));
+    exe.root_module.addImport("ansi_term", ansiterm.module("ansi_term"));
     b.getInstallStep().dependOn(&b.addInstallArtifact(exe, .{}).step);
 
     { // Run
