@@ -134,6 +134,12 @@ fn count_constellations(subframe: *o2s.struct_ublox_navigation_data) !void {
 }
 
 var satellite_count: std.AutoArrayHashMapUnmanaged(o2s.ublox_constellation, std.AutoArrayHashMapUnmanaged(u8, u32)) = .empty;
+const prefix: std.StaticStringMap(u8) = .initComptime(.{
+    .{ "GPS", 'G' },
+    .{ "Galileo", 'E' },
+    .{ "BeiDou", 'C' },
+    .{ "GLONASS", 'R' },
+});
 
 fn c_count_satellite(message: [*c]o2s.ublox_message_t) callconv(.C) void {
     if (message.*.ublox_class != o2s.RXM or message.*.type != o2s.SFRBX)
@@ -158,12 +164,16 @@ fn count_satellite(subframe: *o2s.struct_ublox_navigation_data) !void {
                 .bold = (constellation.key_ptr.* == subframe.constellation and satellite.key_ptr.* == subframe.satellite),
                 .underline = false,
             } }, null);
-            try out.print("{:02}: {:3}", .{ satellite.key_ptr.*, satellite.value_ptr.* });
-            try terminal.cursor.cursorBackward(out, 7);
+            try out.print("{c}{s}: {:4}", .{
+                prefix.get(std.mem.span(o2s.ublox_constellation_to_cstring(constellation.key_ptr.*))) orelse '?',
+                if (satellite.key_ptr.* == 255) .{ '?', '?' } else std.fmt.digits2(satellite.key_ptr.*),
+                satellite.value_ptr.*,
+            });
+            try terminal.cursor.cursorBackward(out, 9);
         }
         try terminal.cursor.restoreCursor(out);
         try terminal.format.updateStyle(out, .{ .font_style = .{ .underline = true } }, null);
-        try out.print("{s:<12}", .{o2s.ublox_constellation_to_cstring(constellation.key_ptr.*)});
+        try out.print("{s:<16}", .{o2s.ublox_constellation_to_cstring(constellation.key_ptr.*)});
     }
     try buffered_out.flush();
 }

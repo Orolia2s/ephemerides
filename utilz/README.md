@@ -100,7 +100,13 @@ The satellite of the latest subframe will be highlighted in bold.
 ```console
 $ zig build run -- /dev/ttyACM0 --baudrate 115200 --mode satellite
 GLONASS     BeiDou      GPS         Galileo
-15: 106     23:  35     11:  34     13: 117
-            25:   8     14:   8
-                        20:   3
+R12: 488    C36: 172    G07: 156    E23: 914
+R23: 458    C29:  31    G08: 155    E33: 928
+R21:  92    C35: 152    G10: 131    E31: 116
+R05: 121    C30:   1    G15: 154
+R14: 249    C26:  25    G16: 117
+R22:  34                G18:  41
+R07: 126                G23:  90
+R13:  57                G26:  33
+R24:  50                G27:  12
 ```
