@@ -56,6 +56,9 @@ class ZigWriter:
     def function(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool = False):
         return ZigFunction(name, arguments, return_type, public, self.output)
 
+    def enum(self, name: str, elements: list[str]):
+        self.write_line(f"const {Zig.identifier(name)} = enum {'{'}{', '.join(map(Zig.identifier, elements))}{'}'};");
+
 class ZigFunction(ZigWriter):
     def __init__(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool, output: TextIO):
         self.name = name
@@ -81,11 +84,12 @@ class ZigFunction(ZigWriter):
 
 def handler_to_zig(self, output: TextIO):
     writer = ZigWriter(output)
-    writer.add_imports(['std', 'utilz'])
+    writer.add_imports(['std', 'o2s', 'utils'])
     writer.empty_line()
     writer.const('SkippingBitReader', 'utilz.SkippingBitReader')
     for _, message in sorted(self.messages.items()):
         format_to_zig(message, writer)
+    writer.enum('GnssMessage', sorted(self.messages.keys()))
     with writer.function('main', [], 'void', True) as main:
         pass
 
