@@ -22,6 +22,10 @@
             .url = "git+https://github.com/ziglibs/ansi_term?ref=master#c0e6ad093d4f6a9ed4e65d962d1e53b97888f989",
             .hash = "ansi_term-0.1.0-_baAywpoAABEqsPmS5Jz_CddDCrG8qdIyRIESH8D2fzd",
         },
+        .unitz = .{
+            .url = "git+https://github.com/agagniere/unitz?ref=master#4a07ae5d4d1d3c38be3a9ef5ebc622851f057ca5",
+            .hash = "unitz-0.1.0-SkAk5IBwAADftk39UmGHAx3KeAlHWMdYkENGJW6mJJuF",
+        },
     },
     .paths = .{
         "build.zig",
@@ -29,6 +33,7 @@
         "root.zig",
         "bit_reader.zig",
         "ublox_loop.zig",
+        "ephemeris.zig",
     },
     .fingerprint = 0xeb6f1054c564ecb2,
 }

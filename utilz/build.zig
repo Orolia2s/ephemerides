@@ -12,6 +12,7 @@ pub fn build(b: *std.Build) !void {
     const blackmagic = b.dependency("blackmagic", .{});
     const argsParser = b.dependency("args", .{ .target = target, .optimize = optimize });
     const ansiterm = b.dependency("ansi_term", .{ .target = target, .optimize = optimize });
+    const units = b.dependency("unitz", .{ .target = target, .optimize = optimize });
 
     const include_all = b.addWriteFile("ublox.h",
         \\#include <ublox_enums.h>
@@ -39,6 +40,7 @@ pub fn build(b: *std.Build) !void {
     const o2z = bind.addModule("o2s");
     utils.addImport("o2s", o2z);
     utils.linkLibrary(ublox.artifact("ublox_parser"));
+    utils.addImport("unitz", units.module("unitz"));
 
     const exe = b.addExecutable(.{
         .name = "ublox_dumper",
