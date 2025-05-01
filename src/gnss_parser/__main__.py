@@ -1,9 +1,5 @@
 """
 Executed when using this module as a program.
-
-To do so :
-python -m gnss_parser
-
 """
 
 import argparse
