@@ -1,5 +1,0 @@
-pyserial
-pyubx2 >= 1.2.26
-pyYAML
-astropy
-more-itertools
