@@ -125,15 +125,16 @@ def field_array_to_zig(self, struct_name: str, function_name: str, reader_name: 
     writer.struct(struct_name, [field_to_zigvar(field)
                                 for field in self.fields
                                 if field.name and not field.value])
-    with writer.function(function_name, [ZigVariable('reader', reader_name)], f'!{struct_name}', False):
-        writer.var('result', struct_name, 'undefined');
+    with writer.function(function_name, [ZigVariable('reader', reader_name)], f'!{struct_name}', False) as func:
+        func.var('result', struct_name, 'undefined');
         for field in self.fields:
             consume = f'reader.consume({field.bits})'
             dest = f'result.{field.name}' if field.name else '_'
             if field.value is not None:
-                writer.write_line(f'std.debug.assert({consume} == {field.value});')
+                func.write_line(f'std.debug.assert(try {consume} == {field.value});')
             else:
-                writer.write_line(f'{dest} = {consume};')
+                func.write_line(f'{dest} = try {consume};')
+        func.write_line('return result;');
 
 def field_to_zigvar(self):
     comment = None
