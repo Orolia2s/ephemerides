@@ -10,11 +10,17 @@ This repo is a proof of concept to show it is possible to represent GNSS message
 
 ## Usage
 
+```
+uv run icd-manager --help
+uv run icd-manager translate --help
+uv run icd-manager parse --help
+```
+
 ### Read the YAML ICDs
 
 Each YAML can be translated to markdown for human verification:
 ```bash
-make
+make markdown
 ```
 
 All YAMLs can be aggregated in a single PDF with extra information:
@@ -25,14 +31,19 @@ open ephemerides.pdf
 
 ### Parse ublox stream from python
 
-All subframes can be dumped as a YAML stream (that you can pipe in [yq](https://github.com/mikefarah/yq)):
+All subframes can be dumped as a YAML stream:
 ```bash
-uv run icd-manager --verbose --icd GPS/LNAV-L.yaml parse test/one_gps.ubx --dump
+make parse PORT=test/two.ubx ARGS=--dump
 ```
 
-Or they can be accumulated until a full ephemeris can be output:
+You can it pipe in [yq](https://github.com/mikefarah/yq):
 ```bash
-uv run icd-manager -I GPS/LNAV-L.yaml -I Galileo/FNAV.yaml -I BeiDou/D1.yaml -I GLONASS/L1OC.yaml parse /dev/ttyACM0 --serial --baudrate 115200
+make --silent parse PORT=test/two.ubx ARGS=--dump | yq -P
+```
+
+Or, subframes can be accumulated until a full ephemeris can be output:
+```bash
+make parse # PORT=/dev/ttyACM0 BAUDRATE=115200 ARGS=--serial
 ```
 
 ### Generate zig
@@ -117,7 +128,8 @@ The mean motion can be seen as the derivative of the mean anomaly.
 
 ## GNSS Receivers
 
-For now only u-blox receivers are supported, but the YAMLs are agnostic of the receiver, as they describe the raw message as it is emitted by the satellites.
+For now only u-blox receivers are supported, and the YAMLs contain a section about how subframes are transmitted by ublox.
+Note that the ICD mappings in the YAMLs are agnostic of the receiver, as they describe the raw message as it is emitted by the satellites.
 
 ### u-blox
 
