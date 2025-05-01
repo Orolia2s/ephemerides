@@ -50,7 +50,7 @@ wheels = [
 [[package]]
 name = "ephemerides"
 version = "0.0.1"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "astropy" },
     { name = "more-itertools" },
