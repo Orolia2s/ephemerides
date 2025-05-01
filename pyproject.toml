@@ -21,4 +21,8 @@ Repository = "https://github.com/Orolia2s/ephemerides"
 Issues = "https://github.com/Orolia2s/ephemerides/issues"
 
 [project.scripts]
-ephemerides = "gnss_parser.__main__:main"
+icd-manager = "gnss_parser.__main__:main"
+
+[tool.uv]
+required-version = ">= 0.7.0"
+package = true

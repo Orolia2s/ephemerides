@@ -2,20 +2,44 @@
 
 This repo is a proof of concept to show it is possible to represent GNSS messages in language-agnostic YAMLs, in order to generate code that parses such messages in any language.
 
+## Requirements
+
+- Building binaries requires [zig](https://ziglang.org/download/)
+- The python package requires [uv](https://docs.astral.sh/uv/getting-started/installation)
+- A pdf detailing GNSS ICDs can be generated with [typst](https://github.com/typst/typst/releases)
+
 ## Usage
 
-### Generate markdown ICDs
+### Read the YAML ICDs
 
-Currently, the only generator implemented is markdown, to get a human-readable version of the YAMLs
+Each YAML can be translated to markdown for human verification:
 ```bash
 make
 ```
 
-### Parse GNSS signals
-
-To demonstrate how real GNSS messages can be parsed from the structure described in the YAMLs, a python program that reads YAMLs at run-time then parses messages from an u-blox receiver is provided
+All YAMLs can be aggregated in a single PDF with extra information:
 ```bash
-make run
+make pdf
+open ephemerides.pdf
+```
+
+### Parse ublox stream from python
+
+All subframes can be dumped as a YAML stream (that you can pipe in [yq](https://github.com/mikefarah/yq)):
+```bash
+uv run icd-manager --verbose --icd GPS/LNAV-L.yaml parse test/one_gps.ubx --dump
+```
+
+Or they can be accumulated until a full ephemeris can be output:
+```bash
+uv run icd-manager -I GPS/LNAV-L.yaml -I Galileo/FNAV.yaml -I BeiDou/D1.yaml -I GLONASS/L1OC.yaml parse /dev/ttyACM0 --serial --baudrate 115200
+```
+
+### Generate zig
+
+Generate parsing code:
+```bash
+make zig
 ```
 
 ## GNSS Messages list

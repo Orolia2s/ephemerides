@@ -20,7 +20,7 @@ Words|MSB skipped|Data bits|LSB skipped
 ||telemetry|14|||
 ||integrity_status|1|||
 ||_ignored_|1|||
-|$\text{TOW}$|time_of_week|17|||
+|$\text{TOW}$|time_of_week|17|6|$\mathrm{s}$|
 |`0`|alert|1|||
 ||anti_spoof|1|||
 ||subframe_id|3|||
