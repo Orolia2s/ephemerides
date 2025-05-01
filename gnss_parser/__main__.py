@@ -22,6 +22,9 @@ from gnss_parser.yaml import ensure_fields
 from gnss_parser.to_json import format_as_json
 
 if __name__ == '__main__':
+    main()
+
+def main():
     cli_parser = argparse.ArgumentParser(prog = 'Ephemerides',
         description = 'Read yaml ICD files, to generate code or parse ublox stream',
         epilog = 'Orolia 2S')
