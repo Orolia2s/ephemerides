@@ -27,6 +27,8 @@ header:
   - name: time_of_week
     latex: \text{TOW}
     bits: 17
+    factor: 6
+    unit: s
   - name: alert
     bits: 1
     value: 0
