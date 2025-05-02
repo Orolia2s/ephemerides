@@ -59,17 +59,44 @@ class ZigWriter:
     def comment(self, comment: str):
         self.write_line(f'// {comment}')
 
+    def doc(self, comment: str):
+        self.write_line(f'/// {comment}')
+
     def function(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool = False):
         return ZigFunction(name, arguments, return_type, public, self.output)
 
     def enum(self, name: str, elements: list[str]):
         self.write_line(f"const {Zig.identifier(name)} = enum {'{'}{', '.join(map(Zig.identifier, elements))}{'}'};");
 
-    def struct(self, name: str, members: list[ZigVariable]):
-        self.write_line(f"const {Zig.identifier(name)} = struct {'{'}")
+    def struct(self, name: str, public: bool = False):
+        return ZigStruct(name, public, self.output)
+
+class ZigStruct(ZigWriter):
+    def __init__(self, name: str, public: bool, output: TextIO):
+        self.name = name
+        self.public = public
+        super().__init__(output)
+
+    def write_line(self, line: str):
+        super().write_line('\t' + line)
+
+    def __enter__(self):
+        tokens = []
+        if self.public:
+            tokens.append('pub')
+        tokens += ['const', Zig.identifier(self.name), '=', 'struct', '{']
+        super().write_line(' '.join(tokens))
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        super().write_line('};')
+
+    def add_member(self, member: ZigVariable):
+        self.write_line(member.in_struct())
+
+    def add_members(self, members: list[ZigVariable]):
         for member in members:
-            self.write_line('\t' + member.in_struct())
-        self.write_line('};')
+            self.add_member(member)
 
 class ZigFunction(ZigWriter):
     def __init__(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool, output: TextIO):
@@ -101,18 +128,20 @@ def handler_to_zig(self, output: TextIO):
     for _, message in sorted(self.messages.items()):
         format_to_zig(message, writer)
     writer.enum('GnssMessage', sorted(self.messages.keys()))
-    with writer.function('main', [], '!void', True) as main:
-        pass
 
 def format_to_zig(self, writer: ZigWriter):
     simple_name = ''.join(filter(str.isalnum, self.name))
-    header_name = simple_name + 'Header'
-    reader_name = simple_name + 'Reader'
     writer.empty_line()
-    writer.comment(f"Code about {self.constellation.name} {self.name}")
-    if self.ublox:
-        ublox_to_zig(self.ublox, reader_name, writer)
-    field_array_to_zig(self.header, header_name, f'read_{simple_name}_header', reader_name, writer)
+    writer.doc(f"{self.constellation.name} {self.name}")
+    with writer.struct(simple_name) as namespace:
+        if self.ublox:
+            ublox_to_zig(self.ublox, 'Reader', namespace)
+        field_array_to_zig(self.header, 'Header', 'read_header', 'Reader', namespace)
+        for (subframe, page), field_array in self.formats.items():
+            name = f'Subframe{subframe}'
+            if page:
+                name += f'Page{page}'
+            field_array_to_zig(field_array, name, f'read_{name}', 'Reader', namespace)
     #with writer.function('read_' + simple_name, [ZigVariable('reader', reader_name)], '!void', True):
     #    pass
 
@@ -122,9 +151,10 @@ def ublox_to_zig(self, reader_name: str, writer: ZigWriter):
     writer.const(Zig.identifier(reader_name), f'SkippingBitReader({self.count}, u32, {Zig.array(to_skip)}, {Zig.array(to_keep)})')
 
 def field_array_to_zig(self, struct_name: str, function_name: str, reader_name: str, writer: ZigWriter):
-    writer.struct(struct_name, [field_to_zigvar(field)
-                                for field in self.fields
-                                if field.name and not field.value])
+    with writer.struct(struct_name) as struct:
+        for field in self.fields:
+            if field.name and not field.value:
+                struct.add_member(field_to_zigvar(field))
     with writer.function(function_name, [ZigVariable('reader', reader_name)], f'!{struct_name}', False) as func:
         func.var('result', struct_name, 'undefined');
         for field in self.fields:
