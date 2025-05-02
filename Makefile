@@ -10,6 +10,7 @@ ZIG_FILE      := generated.zig
 RUN           := $(UV) run icd-manager
 TYPST_SOURCE  := ephemerides.typ
 PDF           := $(TYPST_SOURCE:%.typ=%.pdf)
+SOURCES       := $(shell find src -type f -name '*.py')
 
 .DEFAULT_GOAL := markdown
 
@@ -30,11 +31,11 @@ full_clean: clean
 
 .PHONY: markdown pdf zig parse clean full_clean
 
-$(MARKDOWN): %.md: %.yaml
+$(MARKDOWN): %.md: %.yaml $(SOURCES)
 	$(RUN) --verbose --icd $< translate md > $@
 
 $(PDF): %.pdf: %.typ
 	$(TYPST) compile $< $@
 
-$(ZIG_FILE): $(YAML_ICDS)
-	$(RUN) --verbose $(addprefix -I ,$^) translate zig > $@
+$(ZIG_FILE): $(YAML_ICDS) $(SOURCES)
+	$(RUN) --verbose $(addprefix -I ,$(YAML_ICDS)) translate zig > $@

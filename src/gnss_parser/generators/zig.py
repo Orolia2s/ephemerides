@@ -128,7 +128,8 @@ def field_array_to_zig(self, struct_name: str, function_name: str, reader_name: 
     with writer.function(function_name, [ZigVariable('reader', reader_name)], f'!{struct_name}', False) as func:
         func.var('result', struct_name, 'undefined');
         for field in self.fields:
-            consume = f'reader.consume({field.bits})'
+            typename = '{}{}'.format('i' if field.signed else 'u', field.bits)
+            consume = f'reader.consume({typename}, {field.bits})'
             dest = f'result.{field.name}' if field.name else '_'
             if field.value is not None:
                 func.write_line(f'std.debug.assert(try {consume} == {field.value});')

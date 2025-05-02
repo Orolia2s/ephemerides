@@ -81,7 +81,7 @@ test SimpleBitReader {
     var reader: SimpleBitReader(4, u16) = .init(.{ 0xcafe, 0xbabe, 0xdead, 0xbeef });
     try std.testing.expectEqual(0xc, reader.consume(4, u8));
     try std.testing.expectEqual(4, reader.bit_consumed);
-    try std.testing.expectEqual(0xaf, reader.consume(8, u8));
+    try std.testing.expectEqual(-81, reader.consume(8, i8)); // 0xaf = 128 + 47 unsigned, -128 + 47 signed
     try std.testing.expectEqual(12, reader.bit_consumed);
     try std.testing.expectEqual(0xeBabe, reader.consume(20, u32));
     try std.testing.expectEqual(32, reader.bit_consumed);
@@ -96,7 +96,7 @@ test SkippingBitReader {
     var reader: SkippingBitReader(4, u16, .{ 8, 4, 0, 12 }, .{ 4, 12, 12, 4 }) = .init(.{ 0xcafe, 0xbabe, 0xdead, 0xbeef });
     try std.testing.expectEqual(0xfab, reader.consume(12, u16));
     try std.testing.expectEqual(12, reader.bit_consumed);
-    try std.testing.expectEqual(0xe, reader.consume(4, u4));
+    try std.testing.expectEqual(-2, reader.consume(4, i4)); // 0xe = 8 + 6 unsigned, -8 + 6 signed
     try std.testing.expectEqual(16, reader.bit_consumed);
     try std.testing.expectEqual(0xdeaf, reader.consume(16, u16));
     try std.testing.expectEqual(32, reader.bit_consumed);
