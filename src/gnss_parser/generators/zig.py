@@ -178,14 +178,20 @@ def field_array_to_zig(self, struct_name: str, function_name: str, reader_name: 
     with writer.function(function_name, [ZigVariable('reader', reader_name)], f'!{struct_name}', False) as func:
         func.var('result', struct_name, 'undefined');
         for field in self.fields:
-            typename = '{}{}'.format('i' if field.signed else 'u', field.bits)
-            consume = f'reader.consume({typename}, {field.bits})'
+            consume = f'reader.consume({field_type(field)}, {field.bits})'
             dest = f'result.{field.name}' if field.name else '_'
             if field.value is not None:
+                if field.name:
+                    func.comment(field.name)
                 func.write_line(f'std.debug.assert(try {consume} == {field.value});')
             else:
                 func.write_line(f'{dest} = try {consume};')
         func.write_line('return result;');
+
+def field_type(self) -> str:
+    if self.signed and self.half == 'msb':
+        return f'i{self.bits}'
+    return f'u{self.bits}'
 
 def field_to_zigvar(self):
     comment = None
@@ -194,6 +200,4 @@ def field_to_zigvar(self):
     elif self.factor or self.shift or self.unit:
         factor = f'2^{self.shift}' if self.shift else self.factor
         comment = ' '.join(str(t) for t in (factor, self.unit) if t)
-    return ZigVariable(self.name,
-                       '{}{}'.format('i' if self.signed else 'u', self.bits),
-                       comment)
+    return ZigVariable(self.name, field_type(self), comment)
