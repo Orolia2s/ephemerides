@@ -62,6 +62,10 @@ class ZigWriter:
     def doc(self, comment: str):
         self.write_line(f'/// {comment}')
 
+    def docs(self, comments: list[str]):
+        for comment in comments:
+            self.doc(comment)
+
     def function(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool = False):
         return ZigFunction(name, arguments, return_type, public, self.output)
 
@@ -133,15 +137,31 @@ def format_to_zig(self, writer: ZigWriter):
     simple_name = ''.join(filter(str.isalnum, self.name))
     writer.empty_line()
     writer.doc(f"{self.constellation.name} {self.name}")
+    if self.description:
+        writer.docs(self.description.strip().split('\n'))
     with writer.struct(simple_name) as namespace:
         if self.ublox:
             ublox_to_zig(self.ublox, 'Reader', namespace)
         field_array_to_zig(self.header, 'Header', 'read_header', 'Reader', namespace)
-        for (subframe, page), field_array in self.formats.items():
-            name = f'Subframe{subframe}'
-            if page:
-                name += f'Page{page}'
-            field_array_to_zig(field_array, name, f'read_{name}', 'Reader', namespace)
+        if self.page_header:
+            field_array_to_zig(self.page_header, 'PageHeader', 'read_page_header', 'Reader', namespace)
+        for key, value in sorted(self.human_readable.items()):
+            namespace.comment(key)
+            subframe = key.replace(' ', '')
+            if isinstance(value, dict):
+                for (start, human_readable), (field_array, description) in sorted(value.items()):
+                    name = f'{subframe}Page{start}'
+                    namespace.doc(human_readable)
+                    if description:
+                        namespace.docs(description.strip().split('\n'))
+                    field_array_to_zig(field_array, name, f'read_{name}', 'Reader', namespace)
+            else:
+                field_array, description = value
+                if description:
+                    namespace.docs(description.strip().split('\n'))
+                field_array_to_zig(field_array, subframe, f'read_{subframe}', 'Reader', namespace)
+
+
     #with writer.function('read_' + simple_name, [ZigVariable('reader', reader_name)], '!void', True):
     #    pass
 
