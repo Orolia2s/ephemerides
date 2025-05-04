@@ -38,4 +38,4 @@ $(PDF): %.pdf: %.typ
 	$(TYPST) compile $< $@
 
 $(ZIG_FILE): $(YAML_ICDS) $(SOURCES)
-	$(RUN) --verbose $(addprefix -I ,$(YAML_ICDS)) translate zig > $@
+	$(RUN) --verbose $(addprefix -I ,$(YAML_ICDS)) translate zig | zig fmt --stdin > $@

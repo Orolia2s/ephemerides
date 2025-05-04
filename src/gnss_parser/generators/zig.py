@@ -9,7 +9,7 @@ class Zig:
 
     @staticmethod
     def identifier(identifier: str) -> str:
-        if re.fullmatch(r'[a-zA-Z]\w*', identifier):
+        if re.fullmatch(r'[a-zA-Z_]\w*', identifier):
             return identifier
         return f'@"{identifier}"'
 
@@ -79,6 +79,8 @@ class ZigWriter:
         return ZigStruct(name, public, self.output)
 
 class ZigStruct(ZigWriter):
+    keyword = 'struct'
+
     def __init__(self, name: str, public: bool, output: TextIO):
         self.name = name
         self.public = public
@@ -91,7 +93,7 @@ class ZigStruct(ZigWriter):
         tokens = []
         if self.public:
             tokens.append('pub')
-        tokens += ['const', Zig.identifier(self.name), '=', 'struct', '{']
+        tokens += ['const', Zig.identifier(self.name), '=', self.keyword, '{']
         super().write_line(' '.join(tokens))
         return self
 
@@ -106,6 +108,8 @@ class ZigStruct(ZigWriter):
             self.add_member(member)
 
 class ZigEnum(ZigStruct):
+    keyword = 'enum'
+
     def add_member(self, member: str):
         self.write_line(f'{Zig.identifier(member)},')
 
@@ -140,7 +144,7 @@ def handler_to_zig(self, output: TextIO):
         format_to_zig(message, writer)
     writer.empty_line()
     with writer.enum('GnssMessage', True) as enum:
-        enum.add_members(sorted(self.messages.keys()))
+        enum.add_members(sorted(map(simplify, self.messages.keys())))
         enum.empty_line()
         with enum.function('from_ublox_message', [ZigVariable('message', '*o2s.ublox_message_t')], '!@This()') as func:
             constellations = sorted(self.per_constellation.keys(), key = lambda c: c.value)
@@ -152,14 +156,18 @@ def handler_to_zig(self, output: TextIO):
                 for message in sorted(self.per_constellation[constellation], key = lambda m: m.name):
                     if not message.ublox:
                         continue
-                    func.write_line(f'\t\t{message.ublox.signal} => .{Zig.identifier(message.name)},')
+                    func.write_line(f'\t\t{message.ublox.signal} => .{Zig.identifier(simplify(message.name))},')
                 func.write_line('\t\telse => error.MissingMessage')
                 func.write_line('\t},')
             func.write_line('\telse => error.MissingConstellation')
             func.write_line('};')
+    writer.empty_line()
+
+def simplify(name: str) -> str:
+    return ''.join(filter(str.isalnum, name))
 
 def format_to_zig(self, writer: ZigWriter):
-    simple_name = ''.join(filter(str.isalnum, self.name))
+    simple_name = simplify(self.name)
     writer.empty_line()
     writer.doc(f"{self.constellation.name} {self.name}")
     if self.description:
@@ -198,20 +206,23 @@ def ublox_to_zig(self, reader_name: str, writer: ZigWriter):
 def field_array_to_zig(self, struct_name: str, function_name: str, reader_name: str, writer: ZigWriter):
     with writer.struct(struct_name) as struct:
         for field in self.fields:
-            if field.name and not field.value:
+            if field.name and field.value is None:
                 struct.add_member(field_to_zigvar(field))
     with writer.function(function_name, [ZigVariable('reader', reader_name)], f'!{struct_name}', False) as func:
-        func.var('result', struct_name, 'undefined');
+        needs_result = any(map(lambda f: f.name and field.value is None, self.fields))
+        if needs_result:
+            func.var('result', struct_name, 'undefined');
         for field in self.fields:
-            consume = f'reader.consume({field_type(field)}, {field.bits})'
-            dest = f'result.{field.name}' if field.name else '_'
+            zigvar = field_to_zigvar(field)
+            consume = f'reader.consume({zigvar.typename}, {field.bits})'
+            dest = f'result.{zigvar.name}' if field.name else '_'
             if field.value is not None:
                 if field.name:
                     func.comment(field.name)
                 func.write_line(f'std.debug.assert(try {consume} == {field.value});')
             else:
                 func.write_line(f'{dest} = try {consume};')
-        func.write_line('return result;');
+        func.write_line('return result;' if needs_result else 'return .{};');
 
 def field_type(self) -> str:
     if self.signed and self.half == 'msb':
@@ -220,9 +231,11 @@ def field_type(self) -> str:
 
 def field_to_zigvar(self):
     comment = None
+    name = self.name if self.name else '_'
     if self.half:
+        name += f'_{self.half}'
         comment = f'{self.half}'
     elif self.factor or self.shift or self.unit:
         factor = f'2^{self.shift}' if self.shift else self.factor
         comment = ' '.join(str(t) for t in (factor, self.unit) if t)
-    return ZigVariable(self.name, field_type(self), comment)
+    return ZigVariable(name, field_type(self), comment)
