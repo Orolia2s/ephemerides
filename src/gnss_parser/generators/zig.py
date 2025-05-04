@@ -16,7 +16,7 @@ class Zig:
 class ZigVariable:
     def __init__(self, name: str, typename: str, comment: str | None = None):
         self.name = Zig.identifier(name)
-        self.typename = Zig.identifier(typename)
+        self.typename = typename
         self.comment = comment
 
     def argdef(self) -> str:
@@ -35,11 +35,14 @@ class ZigWriter:
     def __init__(self, output: TextIO):
         self.output = output
 
+    def write(self, string: str):
+        self.output.write(string)
+
     def empty_line(self):
-        self.output.write('\n')
+        self.write('\n')
 
     def write_line(self, line: str):
-        self.output.write(line + '\n')
+        self.write(line + '\n')
 
     def const(self, name: str, value: str):
         self.write_line(f'const {Zig.identifier(name)} = {value};')
@@ -69,8 +72,8 @@ class ZigWriter:
     def function(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool = False):
         return ZigFunction(name, arguments, return_type, public, self.output)
 
-    def enum(self, name: str, elements: list[str]):
-        self.write_line(f"const {Zig.identifier(name)} = enum {'{'}{', '.join(map(Zig.identifier, elements))}{'}'};");
+    def enum(self, name: str, public: bool = False):
+        return ZigEnum(name, public, self.output)
 
     def struct(self, name: str, public: bool = False):
         return ZigStruct(name, public, self.output)
@@ -102,6 +105,10 @@ class ZigStruct(ZigWriter):
         for member in members:
             self.add_member(member)
 
+class ZigEnum(ZigStruct):
+    def add_member(self, member: str):
+        self.write_line(f'{Zig.identifier(member)},')
+
 class ZigFunction(ZigWriter):
     def __init__(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool, output: TextIO):
         self.name = name
@@ -128,10 +135,28 @@ def handler_to_zig(self, output: TextIO):
     writer = ZigWriter(output)
     writer.add_imports(['std', 'o2s', 'utils'])
     writer.empty_line()
-    writer.const('SkippingBitReader', 'utilz.SkippingBitReader')
+    writer.const('SkippingBitReader', 'utils.SkippingBitReader')
     for _, message in sorted(self.messages.items()):
         format_to_zig(message, writer)
-    writer.enum('GnssMessage', sorted(self.messages.keys()))
+    writer.empty_line()
+    with writer.enum('GnssMessage', True) as enum:
+        enum.add_members(sorted(self.messages.keys()))
+        enum.empty_line()
+        with enum.function('from_ublox_message', [ZigVariable('message', '*o2s.ublox_message_t')], '!@This()') as func:
+            constellations = sorted(self.per_constellation.keys(), key = lambda c: c.value)
+            for constellation in constellations:
+                func.write_line(f'comptime std.debug.assert({constellation.value} == o2s.{constellation.name});')
+            func.write_line('return switch (message.constellation) {')
+            for constellation in constellations:
+                func.write_line(f"\to2s.{constellation.name} => switch (message.signal) {'{'}")
+                for message in sorted(self.per_constellation[constellation], key = lambda m: m.name):
+                    if not message.ublox:
+                        continue
+                    func.write_line(f'\t\t{message.ublox.signal} => .{Zig.identifier(message.name)},')
+                func.write_line('\t\telse => error.MissingMessage')
+                func.write_line('\t},')
+            func.write_line('\telse => error.MissingConstellation')
+            func.write_line('};')
 
 def format_to_zig(self, writer: ZigWriter):
     simple_name = ''.join(filter(str.isalnum, self.name))

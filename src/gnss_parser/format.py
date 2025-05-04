@@ -18,6 +18,7 @@ class GnssFormatHandler:
     def __init__(self):
         self.messages = {}
         self.ublox_mapping = {}
+        self.per_constellation = defaultdict(list)
 
     def parse_icd(self, obj: dict):
         ensure_fields('top level', obj, ['kind'])
@@ -27,6 +28,7 @@ class GnssFormatHandler:
         self.messages[message.name] = message
         if message.ublox:
             self.ublox_mapping[message.constellation.value, message.ublox.signal] = message.name
+        self.per_constellation[message.constellation].append(message)
 
     def parse_subframe(self, message_name: str, reader):
         return self.messages[message_name].parse_subframe(reader)
