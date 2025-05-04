@@ -3,5 +3,5 @@
 *.pyc
 .python-version
 .zig-cache
-generated.zig
 zig-out
+zig/generated.zig

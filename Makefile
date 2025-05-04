@@ -6,7 +6,7 @@ ARGS          ?= --serial
 
 YAML_ICDS     := $(shell find GPS BeiDou Galileo GLONASS -name '*.yaml')
 MARKDOWN      := $(YAML_ICDS:.yaml=.md)
-ZIG_FILE      := generated.zig
+ZIG_FILE      := zig/generated.zig
 RUN           := $(UV) run icd-manager
 TYPST_SOURCE  := ephemerides.typ
 PDF           := $(TYPST_SOURCE:%.typ=%.pdf)

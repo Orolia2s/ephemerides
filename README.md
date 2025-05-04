@@ -36,7 +36,7 @@ All subframes can be dumped as a YAML stream:
 make parse PORT=test/two.ubx ARGS=--dump
 ```
 
-You can it pipe in [yq](https://github.com/mikefarah/yq):
+You can pipe it in [yq](https://github.com/mikefarah/yq):
 ```bash
 make --silent parse PORT=test/two.ubx ARGS=--dump | yq -P
 ```
