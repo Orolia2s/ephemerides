@@ -7,10 +7,14 @@
         .ephemerides_utilities = .{
             .path = "utilz",
         },
+        .axe = .{
+            .url = "git+https://github.com/Ratakor/axe?ref=master#b84413eeb75adb1bc738e67a32d946a17088786f",
+            .hash = "axe-0.6.1-M2JU5WqKAAA7CfrdSVgJVGtbePPUjZapmOsVW_m5vl1w",
+        },
     },
     .paths = .{
         "build.zig",
         "build.zig.zon",
-        "src",
+        "generated.zig",
     },
 }

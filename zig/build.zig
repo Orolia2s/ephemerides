@@ -5,14 +5,16 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const utils = b.dependency("ephemerides_utilities", .{ .target = target });
+    const axe = b.dependency("axe", .{ .target = target, .optimize = optimize });
 
     const exe_mod = b.createModule(.{
-        .root_source_file = b.path("src/main.zig"),
+        .root_source_file = b.path("main.zig"),
         .target = target,
         .optimize = optimize,
     });
     exe_mod.addImport("utils", utils.module("utilz"));
     exe_mod.addImport("o2s", utils.module("o2s"));
+    exe_mod.addImport("axe", axe.module("axe"));
     const exe = b.addExecutable(.{
         .name = "ephemerides",
         .root_module = exe_mod,

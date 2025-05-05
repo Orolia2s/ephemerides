@@ -146,7 +146,7 @@ def handler_to_zig(self, output: TextIO):
     with writer.enum('GnssMessage', True) as enum:
         enum.add_members(sorted(map(simplify, self.messages.keys())))
         enum.empty_line()
-        with enum.function('from_ublox_message', [ZigVariable('message', '*o2s.ublox_message_t')], '!@This()') as func:
+        with enum.function('from_ublox_message', [ZigVariable('message', '*o2s.struct_ublox_navigation_data')], '!GnssMessage', True) as func:
             constellations = sorted(self.per_constellation.keys(), key = lambda c: c.value)
             for constellation in constellations:
                 func.write_line(f'comptime std.debug.assert({constellation.value} == o2s.{constellation.name});')
@@ -225,7 +225,7 @@ def field_array_to_zig(self, struct_name: str, function_name: str, reader_name: 
         func.write_line('return result;' if needs_result else 'return .{};');
 
 def field_type(self) -> str:
-    if self.signed and self.half == 'msb':
+    if self.signed and self.half != 'lsb':
         return f'i{self.bits}'
     return f'u{self.bits}'
 
