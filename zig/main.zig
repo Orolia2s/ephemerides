@@ -74,6 +74,6 @@ fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
         std.log.info("First subframe of {c}{}", .{ utils.prefix.get(std.mem.span(o2s.ublox_constellation_to_cstring(subframe.constellation))) orelse '?', subframe.satellite });
     const subframeAccumulator = (try satelliteAccumulator.getOrPutValue(gpa, subframe.satellite, .empty)).value_ptr;
     if (!subframeAccumulator.contains(subframe.key()))
-        std.log.info("First subframe {} {?} of {c}{}", .{ subframe.id, subframe.page, utils.prefix.get(std.mem.span(o2s.ublox_constellation_to_cstring(subframe.constellation))) orelse '?', subframe.satellite });
+        std.log.info("First subframe {?} {?} of {c}{}", .{ subframe.id, subframe.page, utils.prefix.get(std.mem.span(o2s.ublox_constellation_to_cstring(subframe.constellation))) orelse '?', subframe.satellite });
     try subframeAccumulator.put(gpa, subframe.key(), subframe);
 }

@@ -68,7 +68,7 @@ pub fn SkippingBitReader(comptime word_count: usize, comptime WordType: type, co
             var result: Target = 0;
 
             for (0..count) |_| {
-                result <<= 1;
+                result = std.math.shl(Target, result, 1);
                 if (self.next() orelse return error.NotEnoughBits)
                     result += 1;
             }
@@ -101,4 +101,12 @@ test SkippingBitReader {
     try std.testing.expectEqual(0xdeaf, reader.consume(16, u16));
     try std.testing.expectEqual(32, reader.bit_consumed);
     try std.testing.expectError(error.NotEnoughBits, reader.consume(1, u8));
+}
+
+test "Smol" {
+    var reader: SkippingBitReader(4, u16, .{ 8, 4, 0, 12 }, .{ 4, 12, 12, 4 }) = .init(.{ 0xcafe, 0xbabe, 0xdead, 0xbeef });
+    try std.testing.expectEqual(0xf, reader.consume(4, u4));
+    try std.testing.expectEqual(2, reader.consume(2, u2));
+    try std.testing.expectEqual(1, reader.consume(1, u1));
+    try std.testing.expectEqual(0, reader.consume(1, u1));
 }
