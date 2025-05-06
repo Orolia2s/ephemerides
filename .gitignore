@@ -1,7 +1,8 @@
+*~
 *.egg-info
 *.pdf
 *.pyc
 .python-version
 .zig-cache
-zig-out
 zig/generated.zig
+zig-out

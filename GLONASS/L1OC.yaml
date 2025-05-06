@@ -18,6 +18,8 @@ ublox:
       keep: 32
     - words: [3]
       keep: 13 # 77 data bits
+    - words: [4]
+      keep: 0
 order: msb_first
 header:
   - name: idle_chip

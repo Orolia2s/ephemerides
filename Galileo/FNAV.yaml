@@ -16,6 +16,8 @@ ublox:
       keep: 32
     - words: [7]
       keep: 22 # 214 information bits
+    - words: [8]
+      keep: 0
 order: msb_first
 header:
   - name: subframe_id
