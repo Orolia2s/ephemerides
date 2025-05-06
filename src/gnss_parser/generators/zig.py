@@ -161,12 +161,11 @@ def handler_to_zig(self, output: TextIO):
                 func.write_line('\t},')
             func.write_line('\telse => error.MissingConstellation')
             func.write_line('};')
-        with enum.function('get_subframe_id', [ZigVariable('message_type', 'GnssMessage'), ZigVariable('raw_message', '[]u32')], '!u8', True) as func:
-            func.write_line('return switch(message_type) {')
-            for message in sorted(map(simplify, self.messages.keys())):
-                func.write_line(f'\t.{message} => {message}.get_subframe_id(raw_message),');
-            func.write_line('\telse => error.MissingMessage');
-            func.write_line('};')
+    with writer.function('get_subframe_id', [ZigVariable('message_type', 'GnssMessage'), ZigVariable('raw_message', '[]u32')], '!u8', True) as func:
+        func.write_line('return switch(message_type) {')
+        for message in sorted(map(simplify, self.messages.keys())):
+            func.write_line(f'\t.{message} => {message}.get_subframe_id(raw_message),');
+        func.write_line('};')
     writer.empty_line()
 
 def simplify(name: str) -> str:
@@ -181,9 +180,9 @@ def format_to_zig(self, writer: ZigWriter):
     with writer.struct(simple_name) as namespace:
         if self.ublox:
             ublox_to_zig(self.ublox, 'Reader', namespace)
-        field_array_to_zig(self.header, 'Header', 'read_header', 'Reader', namespace)
+        field_array_to_zig(self.header, 'Header', 'read_header', '*Reader', namespace)
         if self.page_header:
-            field_array_to_zig(self.page_header, 'PageHeader', 'read_page_header', 'Reader', namespace)
+            field_array_to_zig(self.page_header, 'PageHeader', 'read_page_header', '*Reader', namespace)
         for key, value in sorted(self.human_readable.items()):
             namespace.comment(key)
             subframe = key.replace(' ', '')
@@ -193,19 +192,20 @@ def format_to_zig(self, writer: ZigWriter):
                     namespace.doc(human_readable)
                     if description:
                         namespace.docs(description.strip().split('\n'))
-                    field_array_to_zig(field_array, name, f'read_{name}', 'Reader', namespace)
+                    field_array_to_zig(field_array, name, f'read_{name}', '*Reader', namespace)
             else:
                 field_array, description = value
                 if description:
                     namespace.docs(description.strip().split('\n'))
-                field_array_to_zig(field_array, subframe, f'read_{subframe}', 'Reader', namespace)
+                field_array_to_zig(field_array, subframe, f'read_{subframe}', '*Reader', namespace)
         with namespace.function('get_subframe_id', [ZigVariable('raw_data', '[]u32')], '!u8', True) as func:
             if self.ublox and self.ublox.subframe_id:
-                func.var('reader', f'SkippingBitReader(1, u32, {Zig.array([self.ublox.subframe_id.discard_msb])}, {Zig.array([self.ublox.subframe_id.keep])})', f".init(&{Zig.array([f'raw_data[{self.ublox.subframe_id.word - 1}]'])})")
-                func.write_line(f'return try reader.consume(u8, self.ublox.subframe_id.keep);')
+                func.var('reader', f'SkippingBitReader(1, u32, {Zig.array([self.ublox.subframe_id.discard_msb])}, {Zig.array([self.ublox.subframe_id.keep])})', f".init({Zig.array([f'raw_data[{self.ublox.subframe_id.word - 1}]'])})")
+                func.write_line(f'return try reader.consume({self.ublox.subframe_id.keep}, u8);')
             else:
-                func.var('reader', 'Reader', '.init(&raw_data)')
-                func.const('header', 'try read_header(reader)')
+                func.write_line(f'std.debug.assert(raw_data.len == {self.ublox.count});');
+                func.var('reader', 'Reader', f'.init(raw_data[0..{self.ublox.count}].*)')
+                func.const('header', 'try read_header(&reader)')
                 func.write_line('return header.subframe_id;')
 
     #with writer.function('read_' + simple_name, [ZigVariable('reader', reader_name)], '!void', True):
@@ -227,7 +227,7 @@ def field_array_to_zig(self, struct_name: str, function_name: str, reader_name: 
             func.var('result', struct_name, 'undefined');
         for field in self.fields:
             zigvar = field_to_zigvar(field)
-            consume = f'reader.consume({zigvar.typename}, {field.bits})'
+            consume = f'reader.consume({field.bits}, {zigvar.typename})'
             dest = f'result.{zigvar.name}' if field.name else '_'
             if field.value is not None:
                 if field.name:

@@ -1,6 +1,6 @@
 const std = @import("std");
 
-fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type {
+pub fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type {
     return struct {
         words: [word_count]WordType,
         bit_consumed: u16 = 0,
@@ -35,7 +35,7 @@ fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type {
     };
 }
 
-fn SkippingBitReader(comptime word_count: usize, comptime WordType: type, comptime to_skip: [word_count]u8, comptime to_keep: [word_count]u8) type {
+pub fn SkippingBitReader(comptime word_count: usize, comptime WordType: type, comptime to_skip: [word_count]u8, comptime to_keep: [word_count]u8) type {
     return struct {
         words: [word_count]WordType,
         current_word: u16 = 0,

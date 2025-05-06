@@ -65,12 +65,15 @@ fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
         return;
     }
 
-    const subframe: Subframe = try .from_ublox(ublox);
+    var subframe: Subframe = try .from_ublox(ublox);
+    subframe.id = try icds.get_subframe_id(subframe.message, subframe.data);
     if (!accumulator.contains(subframe.message))
         std.log.info("First subframe of {s} {s}", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), @tagName(subframe.message) });
     const satelliteAccumulator = (try accumulator.getOrPutValue(gpa, subframe.message, .empty)).value_ptr;
     if (!satelliteAccumulator.contains(subframe.satellite))
         std.log.info("First subframe of {c}{}", .{ utils.prefix.get(std.mem.span(o2s.ublox_constellation_to_cstring(subframe.constellation))) orelse '?', subframe.satellite });
     const subframeAccumulator = (try satelliteAccumulator.getOrPutValue(gpa, subframe.satellite, .empty)).value_ptr;
+    if (!subframeAccumulator.contains(subframe.key()))
+        std.log.info("First subframe {} {?} of {c}{}", .{ subframe.id, subframe.page, utils.prefix.get(std.mem.span(o2s.ublox_constellation_to_cstring(subframe.constellation))) orelse '?', subframe.satellite });
     try subframeAccumulator.put(gpa, subframe.key(), subframe);
 }
