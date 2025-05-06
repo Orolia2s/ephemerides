@@ -14,6 +14,7 @@ Words|MSB skipped|Data bits|LSB skipped
 :-|-:|-:|-:
 1 to 6|0|32|0
 7|0|22|10
+8|0|0|32
 
 ## Header
 

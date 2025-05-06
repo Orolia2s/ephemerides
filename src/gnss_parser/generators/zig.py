@@ -161,6 +161,12 @@ def handler_to_zig(self, output: TextIO):
                 func.write_line('\t},')
             func.write_line('\telse => error.MissingConstellation')
             func.write_line('};')
+        with enum.function('get_subframe_id', [ZigVariable('message_type', 'GnssMessage'), ZigVariable('raw_message', '[]u32')], '!u8', True) as func:
+            func.write_line('return switch(message_type) {')
+            for message in sorted(map(simplify, self.messages.keys())):
+                func.write_line(f'\t.{message} => {message}.get_subframe_id(raw_message),');
+            func.write_line('\telse => error.MissingMessage');
+            func.write_line('};')
     writer.empty_line()
 
 def simplify(name: str) -> str:
@@ -193,7 +199,14 @@ def format_to_zig(self, writer: ZigWriter):
                 if description:
                     namespace.docs(description.strip().split('\n'))
                 field_array_to_zig(field_array, subframe, f'read_{subframe}', 'Reader', namespace)
-
+        with namespace.function('get_subframe_id', [ZigVariable('raw_data', '[]u32')], '!u8', True) as func:
+            if self.ublox and self.ublox.subframe_id:
+                func.var('reader', f'SkippingBitReader(1, u32, {Zig.array([self.ublox.subframe_id.discard_msb])}, {Zig.array([self.ublox.subframe_id.keep])})', f".init(&{Zig.array([f'raw_data[{self.ublox.subframe_id.word - 1}]'])})")
+                func.write_line(f'return try reader.consume(u8, self.ublox.subframe_id.keep);')
+            else:
+                func.var('reader', 'Reader', '.init(&raw_data)')
+                func.const('header', 'try read_header(reader)')
+                func.write_line('return header.subframe_id;')
 
     #with writer.function('read_' + simple_name, [ZigVariable('reader', reader_name)], '!void', True):
     #    pass

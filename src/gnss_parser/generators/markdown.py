@@ -55,4 +55,6 @@ def ublox_to_markdown(self, parent_format):
     lines += ['|'.join(['Words', 'MSB skipped', 'Data bits', 'LSB skipped']), '|'.join([':-', '-:', '-:', '-:'])]
     for layout in self.layout:
         lines.append('|'.join(map(str, [layout.words, layout.discard_msb, layout.keep, 32 - (layout.discard_msb + layout.keep)])))
+    if self.subframe_id:
+        lines += ['', f'ublox places the subframe ID in word {self.subframe_id.word}, after {self.subframe_id.discard_msb} MSB, on {self.subframe_id.keep} bits']
     return '\n'.join(lines + [''])

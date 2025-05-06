@@ -12,6 +12,11 @@ from gnss_parser.bits import (SingleWordBitReaderMsb, append_lsb, discard_lsb,
                               keep_lsb, xor_bits)
 from gnss_parser.yaml import RangeList, ensure_fields
 
+class SingleField(namedtuple('SingleField', ['word', 'discard_msb', 'keep'])):
+    @classmethod
+    def from_icd(cls, icd: dict):
+        ensure_fields('ublox special field', icd, ['word', 'keep'])
+        return cls(word=icd['word'], keep=icd['keep'], discard_msb=icd.get('discard_msb', 0))
 
 class UbloxLayout(namedtuple('UbloxLayout', ['words', 'discard_msb', 'keep'])):
     @classmethod
@@ -20,7 +25,7 @@ class UbloxLayout(namedtuple('UbloxLayout', ['words', 'discard_msb', 'keep'])):
         return cls(words=RangeList(icd['words']), keep=icd['keep'], discard_msb=icd.get('discard_msb', 0))
 
 class Ublox:
-    def __init__(self, signal: int, layout: list[UbloxLayout]):
+    def __init__(self, signal: int, layout: list[UbloxLayout], subframe_id: None | SingleField):
         self.signal = signal
         self.layout = layout
         self.per_word = {}
@@ -28,11 +33,14 @@ class Ublox:
             for word in x.words:
                 self.per_word[word] = x
         self.count = max(self.per_word.keys())
+        self.subframe_id = subframe_id
 
     @classmethod
     def from_icd(cls, icd: dict):
         ensure_fields('ublox', icd, ['signal', 'layout'])
-        return cls(signal=icd['signal'], layout=list(map(UbloxLayout.from_icd, icd['layout'])))
+        return cls(signal = icd['signal'],
+                   layout = list(map(UbloxLayout.from_icd, icd['layout'])),
+                   subframe_id = SingleField.from_icd(icd['subframe_id']) if 'subframe_id' in icd else None)
 
     def __str__(self):
         return f'[signal: {self.signal}, layout: {self.layout}]'

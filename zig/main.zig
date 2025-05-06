@@ -32,11 +32,6 @@ const Subframe = struct {
         return .{ .satellite = subframe.satellite, .constellation = subframe.constellation, .message = try .from_ublox_message(subframe), .data = words[0..subframe.word_count] };
     }
 
-    pub fn get_subframe_id(self: Subframe) !u8 {
-        if (self.message == .L1OC)
-            return self.data[4] & 0xff;
-    }
-
     pub fn key(self: Subframe) Key {
         return .{ .subframe = self.id orelse unreachable, .page = self.page };
     }
