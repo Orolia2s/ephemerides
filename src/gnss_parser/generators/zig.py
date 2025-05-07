@@ -80,8 +80,8 @@ class ZigWriter:
         for comment in comments:
             self.doc(comment)
 
-    def function(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool = False):
-        return ZigFunction(name, arguments, return_type, public, self.output)
+    def function(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool = False, inline: bool = False):
+        return ZigFunction(name, arguments, return_type, public, inline, self.output)
 
     def enum(self, name: str, public: bool = False):
         return ZigEnum(name, public, self.output)
@@ -132,11 +132,12 @@ class ZigUnion(ZigStruct):
             self.keyword = f'union({tag})'
 
 class ZigFunction(ZigWriter):
-    def __init__(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool, output: TextIO):
+    def __init__(self, name: str, arguments: list[ZigVariable], return_type: str, public: bool, inline: bool, output: TextIO):
         self.name = name
         self.public = public
         self.arguments = arguments
         self.return_type = return_type
+        self.inline = inline
         super().__init__(output)
 
     def write_line(self, line: str):
@@ -146,6 +147,8 @@ class ZigFunction(ZigWriter):
         tokens = []
         if self.public:
             tokens.append('pub')
+        if self.inline:
+            tokens.append('inline')
         tokens += ['fn', Zig.identifier(self.name), '(', ', '.join(map(ZigVariable.argdef, self.arguments)), ')', self.return_type, '{']
         super().write_line(' '.join(tokens))
         return self
@@ -191,7 +194,7 @@ def handler_to_zig(self, output: TextIO):
     writer.empty_line()
     with writer.union('GnssSubframe', 'GnssMessageType', True) as union:
         for message in simple_messages:
-            union.add_member(ZigVariable(message, f'{message}Subframe'))
+            union.add_member(ZigVariable(message, f'{message}.Subframe'))
         union.empty_line()
         union.const('Self', '@This()')
         union.empty_line()
@@ -200,31 +203,32 @@ def handler_to_zig(self, output: TextIO):
             struct.add_member(ZigVariable('page', '?u8', 'null'))
         with writer.function('get_key', [ZigVariable('self', 'Self')], 'Key', True) as func:
             func.write_line('return switch (self) {')
-            for message_name, message in sorted(self.messages.items()):
-                simple_name = simplify(message_name)
-                members = []
-                if message.ublox and message.ublox.subframe_id:
-                    members.append('.subframe = this.id')
-                else:
-                    members.append('.subframe = this.header.subframe_id')
-                if message.page_header:
-                    members.append('.page = if (this.page_header) |page_header| page_header.page_id else null')
-                func.write_line(f"\t.{simple_name} => |this| .{'{'}{', '.join(members)}{',}'},")
+            paged = sorted('.' + simplify(message.name) for message in self.messages.values() if message.page_header)
+            func.write_line(f"\t{', '.join(paged)} => |this|" + ' .{.subframe = this.get_id(), .page = this.get_page_number()},')
+            func.write_line('\telse => |this| .{.subframe = this.get_id()}')
             func.write_line('};')
+        with writer.function('from_ublox', [ZigVariable('messageType', 'GnssMessageType'), ZigVariable('words', '[]u32')], '!Self', True) as func:
+            func.write_line('return switch (messageType) {')
+            for message in sorted(filter(lambda m: bool(m.ublox), self.messages.values()), key=lambda m: m.name):
+                func.write_line(f".{simplify(message.name)} => .{'{'} .{simplify(message.name)} = .from_ublox(signal, words[0..{message.ublox.count}].*) {'}'},")
+            func.write_line('};')
+
     writer.empty_line()
     with writer.struct('Subframe', True) as struct:
         struct.add_member(ZigVariable('constellation', 'Constellation'))
         struct.add_member(ZigVariable('messageType', 'GnssMessageType'))
         struct.add_member(ZigVariable('satellite', 'u8'))
-        struct.add_member(ZigVariable('message', 'GnssMessage'))
+        struct.add_member(ZigVariable('message', 'GnssSubframe'))
+        struct.add_member(ZigVariable('key', 'GnssSubframe.Key'))
         struct.empty_line()
         with writer.function('from_ublox', [ZigVariable('subframe', '*o2s.struct_ublox_navigation_data')], '@This()', True) as func:
             func.const('constellation', '.from_ublox(subframe.constellation)', Type='Constellation')
             func.const('signal', '.from_ublox(subframe.constellation, subframe.signal)', Type='GnssMessageType')
             func.const('multi_ptr', '@ptrCast(subframe)', Type='[*]o2s.struct_ublox_navigation_data')
+            func.const('words_ptr', '@alignCast(@ptrCast(multi_ptr + 1))', Type=f'[*]u32')
             func.const('words', '@alignCast(@ptrCast(multi_ptr + 1))', Type=f'[*]u32')
-            func.write_line('switch (signal) {')
-            func.write_line('}')
+            func.const('message', '.from_ublox(signal, words)', Type=f'GnssSubframe')
+            func.write_line(f"return .{'{'} .constellation = constellation, .messageType = signal, .satellite = subframe.satellite, .message = message, .key = message.get_key() {'}'};")
 
 def simplify(name: str) -> str:
     return ''.join(filter(str.isalnum, name))
@@ -279,7 +283,7 @@ def format_to_zig(self, writer: ZigWriter):
                 with writer.function('from_ublox', [ZigVariable('words', f'[{self.ublox.count}]u32')], '!@This()', True) as func:
                     members = []
                     func.var('reader', f'Reader', f'.init(words)')
-                    func.const('header', f'try read_header(reader)', Type=f'Header')
+                    func.const('header', f'try read_header(&reader)', Type=f'Header')
                     members += ['.reader = reader', '.header = header']
                     if self.ublox.subframe_id:
                         func.var('id_reader', 'IDReader',
@@ -292,9 +296,17 @@ def format_to_zig(self, writer: ZigWriter):
                     if self.page_header:
                         func.var('page_header', f'?PageHeader', 'null')
                         func.write_line(f'if (is_paged({idname}))')
-                        func.write_line(f'\tpage_header = try read_page_header(reader);')
+                        func.write_line(f'\tpage_header = try read_page_header(&reader);')
                         members.append('.page_header = page_header')
                     func.write_line(f"return .{'{'}{', '.join(members)}{'}'};")
+            with writer.function('get_id', [ZigVariable('self', '@This()')], 'u8', public=True, inline=True) as func:
+                if self.ublox and self.ublox.subframe_id:
+                    func.write_line('return self.id;')
+                else:
+                    func.write_line('return self.header.subframe_id;')
+            if self.page_header:
+                with writer.function('get_page_number', [ZigVariable('self', '@This()')], '?u8', public=True, inline=True) as func:
+                    func.write_line('return if (self.page_header) |page_header| page_header.page_id else null;')
 
 def ublox_to_zig(self, reader_name: str, writer: ZigWriter):
     to_skip = [self.per_word[i].discard_msb for i in range(1, self.count + 1)]
