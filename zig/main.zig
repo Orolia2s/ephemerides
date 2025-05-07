@@ -4,10 +4,14 @@ const o2s = @import("o2s");
 const axe = @import("axe");
 const icds = @import("generated.zig");
 
-const GnssMessage = icds.GnssMessage;
-const SubframeAccumulator = std.AutoArrayHashMapUnmanaged(Subframe.Key, Subframe);
-const SatelliteAccumulator = std.AutoArrayHashMapUnmanaged(u8, SubframeAccumulator);
-const MessageAccumulator = std.AutoArrayHashMapUnmanaged(GnssMessage, SatelliteAccumulator);
+const Constellation = icds.Constellation;
+const GnssMessageType = icds.GnssMessageType;
+const GnssSubframe = icds.GnssSubframe;
+const Subframe = icds.Subframe;
+
+const SatelliteKey = struct { id: u8, signal: GnssMessageType };
+const SubframeAccumulator = std.AutoArrayHashMapUnmanaged(GnssSubframe.Key, GnssSubframe);
+const SatelliteAccumulator = std.AutoArrayHashMapUnmanaged(SatelliteKey, SubframeAccumulator);
 
 const log = axe.Axe(.{
     .format = "[%l%s%L] %m\n",
@@ -16,30 +20,9 @@ const log = axe.Axe(.{
 });
 pub const std_options: std.Options = .{ .logFn = log.log };
 
-const Subframe = struct {
-    id: ?u8 = null,
-    page: ?u8 = null,
-    satellite: u8,
-    constellation: u8,
-    message: GnssMessage,
-    data: []u32,
-
-    pub const Key = struct { subframe: u8, page: ?u8 };
-
-    pub fn from_ublox(subframe: *o2s.struct_ublox_navigation_data) !Subframe {
-        const multi_ptr: [*]o2s.struct_ublox_navigation_data = @ptrCast(subframe);
-        const words: [*]u32 = @alignCast(@ptrCast(multi_ptr + 1));
-        return .{ .satellite = subframe.satellite, .constellation = subframe.constellation, .message = try .from_ublox_message(subframe), .data = words[0..subframe.word_count] };
-    }
-
-    pub fn key(self: Subframe) Key {
-        return .{ .subframe = self.id orelse unreachable, .page = self.page };
-    }
-};
-
 var gpa_instance: std.heap.GeneralPurposeAllocator(.{}) = .init;
 const gpa = gpa_instance.allocator();
-var accumulator: MessageAccumulator = .empty;
+var accumulator: SatelliteAccumulator = .empty;
 
 pub fn main() !void {
     defer _ = gpa_instance.deinit();
@@ -56,7 +39,11 @@ pub fn main() !void {
 fn c_ublox_callback(message: [*c]o2s.ublox_message_t) callconv(.C) void {
     if (message.*.ublox_class != o2s.RXM or message.*.type != o2s.SFRBX)
         return;
-    receive_ublox_subframe(@ptrCast(message)) catch unreachable;
+    receive_ublox_subframe(@ptrCast(message)) catch |err| {
+        switch (err) {
+            else => log.errorAr(@src(), "Error: {}", err),
+        }
+    };
 }
 
 fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
@@ -66,14 +53,12 @@ fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
     }
 
     var subframe: Subframe = try .from_ublox(ublox);
-    subframe.id = try icds.get_subframe_id(subframe.message, subframe.data);
-    if (!accumulator.contains(subframe.message))
-        std.log.info("First subframe of {s} {s}", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), @tagName(subframe.message) });
-    const satelliteAccumulator = (try accumulator.getOrPutValue(gpa, subframe.message, .empty)).value_ptr;
-    if (!satelliteAccumulator.contains(subframe.satellite))
-        std.log.info("First subframe of {c}{}", .{ utils.prefix.get(std.mem.span(o2s.ublox_constellation_to_cstring(subframe.constellation))) orelse '?', subframe.satellite });
-    const subframeAccumulator = (try satelliteAccumulator.getOrPutValue(gpa, subframe.satellite, .empty)).value_ptr;
-    if (!subframeAccumulator.contains(subframe.key()))
-        std.log.info("First subframe {?} {?} of {c}{}", .{ subframe.id, subframe.page, utils.prefix.get(std.mem.span(o2s.ublox_constellation_to_cstring(subframe.constellation))) orelse '?', subframe.satellite });
-    try subframeAccumulator.put(gpa, subframe.key(), subframe);
+    const satKey: SatelliteKey = .{ .id = subframe.satellite, .signal = subframe.messageType };
+
+    if (!accumulator.contains(satKey))
+        std.log.info("First subframe of {s} {s}", .{ @tagName(subframe.constellation), @tagName(subframe.message) });
+    const subframeAccumulator = (try accumulator.getOrPutValue(gpa, satKey, .empty)).value_ptr;
+    if (!subframeAccumulator.contains(subframe.key))
+        std.log.info("First subframe {} {?} of {c}{}", .{ subframe.key.subframe, subframe.key.page, utils.prefix.get(@tagName(subframe.constellation)) orelse '?', subframe.satellite });
+    try subframeAccumulator.put(gpa, subframe.key, subframe.message);
 }
