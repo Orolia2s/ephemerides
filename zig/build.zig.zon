@@ -11,6 +11,10 @@
             .url = "git+https://github.com/Ratakor/axe?ref=master#b84413eeb75adb1bc738e67a32d946a17088786f",
             .hash = "axe-0.6.1-M2JU5WqKAAA7CfrdSVgJVGtbePPUjZapmOsVW_m5vl1w",
         },
+        .args = .{
+            .url = "git+https://github.com/ikskuh/zig-args?ref=master#9425b94c103a031777fdd272c555ce93a7dea581",
+            .hash = "args-0.0.0-CiLiqv_NAAC97fGpk9hS2K681jkiqPsWP6w3ucb_ctGH",
+        },
     },
     .paths = .{
         "build.zig",

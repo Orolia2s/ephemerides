@@ -6,6 +6,7 @@ pub fn build(b: *std.Build) void {
 
     const utils = b.dependency("ephemerides_utilities", .{ .target = target });
     const axe = b.dependency("axe", .{ .target = target, .optimize = optimize });
+    const argsParser = b.dependency("args", .{ .target = target, .optimize = optimize });
 
     const exe_mod = b.createModule(.{
         .root_source_file = b.path("main.zig"),
@@ -15,6 +16,7 @@ pub fn build(b: *std.Build) void {
     exe_mod.addImport("utils", utils.module("utilz"));
     exe_mod.addImport("o2s", utils.module("o2s"));
     exe_mod.addImport("axe", axe.module("axe"));
+    exe_mod.addImport("args", argsParser.module("args"));
     const exe = b.addExecutable(.{
         .name = "ephemerides",
         .root_module = exe_mod,
