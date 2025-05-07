@@ -39,9 +39,11 @@ pub fn main() !void {
 fn c_ublox_callback(message: [*c]o2s.ublox_message_t) callconv(.C) void {
     if (message.*.ublox_class != o2s.RXM or message.*.type != o2s.SFRBX)
         return;
-    receive_ublox_subframe(@ptrCast(message)) catch |err| {
+    const subframe: *o2s.struct_ublox_navigation_data = @ptrCast(message);
+    receive_ublox_subframe(subframe) catch |err| {
         switch (err) {
-            else => log.errorAr(@src(), "Error: {}", err),
+            error.MissingMessage => log.warnAt(@src(), "Unsupported GNSS message: {s} {}", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), subframe.signal }),
+            else => log.errAt(@src(), "Error: {}", .{err}),
         }
     };
 }
@@ -52,13 +54,13 @@ fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
         return;
     }
 
-    var subframe: Subframe = try .from_ublox(ublox);
+    const subframe: Subframe = try .from_ublox(ublox);
     const satKey: SatelliteKey = .{ .id = subframe.satellite, .signal = subframe.messageType };
 
     if (!accumulator.contains(satKey))
         std.log.info("First subframe of {s} {s}", .{ @tagName(subframe.constellation), @tagName(subframe.message) });
     const subframeAccumulator = (try accumulator.getOrPutValue(gpa, satKey, .empty)).value_ptr;
     if (!subframeAccumulator.contains(subframe.key))
-        std.log.info("First subframe {} {?} of {c}{}", .{ subframe.key.subframe, subframe.key.page, utils.prefix.get(@tagName(subframe.constellation)) orelse '?', subframe.satellite });
+        std.log.info("First subframe {} {?} of {c}{:02}", .{ subframe.key.subframe, subframe.key.page, utils.prefix.get(@tagName(subframe.constellation)) orelse '?', subframe.satellite });
     try subframeAccumulator.put(gpa, subframe.key, subframe.message);
 }

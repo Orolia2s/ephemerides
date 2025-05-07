@@ -204,13 +204,13 @@ def handler_to_zig(self, output: TextIO):
         with writer.function('get_key', [ZigVariable('self', 'Self')], 'Key', True) as func:
             func.write_line('return switch (self) {')
             paged = sorted('.' + simplify(message.name) for message in self.messages.values() if message.page_header)
-            func.write_line(f"\t{', '.join(paged)} => |this|" + ' .{.subframe = this.get_id(), .page = this.get_page_number()},')
-            func.write_line('\telse => |this| .{.subframe = this.get_id()}')
+            func.write_line(f"\tinline {', '.join(paged)} => |this|" + ' .{.subframe = this.get_id(), .page = this.get_page_number()},')
+            func.write_line('\tinline else => |this| .{.subframe = this.get_id()}')
             func.write_line('};')
         with writer.function('from_ublox', [ZigVariable('messageType', 'GnssMessageType'), ZigVariable('words', '[]u32')], '!Self', True) as func:
             func.write_line('return switch (messageType) {')
             for message in sorted(filter(lambda m: bool(m.ublox), self.messages.values()), key=lambda m: m.name):
-                func.write_line(f".{simplify(message.name)} => .{'{'} .{simplify(message.name)} = .from_ublox(signal, words[0..{message.ublox.count}].*) {'}'},")
+                func.write_line(f".{simplify(message.name)} => .{'{'} .{simplify(message.name)} = try .from_ublox(words[0..{message.ublox.count}].*) {'}'},")
             func.write_line('};')
 
     writer.empty_line()
@@ -221,13 +221,13 @@ def handler_to_zig(self, output: TextIO):
         struct.add_member(ZigVariable('message', 'GnssSubframe'))
         struct.add_member(ZigVariable('key', 'GnssSubframe.Key'))
         struct.empty_line()
-        with writer.function('from_ublox', [ZigVariable('subframe', '*o2s.struct_ublox_navigation_data')], '@This()', True) as func:
-            func.const('constellation', '.from_ublox(subframe.constellation)', Type='Constellation')
-            func.const('signal', '.from_ublox(subframe.constellation, subframe.signal)', Type='GnssMessageType')
+        with writer.function('from_ublox', [ZigVariable('subframe', '*o2s.struct_ublox_navigation_data')], '!@This()', True) as func:
+            func.const('constellation', 'try .from_ublox(subframe.constellation)', Type='Constellation')
+            func.const('signal', 'try .from_ublox(subframe.constellation, subframe.signal)', Type='GnssMessageType')
             func.const('multi_ptr', '@ptrCast(subframe)', Type='[*]o2s.struct_ublox_navigation_data')
             func.const('words_ptr', '@alignCast(@ptrCast(multi_ptr + 1))', Type=f'[*]u32')
-            func.const('words', '@alignCast(@ptrCast(multi_ptr + 1))', Type=f'[*]u32')
-            func.const('message', '.from_ublox(signal, words)', Type=f'GnssSubframe')
+            func.const('words', 'words_ptr[0..subframe.word_count]', Type=f'[]u32')
+            func.const('message', 'try .from_ublox(signal, words)', Type=f'GnssSubframe')
             func.write_line(f"return .{'{'} .constellation = constellation, .messageType = signal, .satellite = subframe.satellite, .message = message, .key = message.get_key() {'}'};")
 
 def simplify(name: str) -> str:
