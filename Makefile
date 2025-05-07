@@ -24,12 +24,9 @@ parse: $(YAML_ICDS)
 	$(RUN) $(addprefix -I ,$^) parse $(PORT) --baudrate $(BAUDRATE) $(ARGS)
 
 clean:
-	$(RM) $(MARKDOWN) $(PDF)
+	$(RM) $(MARKDOWN) $(PDF) $(ZIG_FILE)
 
-full_clean: clean
-	$(RM) $(ZIG_FILE)
-
-.PHONY: markdown pdf zig parse clean full_clean
+.PHONY: markdown pdf zig parse clean
 
 $(MARKDOWN): %.md: %.yaml $(SOURCES)
 	$(RUN) --verbose --icd $< translate md > $@

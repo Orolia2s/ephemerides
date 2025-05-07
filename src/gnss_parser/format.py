@@ -54,12 +54,14 @@ class GnssFormat(SimpleNamespace):
         result.description = icd['metadata']['description'] if 'description' in icd['metadata'] else None
         result.formats = {}
         result.human_readable = defaultdict(dict)
+        result.paged_subframes = set()
         for fmt in icd['formats']:
             ensure_fields('format', fmt, ['subframe', 'fields'])
             subframe = fmt['subframe']
             parser = FieldArray.from_icd(fmt['fields'])
             description = fmt['description'] if 'description' in fmt else None
             if 'pages' in fmt:
+                result.paged_subframes.add(subframe)
                 pages = RangeList(fmt['pages'])
                 for page in pages:
                     result.formats[subframe, page] = parser
