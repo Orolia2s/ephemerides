@@ -24,6 +24,16 @@ var gpa_instance: std.heap.GeneralPurposeAllocator(.{}) = .init;
 const gpa = gpa_instance.allocator();
 var accumulator: SatelliteAccumulator = .empty;
 
+const Warning = enum(u4) { MissingMessage };
+var seen_warnings: std.StaticBitSet(@typeInfo(Warning).@"enum".fields.len) = .initEmpty();
+
+inline fn show_warning_once(warning: Warning, text: []const u8, args: anytype) void {
+    if (seen_warnings.isSet(@intFromEnum(warning)))
+        return;
+    seen_warnings.set(@intFromEnum(warning));
+    std.log.warn(text, args);
+}
+
 pub fn main() !void {
     defer _ = gpa_instance.deinit();
     var env = try std.process.getEnvMap(gpa);
@@ -42,7 +52,7 @@ fn c_ublox_callback(message: [*c]o2s.ublox_message_t) callconv(.C) void {
     const subframe: *o2s.struct_ublox_navigation_data = @ptrCast(message);
     receive_ublox_subframe(subframe) catch |err| {
         switch (err) {
-            error.MissingMessage => log.warnAt(@src(), "Unsupported GNSS message: {s} {}", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), subframe.signal }),
+            error.MissingMessage => show_warning_once(.MissingMessage, "Unsupported GNSS message: {s} {}", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), subframe.signal }),
             else => log.errAt(@src(), "Error: {}", .{err}),
         }
     };
