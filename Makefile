@@ -11,6 +11,7 @@ RUN           := $(UV) run icd-manager
 TYPST_SOURCE  := ephemerides.typ
 PDF           := $(TYPST_SOURCE:%.typ=%.pdf)
 SOURCES       := $(shell find src -type f -name '*.py')
+EXECUTABLE    := zig/zig-out/bin/ephemerides
 
 .DEFAULT_GOAL := markdown
 
@@ -18,7 +19,7 @@ markdown: $(MARKDOWN)
 
 pdf: $(PDF)
 
-zig: $(ZIG_FILE)
+zig: $(EXECUTABLE)
 
 parse: $(YAML_ICDS)
 	$(RUN) $(addprefix -I ,$^) parse $(PORT) --baudrate $(BAUDRATE) $(ARGS)
@@ -36,3 +37,6 @@ $(PDF): %.pdf: %.typ
 
 $(ZIG_FILE): $(YAML_ICDS) $(SOURCES)
 	$(RUN) --verbose $(addprefix -I ,$(YAML_ICDS)) translate zig | zig fmt --stdin > $@
+
+$(EXECUTABLE): $(ZIG_FILE)
+	( cd zig && zig build )

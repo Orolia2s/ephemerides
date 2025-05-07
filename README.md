@@ -29,6 +29,13 @@ make pdf
 open ephemerides.pdf
 ```
 
+### Generate and compile a parser
+
+```bash
+make zig
+./zig/zig-out/bin/ephemerides --help
+```
+
 ### Parse ublox stream from python
 
 All subframes can be dumped as a YAML stream:
@@ -39,18 +46,6 @@ make parse PORT=test/two.ubx ARGS=--dump
 You can pipe it in [yq](https://github.com/mikefarah/yq):
 ```bash
 make --silent parse PORT=test/two.ubx ARGS=--dump | yq -P
-```
-
-Or, subframes can be accumulated until a full ephemeris can be output:
-```bash
-make parse # PORT=/dev/ttyACM0 BAUDRATE=115200 ARGS=--serial
-```
-
-### Generate zig
-
-Generate parsing code:
-```bash
-make zig
 ```
 
 ## GNSS Messages list

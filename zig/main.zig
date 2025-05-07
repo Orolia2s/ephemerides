@@ -20,6 +20,9 @@ const log = axe.Axe(.{
 });
 pub const std_options: std.Options = .{ .logFn = log.log };
 
+var buffered_out = std.io.bufferedWriter(std.io.getStdOut().writer());
+const out = buffered_out.writer();
+
 var gpa_instance: std.heap.GeneralPurposeAllocator(.{}) = .init;
 const gpa = gpa_instance.allocator();
 var accumulator: SatelliteAccumulator = .empty;
@@ -73,4 +76,8 @@ fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
     if (!subframeAccumulator.contains(subframe.key))
         std.log.info("First subframe {} {?} of {c}{:02}", .{ subframe.key.subframe, subframe.key.page, utils.prefix.get(@tagName(subframe.constellation)) orelse '?', subframe.satellite });
     try subframeAccumulator.put(gpa, subframe.key, subframe.message);
+
+    try std.json.stringify(subframe, .{}, out);
+    try out.writeAll("\n---\n");
+    try buffered_out.flush();
 }
