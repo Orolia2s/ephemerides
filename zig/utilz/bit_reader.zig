@@ -104,7 +104,7 @@ test SkippingBitReader {
 }
 
 test "Smol" {
-    var reader: SkippingBitReader(4, u16, .{ 8, 4, 0, 12 }, .{ 4, 12, 12, 4 }) = .init(.{ 0xcafe, 0xbabe, 0xdead, 0xbeef });
+    var reader: SkippingBitReader(2, u16, .{ 8, 4 }, .{ 4, 12 }) = .init(.{ 0xcafe, 0xbabe });
     try std.testing.expectEqual(0xf, reader.consume(4, u4));
     try std.testing.expectEqual(2, reader.consume(2, u2));
     try std.testing.expectEqual(1, reader.consume(1, u1));
