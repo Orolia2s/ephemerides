@@ -189,42 +189,6 @@ def handler_to_zig(self, output: TextIO):
             func.write_line('\telse => error.MissingConstellation')
             func.write_line('};')
     writer.empty_line()
-    for message_name, message in sorted(self.messages.items()):
-        simple_name = simplify(message_name)
-        with writer.struct(f'{simple_name}Subframe') as struct:
-            if message.ublox and message.ublox.subframe_id:
-                struct.add_member(ZigVariable('id', 'u8'))
-            struct.add_member(ZigVariable('reader', f'{simple_name}.Reader'))
-            struct.add_member(ZigVariable('header', f'{simple_name}.Header'))
-            if message.page_header:
-                struct.add_member(ZigVariable('page_header', f'?{simple_name}.PageHeader'))
-            struct.empty_line()
-            if message.ublox:
-                if message.ublox.subframe_id:
-                    struct.const('IDReader', f'SkippingBitReader(1, u32, {Zig.array([message.ublox.subframe_id.discard_msb])}, {Zig.array([message.ublox.subframe_id.keep])})');
-                    struct.empty_line()
-                with writer.function('from_ublox', [ZigVariable('words', f'[{message.ublox.count}]u32')], '@This()', True) as func:
-                    members = []
-                    func.var('reader', f'{simple_name}.Reader', f'.init(words)')
-                    func.const('header', f'{simple_name}.read_header(reader)', Type=f'{simple_name}.Header')
-                    members += ['.reader = reader', '.header = header']
-                    if message.ublox.subframe_id:
-                        func.var('id_reader', 'IDReader',
-                                 f".init({Zig.array([f'words[{message.ublox.subframe_id.word - 1}]'])})")
-                        func.const('id', f"try id_reader.consume({message.ublox.subframe_id.keep}, u8)")
-                        members.append(f".id = id")
-                        idname = 'id'
-                    else:
-                        idname = 'header.subframe_id'
-                    if message.page_header:
-                        func.var('page_header', f'?{simple_name}.PageHeader', 'null')
-                        func.write_line(f'if ({simple_name}.is_paged({idname}))')
-                        func.write_line(f'\tpage_header = {simple_name}.read_page_header(reader);')
-                        members.append('.page_header = page_header')
-                    func.write_line(f"return .{'{'}{', '.join(members)}{'}'};")
-
-
-    writer.empty_line()
     with writer.union('GnssSubframe', 'GnssMessageType', True) as union:
         for message in simple_messages:
             union.add_member(ZigVariable(message, f'{message}Subframe'))
@@ -292,12 +256,45 @@ def format_to_zig(self, writer: ZigWriter):
                 if description:
                     namespace.docs(description.strip().split('\n'))
                 field_array_to_zig(field_array, subframe, f'read_{subframe}', '*Reader', namespace)
+        namespace.empty_line()
         with namespace.function('is_paged', [ZigVariable('subframe_id', 'u8')], 'bool', True) as func:
             func.write_line('return switch(subframe_id) {')
             if self.paged_subframes:
                 func.write_line(f"\t{','.join(map(str, sorted(self.paged_subframes)))} => true,")
             func.write_line('\telse => false')
             func.write_line('};')
+        namespace.empty_line()
+        with namespace.struct(f'Subframe') as struct:
+            if self.ublox and self.ublox.subframe_id:
+                struct.add_member(ZigVariable('id', 'u8'))
+            struct.add_member(ZigVariable('reader', f'Reader'))
+            struct.add_member(ZigVariable('header', f'Header'))
+            if self.page_header:
+                struct.add_member(ZigVariable('page_header', f'?PageHeader'))
+            struct.empty_line()
+            if self.ublox:
+                if self.ublox.subframe_id:
+                    struct.const('IDReader', f'SkippingBitReader(1, u32, {Zig.array([self.ublox.subframe_id.discard_msb])}, {Zig.array([self.ublox.subframe_id.keep])})');
+                    struct.empty_line()
+                with writer.function('from_ublox', [ZigVariable('words', f'[{self.ublox.count}]u32')], '!@This()', True) as func:
+                    members = []
+                    func.var('reader', f'Reader', f'.init(words)')
+                    func.const('header', f'try read_header(reader)', Type=f'Header')
+                    members += ['.reader = reader', '.header = header']
+                    if self.ublox.subframe_id:
+                        func.var('id_reader', 'IDReader',
+                                 f".init({Zig.array([f'words[{self.ublox.subframe_id.word - 1}]'])})")
+                        func.const('id', f"try id_reader.consume({self.ublox.subframe_id.keep}, u8)")
+                        members.append(f".id = id")
+                        idname = 'id'
+                    else:
+                        idname = 'header.subframe_id'
+                    if self.page_header:
+                        func.var('page_header', f'?PageHeader', 'null')
+                        func.write_line(f'if (is_paged({idname}))')
+                        func.write_line(f'\tpage_header = try read_page_header(reader);')
+                        members.append('.page_header = page_header')
+                    func.write_line(f"return .{'{'}{', '.join(members)}{'}'};")
 
 def ublox_to_zig(self, reader_name: str, writer: ZigWriter):
     to_skip = [self.per_word[i].discard_msb for i in range(1, self.count + 1)]
