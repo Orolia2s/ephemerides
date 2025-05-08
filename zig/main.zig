@@ -55,6 +55,11 @@ inline fn show_warning_once(warning: Warning, text: []const u8, args: anytype) v
 
 pub fn main() !void {
     defer _ = gpa_instance.deinit();
+    defer {
+        var iterator = accumulator.iterator();
+        while (iterator.next()) |entry| entry.value_ptr.deinit(gpa);
+        accumulator.deinit(gpa);
+    }
 
     const options = try argsParser.parseForCurrentProcess(Options, gpa, .print);
     defer options.deinit();
@@ -113,8 +118,6 @@ fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
     if (!accumulator.contains(satKey))
         std.log.debug("First subframe of {s} {s}", .{ @tagName(subframe.constellation), @tagName(subframe.message) });
     const subframeAccumulator = (try accumulator.getOrPutValue(gpa, satKey, .empty)).value_ptr;
-    if (!subframeAccumulator.contains(subframe.key))
-        std.log.debug("First subframe {} {?} of {c}{:02}", .{ subframe.key.subframe, subframe.key.page, utils.prefix.get(@tagName(subframe.constellation)) orelse '?', subframe.satellite });
     try subframeAccumulator.put(gpa, subframe.key, subframe.message);
 
     try std.json.stringify(subframe, .{}, out);

@@ -75,4 +75,5 @@ def main():
             else:
                 accumulate(message, ublox_message.svId, header.subframe_id, page_header.page_id if page_header else None, header.time_of_week if hasattr(header, 'time_of_week') else None, parsed)
         except Exception as err:
-            logging.exception(err)
+            logging.error(err)
+            #logging.exception(err)

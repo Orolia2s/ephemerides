@@ -1,6 +1,6 @@
 import logging
 import sys
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from types import SimpleNamespace
 
 from more_itertools import grouper
@@ -39,6 +39,8 @@ class GnssFormatHandler:
         message = self.ublox_mapping[gnssId, sigId]
         return message, *self.parse_subframe(message, reader_from_ublox[message](words))
 
+FormatData = namedtuple('FormatData', ['min_subframe', 'min_page', 'subframes', 'pages', 'parser', 'description'])
+
 class GnssFormat(SimpleNamespace):
 
     def __init__(self, name: str, constellation: Constellation, order: Ordering, header: FieldArray, **kwargs):
@@ -48,48 +50,47 @@ class GnssFormat(SimpleNamespace):
     def from_icd(cls, icd: dict[str]):
         ensure_fields('top level of GNSS format', icd, ['header', 'formats', 'metadata', 'order'])
         ensure_fields('GNSS format metadata', icd['metadata'], ['constellation', 'message'])
+        constellation = icd['metadata']['constellation']
+        messageName = icd['metadata']['message']
         result = SimpleNamespace()
         result.page_header = FieldArray.from_icd(icd['page_header']) if 'page_header' in icd else None
         result.ublox = Ublox.from_icd(icd['ublox']) if 'ublox' in icd else None
         result.description = icd['metadata']['description'] if 'description' in icd['metadata'] else None
-        result.formats = {}
-        result.human_readable = defaultdict(dict)
         result.paged_subframes = set()
+        result.per_subframe = defaultdict(dict)
+        result.format_list = []
         for fmt in icd['formats']:
             ensure_fields('format', fmt, ['subframe', 'fields'])
-            subframe = fmt['subframe']
+            subframes = RangeList(fmt['subframe']) if isinstance(fmt['subframe'], list) else [fmt['subframe']]
             parser = FieldArray.from_icd(fmt['fields'])
             description = fmt['description'] if 'description' in fmt else None
             if 'pages' in fmt:
-                result.paged_subframes.add(subframe)
                 pages = RangeList(fmt['pages'])
-                for page in pages:
-                    result.formats[subframe, page] = parser
-                result.human_readable[f'Subframe {subframe}'][min(pages), f"Page{'s' if len(pages.as_list) > 1 else ''} {pages}"] = (parser, description)
-                logging.debug(f"Added format message {icd['metadata']['constellation']} {icd['metadata']['message']} > Subframe {subframe} > page(s) {pages}")
+                result.format_list += FormatData(min(subframes), min(pages), subframes, pages, parser, description)
+                for subframe in subframes:
+                    result.paged_subframes.add(subframe)
+                    for page in pages:
+                        result.per_subframe[subframe][page] = parser
+                logging.debug(f"Added format message {constellation} {messageName} > Subframe(s) {subframes} > page(s) {pages}")
             else:
-                result.formats[subframe, None] = parser
-                result.human_readable[f'Subframe {subframe}'] = (parser, description)
-                logging.debug(f"Added format message {icd['metadata']['constellation']} {icd['metadata']['message']} > Subframe {subframe}")
-        return cls(icd['metadata']['message'], Constellation[icd['metadata']['constellation']], Ordering[icd['order']], FieldArray.from_icd(icd['header']), **result.__dict__)
+                for subframe in subframes:
+                    result.per_subframe[subframe] = parser
+                result.format_list += FormatData(min(subframes), 0, subframes, None, parser, description)
+                logging.debug(f"Added format message {constellation} {messageName} > Subframe(s) {subframes}")
+        return cls(messageName, Constellation[constellation], Ordering[icd['order']], FieldArray.from_icd(icd['header']), **result.__dict__)
 
     def parse_subframe(self, reader):
         header = self.header.parse(reader)
         len_header = reader.count
         if not hasattr(header, 'subframe_id'):
             raise Exception('No subframe ID in header')
-        logging.debug(f'Parsed the header and consumed {len_header} bits ({self.header.bit_count}). It indicated the subframe is {header.subframe_id}')
-        if (header.subframe_id, None) in self.formats:
-            logging.debug(f'Parsed a total of {reader.count} bits')
-            return header, None, self.formats[header.subframe_id, None].parse(reader)
-        elif self.page_header is not None:
-            page_header = self.page_header.parse(reader)
-            logging.debug(f'Parsed an additional {reader.count - len_header} bits to find out this is page {page_header.page_id} ({self.page_header.bit_count})')
-            if (header.subframe_id, page_header.page_id) in self.formats:
-                result = self.formats[header.subframe_id, page_header.page_id].parse(reader)
-                logging.debug(f'Parsed a total of {reader.count} bits')
-                return header, page_header, result
-            else:
-                raise Exception(f'Invalid subframe ID and page combination: {header.subframe_id}, {page_header.page_id}')
-        else:
+        if header.subframe_id not in self.per_subframe:
+            raise Exception(f'No such subframe ID: {header.subframe_id}')
+        if header.subframe_id not in self.paged_subframes:
+            return header, None, self.per_subframe[header.subframe_id].parse(reader)
+        if self.page_header is None:
             raise Exception(f'Invalid subframe ID with no page: {header.subframe_id}')
+        page_header = self.page_header.parse(reader)
+        if page_header.page_id not in self.per_subframe[header.subframe_id]:
+            raise Exception(f'Invalid subframe ID and page combination: {header.subframe_id}, {page_header.page_id}')
+        return header, page_header, self.per_subframe[header.subframe_id][page_header.page_id].parse(reader)
