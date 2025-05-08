@@ -114,9 +114,6 @@ fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
 
     const subframe: Subframe = try .from_ublox(ublox);
     const satKey: SatelliteKey = .{ .id = subframe.satellite, .signal = subframe.messageType };
-
-    if (!accumulator.contains(satKey))
-        std.log.debug("First subframe of {s} {s}", .{ @tagName(subframe.constellation), @tagName(subframe.message) });
     const subframeAccumulator = (try accumulator.getOrPutValue(gpa, satKey, .empty)).value_ptr;
     try subframeAccumulator.put(gpa, subframe.key, subframe.message);
 

@@ -240,20 +240,42 @@ def format_to_zig(self, writer: ZigWriter):
     if self.description:
         writer.docs(self.description.strip().split('\n'))
     with writer.struct(simple_name) as namespace:
+        formats = []
         if self.ublox:
             ublox_to_zig(self.ublox, 'Reader', namespace)
         field_array_to_zig(self.header, 'Header', 'read_header', '*Reader', namespace)
         if self.page_header:
             field_array_to_zig(self.page_header, 'PageHeader', 'read_page_header', '*Reader', namespace)
-        for fmt in sorted(self.format_list, key=lambda t: (t.min_subframe, t.min_page)):
+        for fmt in self.format_list:
             namespace.comment(f'Subframe(s) {fmt.subframes}')
             name = f'Subframe{fmt.min_subframe}'
             if fmt.pages is not None:
                 namespace.comment(f'Page(s) {fmt.pages}')
                 name += f'Page{fmt.min_page}'
+            formats.append(name)
             if fmt.description:
                 namespace.docs(fmt.description.split('\n'))
             field_array_to_zig(fmt.parser, name, f'read_{name.lower()}', '*Reader', namespace)
+        namespace.empty_line()
+        with namespace.union('Data', 'enum') as union:
+            for name in formats:
+                union.add_member(ZigVariable(name.lower(), name))
+            parameters = [ZigVariable('reader', f'*Reader'), ZigVariable('subframe_id', 'u8')]
+            if self.paged_subframes:
+                parameters.append(ZigVariable('page_id', '?u8'))
+            with writer.function('init', parameters, '!@This()', True) as func:
+                func.write_line('return switch(subframe_id) {')
+                for subframe, child in sorted(self.switch.items()):
+                    if subframe in self.paged_subframes:
+                        func.write_line(f"\t{subframe} => switch(page_id orelse return error.MissingPage) {'{'}")
+                        for page, (sub, pages) in sorted(child.items()):
+                            func.write_line(f"\t\t{', '.join(map(str, pages))} => .{'{'} .subframe{sub}page{page} = try read_subframe{sub}page{page}(reader) {'}'},")
+                        func.write_line('\t\telse => error.InvalidPage')
+                        func.write_line('\t},')
+                    else:
+                        func.write_line(f"\t{subframe} => .{'{'} .subframe{child} = try read_subframe{child}(reader) {'}'},")
+                func.write_line('\telse => error.InvalidSubframe')
+                func.write_line('};')
         namespace.empty_line()
         with namespace.function('is_paged', [ZigVariable('subframe_id', 'u8')], 'bool', True) as func:
             func.write_line('return switch(subframe_id) {')
@@ -269,16 +291,16 @@ def format_to_zig(self, writer: ZigWriter):
             struct.add_member(ZigVariable('header', f'Header'))
             if self.page_header:
                 struct.add_member(ZigVariable('page_header', f'?PageHeader'))
+            struct.add_member(ZigVariable('data', f'Data'))
             struct.empty_line()
             if self.ublox:
                 if self.ublox.subframe_id:
                     struct.const('IDReader', f'SkippingBitReader(1, u32, {Zig.array([self.ublox.subframe_id.discard_msb])}, {Zig.array([self.ublox.subframe_id.keep])})');
                     struct.empty_line()
                 with writer.function('from_ublox', [ZigVariable('words', f'[{self.ublox.count}]u32')], '!@This()', True) as func:
-                    members = []
-                    func.var('reader', f'Reader', f'.init(words)')
-                    func.const('header', f'try read_header(&reader)', Type=f'Header')
-                    members += ['.reader = reader', '.header = header']
+                    func.var('reader', 'Reader', '.init(words)')
+                    func.const('header', 'try read_header(&reader)', Type='Header')
+                    members = ['.reader = reader', '.header = header', '.data = data']
                     if self.ublox.subframe_id:
                         func.var('id_reader', 'IDReader',
                                  f".init({Zig.array([f'words[{self.ublox.subframe_id.word - 1}]'])})")
@@ -288,10 +310,13 @@ def format_to_zig(self, writer: ZigWriter):
                     else:
                         idname = 'header.subframe_id'
                     if self.page_header:
-                        func.var('page_header', f'?PageHeader', 'null')
+                        func.var('page_header', '?PageHeader', 'null')
                         func.write_line(f'if (is_paged({idname}))')
                         func.write_line(f'\tpage_header = try read_page_header(&reader);')
                         members.append('.page_header = page_header')
+                        func.const('data', f'try .init(&reader, {idname}, if (page_header) |hdr| hdr.page_id else null)', Type='Data')
+                    else:
+                        func.const('data', f'try .init(&reader, {idname})', Type='Data')
                     func.write_line(f"return .{'{'}{', '.join(members)}{'}'};")
             with writer.function('get_id', [ZigVariable('self', '@This()')], 'u8', public=True, inline=True) as func:
                 if self.ublox and self.ublox.subframe_id:

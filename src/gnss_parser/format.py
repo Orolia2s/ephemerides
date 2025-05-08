@@ -58,6 +58,7 @@ class GnssFormat(SimpleNamespace):
         result.description = icd['metadata']['description'].strip() if 'description' in icd['metadata'] else None
         result.paged_subframes = set()
         result.per_subframe = defaultdict(dict)
+        result.switch = defaultdict(dict)
         result.format_list = []
         for fmt in icd['formats']:
             ensure_fields('format', fmt, ['subframe', 'fields'])
@@ -69,11 +70,13 @@ class GnssFormat(SimpleNamespace):
                 result.format_list.append(FormatData(min(subframes), min(pages), subframes, pages, parser, description))
                 for subframe in subframes:
                     result.paged_subframes.add(subframe)
+                    result.switch[subframe][min(pages)] = (min(subframes), pages)
                     for page in pages:
                         result.per_subframe[subframe][page] = parser
                 logging.debug(f"Added format message {constellation} {messageName} > Subframe(s) {subframes} > page(s) {pages}")
             else:
                 for subframe in subframes:
+                    result.switch[subframe] = min(subframes)
                     result.per_subframe[subframe] = parser
                 result.format_list.append(FormatData(min(subframes), 0, subframes, None, parser, description))
                 logging.debug(f"Added format message {constellation} {messageName} > Subframe(s) {subframes}")
