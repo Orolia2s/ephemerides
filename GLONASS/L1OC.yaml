@@ -33,10 +33,10 @@ page_header:
   - name: page_id
     bits: 4
 formats:
-  - subframe: 1
+  - subframe: [[1, 5]]
     pages: [1]
     description: Satellite's X data and date
-    fields: &x
+    fields:
       - bits: 2
       - name: time_interval_duration
         bits: 2
@@ -68,10 +68,10 @@ formats:
         signed: true
         shift: -11
         unit: km
-  - subframe: 1
+  - subframe: [[1, 5]]
     pages: [2]
     description: Satellite's Y data and time interval
-    fields: &y
+    fields:
       - name: satellite_health_B
         bits: 3
       - name: time_interval_parity
@@ -97,10 +97,10 @@ formats:
         signed: true
         shift: -11
         unit: km
-  - subframe: 1
+  - subframe: [[1, 5]]
     pages: [3]
     description: Satellite's Z data and other data
-    fields: &z
+    fields:
       - name: almanac_for_satellites
         bits: 1
       - name: carrier_frequency_deviation
@@ -132,10 +132,10 @@ formats:
         signed: true
         shift: -11
         unit: km
-  - subframe: 1
+  - subframe: [[1, 5]]
     pages: [4]
     description: Other data
-    fields: &other
+    fields:
       - name: satellite_to_glonass_time_correction
         bits: 22
         signed: true
@@ -161,10 +161,10 @@ formats:
         bits: 5
       - name: transmitting_satellite_type
         bits: 2
-  - subframe: 1
+  - subframe: [[1, 5]]
     pages: [5]
     description: Almanac global data
-    fields: &almanac_global
+    fields:
       - name: day_number_almanac
         bits: 11
         unit: day
@@ -187,7 +187,7 @@ formats:
         unit: day
       - name: satellite_health_l
         bits: 1
-  - subframe: 1
+  - subframe: [[1, 4]]
     pages: [6, 8, 10, 12, 14]
     description: Almanac (1/2)
     fields: &almanac_1
@@ -219,7 +219,7 @@ formats:
         latex: \epsilon_n
         bits: 15
         shift: -20
-  - subframe: 1
+  - subframe: [[1, 4]]
     pages: [7, 9, 11, 13, 15]
     description: Almanac (2/2)
     fields: &almanac_2
@@ -250,26 +250,6 @@ formats:
         bits: 5
       - name: satellite_health_l
         bits: 1
-  - subframe: 5
-    pages: [1]
-    description: Satellite's X data and date
-    fields: *x
-  - subframe: 5
-    pages: [2]
-    description: Satellite's Y data and time interval
-    fields: *y
-  - subframe: 5
-    pages: [3]
-    description: Satellite's Z data and other data
-    fields: *z
-  - subframe: 5
-    pages: [4]
-    description: Other data
-    fields: *other
-  - subframe: 5
-    pages: [5]
-    description: Almanac global data
-    fields: *almanac_global
   - subframe: 5
     pages: [6, 8, 10, 12]
     description: Almanac (1/2)

@@ -39,6 +39,8 @@ ublox places the subframe ID in word 4, after 24 MSB, on 8 bits
 
 ### Page 1
 
+This format applies to subframes 1 to 5
+
 Satellite's X data and date
 
 72 bits mapped as follows:
@@ -56,6 +58,8 @@ Satellite's X data and date
 
 ### Page 2
 
+This format applies to subframes 1 to 5
+
 Satellite's Y data and time interval
 
 72 bits mapped as follows:
@@ -71,6 +75,8 @@ Satellite's Y data and time interval
 |$y$|y|$^*27$|$2^{-11}$|$\mathrm{km}$|
 
 ### Page 3
+
+This format applies to subframes 1 to 5
 
 Satellite's Z data and other data
 
@@ -89,6 +95,8 @@ Satellite's Z data and other data
 |$z$|z|$^*27$|$2^{-11}$|$\mathrm{km}$|
 
 ### Page 4
+
+This format applies to subframes 1 to 5
 
 Other data
 
@@ -109,6 +117,8 @@ Other data
 
 ### Page 5
 
+This format applies to subframes 1 to 5
+
 Almanac global data
 
 72 bits mapped as follows:
@@ -123,6 +133,8 @@ Almanac global data
 ||satellite_health_l|1|||
 
 ### Pages 6, 8, 10, 12, 14
+
+This format applies to subframes 1 to 4
 
 Almanac (1/2)
 
@@ -140,6 +152,8 @@ Almanac (1/2)
 
 ### Pages 7, 9, 11, 13, 15
 
+This format applies to subframes 1 to 4
+
 Almanac (2/2)
 
 72 bits mapped as follows:
@@ -154,91 +168,6 @@ Almanac (2/2)
 ||satellite_health_l|1|||
 
 ## Subframe 5
-
-### Page 1
-
-Satellite's X data and date
-
-72 bits mapped as follows:
-
-|notation|name|bits|factor|unit|
-|:------:|:---|---:|:-----|:--:|
-||_ignored_|2|||
-||time_interval_duration|2|||
-||hour|5||$\mathrm{h}$|
-||minute|6||$\mathrm{min}$|
-||second|1|30|$\mathrm{s}$|
-|$x'$|x_speed|$^*24$|$2^{-20}$|$\mathrm{\frac{km}{s}}$|
-|$x''$|x_acceleration|$^*5$|$2^{-30}$|$\mathrm{\frac{km}{s^{2}}}$|
-|$x$|x|$^*27$|$2^{-11}$|$\mathrm{km}$|
-
-### Page 2
-
-Satellite's Y data and time interval
-
-72 bits mapped as follows:
-
-|notation|name|bits|factor|unit|
-|:------:|:---|---:|:-----|:--:|
-||satellite_health_B|3|||
-||time_interval_parity|1|||
-||time_interval_index|7|||
-||_ignored_|5|||
-|$y'$|y_speed|$^*24$|$2^{-20}$|$\mathrm{\frac{km}{s}}$|
-|$y''$|y_acceleration|$^*5$|$2^{-30}$|$\mathrm{\frac{km}{s^{2}}}$|
-|$y$|y|$^*27$|$2^{-11}$|$\mathrm{km}$|
-
-### Page 3
-
-Satellite's Z data and other data
-
-72 bits mapped as follows:
-
-|notation|name|bits|factor|unit|
-|:------:|:---|---:|:-----|:--:|
-||almanac_for_satellites|1|||
-||carrier_frequency_deviation|$^*11$|$2^{-40}$||
-||_ignored_|1|||
-||c_computation_location|1|||
-||gps_computation_location|1|||
-||satellite_health_l|1|||
-|$z'$|z_speed|$^*24$|$2^{-20}$|$\mathrm{\frac{km}{s}}$|
-|$z''$|z_acceleration|$^*5$|$2^{-30}$|$\mathrm{\frac{km}{s^{2}}}$|
-|$z$|z|$^*27$|$2^{-11}$|$\mathrm{km}$|
-
-### Page 4
-
-Other data
-
-72 bits mapped as follows:
-
-|notation|name|bits|factor|unit|
-|:------:|:---|---:|:-----|:--:|
-||satellite_to_glonass_time_correction|$^*22$|$2^{-30}$|$\mathrm{s}$|
-||navigation_aviation_time_difference|$^*5$|$2^{-30}$|$\mathrm{s}$|
-||age_of_data|5|||
-||_ignored_|14|||
-||is_ephemeris_present|1|||
-||user_range_accuracy_index|4|||
-||_ignored_|3|||
-||day_number|11||$\mathrm{d}$|
-||transmitting_satellite|5|||
-||transmitting_satellite_type|2|||
-
-### Page 5
-
-Almanac global data
-
-72 bits mapped as follows:
-
-|notation|name|bits|factor|unit|
-|:------:|:---|---:|:-----|:--:|
-||day_number_almanac|11||$\mathrm{d}$|
-|$\tau_{C}$|utc_correction|$^*32$|$2^{-31}$|$\mathrm{s}$|
-||_ignored_|1|||
-||four_year_interval_number|5|4|$\mathrm{yr}$|
-|$\tau_{GPS}$|gps_correction|$^*22$|$2^{-30}$|$\mathrm{d}$|
-||satellite_health_l|1|||
 
 ### Pages 6, 8, 10, 12
 

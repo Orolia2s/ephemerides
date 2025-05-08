@@ -34,6 +34,9 @@ open ephemerides.pdf
 ```bash
 make zig
 ./zig/zig-out/bin/ephemerides --help
+
+#Parse from USB
+./zig/zig-out/bin/ephemerides /dev/ttyACM0 --baudrate 115200
 ```
 
 ### Parse ublox stream from python
