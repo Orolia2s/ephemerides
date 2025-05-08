@@ -158,7 +158,7 @@ class ZigFunction(ZigWriter):
 
 def handler_to_zig(self, output: TextIO):
     simple_messages = list(sorted(map(simplify, self.messages.keys())))
-    constellations = list(sorted(set(message.constellation for message in self.messages.values()), key=lambda c:c.name))
+    constellations = list(sorted(set(message.constellation for message in self.messages.values()), key = lambda c:c.name))
     writer = ZigWriter(output)
     writer.add_imports(['std', 'o2s', 'utils'])
     writer.empty_line()
@@ -245,21 +245,15 @@ def format_to_zig(self, writer: ZigWriter):
         field_array_to_zig(self.header, 'Header', 'read_header', '*Reader', namespace)
         if self.page_header:
             field_array_to_zig(self.page_header, 'PageHeader', 'read_page_header', '*Reader', namespace)
-        for key, value in sorted(self.human_readable.items()):
-            namespace.comment(key)
-            subframe = key.replace(' ', '')
-            if isinstance(value, dict):
-                for (start, human_readable), (field_array, description) in sorted(value.items()):
-                    name = f'{subframe}Page{start}'
-                    namespace.doc(human_readable)
-                    if description:
-                        namespace.docs(description.strip().split('\n'))
-                    field_array_to_zig(field_array, name, f'read_{name}', '*Reader', namespace)
-            else:
-                field_array, description = value
-                if description:
-                    namespace.docs(description.strip().split('\n'))
-                field_array_to_zig(field_array, subframe, f'read_{subframe}', '*Reader', namespace)
+        for fmt in sorted(self.format_list, key=lambda t: (t.min_subframe, t.min_page)):
+            namespace.comment(f'Subframe(s) {fmt.subframes}')
+            name = f'Subframe{fmt.min_subframe}'
+            if fmt.pages is not None:
+                namespace.comment(f'Page(s) {fmt.pages}')
+                name += f'Page{fmt.min_page}'
+            if fmt.description:
+                namespace.docs(fmt.description.split('\n'))
+            field_array_to_zig(fmt.parser, name, f'read_{name.lower()}', '*Reader', namespace)
         namespace.empty_line()
         with namespace.function('is_paged', [ZigVariable('subframe_id', 'u8')], 'bool', True) as func:
             func.write_line('return switch(subframe_id) {')
