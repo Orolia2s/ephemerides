@@ -51,4 +51,4 @@ class RangeList:
         return ', '.join(self.human_readable)
 
     def __len__(self):
-        return self.as_list().__len__()
+        return self.as_list.__len__()

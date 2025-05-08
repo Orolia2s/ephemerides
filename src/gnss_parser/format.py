@@ -55,7 +55,7 @@ class GnssFormat(SimpleNamespace):
         result = SimpleNamespace()
         result.page_header = FieldArray.from_icd(icd['page_header']) if 'page_header' in icd else None
         result.ublox = Ublox.from_icd(icd['ublox']) if 'ublox' in icd else None
-        result.description = icd['metadata']['description'] if 'description' in icd['metadata'] else None
+        result.description = icd['metadata']['description'].strip() if 'description' in icd['metadata'] else None
         result.paged_subframes = set()
         result.per_subframe = defaultdict(dict)
         result.format_list = []
@@ -66,7 +66,7 @@ class GnssFormat(SimpleNamespace):
             description = fmt['description'] if 'description' in fmt else None
             if 'pages' in fmt:
                 pages = RangeList(fmt['pages'])
-                result.format_list += FormatData(min(subframes), min(pages), subframes, pages, parser, description)
+                result.format_list.append(FormatData(min(subframes), min(pages), subframes, pages, parser, description))
                 for subframe in subframes:
                     result.paged_subframes.add(subframe)
                     for page in pages:
@@ -75,7 +75,7 @@ class GnssFormat(SimpleNamespace):
             else:
                 for subframe in subframes:
                     result.per_subframe[subframe] = parser
-                result.format_list += FormatData(min(subframes), 0, subframes, None, parser, description)
+                result.format_list.append(FormatData(min(subframes), 0, subframes, None, parser, description))
                 logging.debug(f"Added format message {constellation} {messageName} > Subframe(s) {subframes}")
         return cls(messageName, Constellation[constellation], Ordering[icd['order']], FieldArray.from_icd(icd['header']), **result.__dict__)
 

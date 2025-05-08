@@ -20,13 +20,13 @@ def field_to_markdown(self):
     return '|'.join(cells + [''])
 
 def parser_to_markdown(self):
-    comment = f'\n{self.bit_count} bits mapped as follows:\n'
+    comment = f'{self.bit_count} bits mapped as follows:\n'
     heading = '|'.join(['', 'notation', 'name', 'bits', 'factor', 'unit', ''])
     hline   = '|'.join(['', ':------:', ':---', '---:', ':-----', ':--:', ''])
     return '\n'.join([comment, heading, hline] + [field_to_markdown(f) for f in self.fields])
 
 def format_to_markdown(self):
-    lines = [f'# {self.constellation.name} {self.name}\n']
+    lines = [f'# {self.constellation.name} {self.name}']
     if self.description:
         lines.append(self.description)
     if self.ublox:
@@ -34,20 +34,21 @@ def format_to_markdown(self):
     lines.append('## Header')
     lines.append(parser_to_markdown(self.header))
     if self.page_header:
-        lines.append('\n## Header extension for paged subframes')
+        lines.append('## Header extension for paged subframes')
         lines.append(parser_to_markdown(self.page_header))
-    for key, value in sorted(self.human_readable.items()):
-        lines.append(f'\n## {key}')
-        if isinstance(value, dict):
-            for subkey, subvalue in sorted(value.items()):
-                lines.append(f'\n### {subkey[1]}')
-                if subvalue[1]:
-                    lines.append(f'\n{subvalue[1]}')
-                lines.append(parser_to_markdown(subvalue[0]))
-        else:
-            lines.append(f'\n{value[1]}')
-            lines.append(parser_to_markdown(value[0]))
-    return '\n'.join(lines)
+    current_subframe = None
+    for format_data in sorted(self.format_list, key = lambda t: (t.min_subframe, t.min_page)):
+        if current_subframe != format_data.min_subframe:
+            current_subframe = format_data.min_subframe
+            lines.append(f'## Subframe {current_subframe}')
+        if format_data.pages is not None:
+            lines.append(f"### Page{'s' if len(format_data.pages) > 1 else ''} {format_data.pages}")
+        if len(format_data.subframes) > 1:
+            lines.append(f'This format applies to subframes {format_data.subframes}')
+        if format_data.description:
+            lines.append(format_data.description)
+        lines.append(parser_to_markdown(format_data.parser))
+    return '\n\n'.join(lines)
 
 def ublox_to_markdown(self, parent_format):
     lines = ['## Ublox words layout\n']
@@ -57,4 +58,4 @@ def ublox_to_markdown(self, parent_format):
         lines.append('|'.join(map(str, [layout.words, layout.discard_msb, layout.keep, 32 - (layout.discard_msb + layout.keep)])))
     if self.subframe_id:
         lines += ['', f'ublox places the subframe ID in word {self.subframe_id.word}, after {self.subframe_id.discard_msb} MSB, on {self.subframe_id.keep} bits']
-    return '\n'.join(lines + [''])
+    return '\n'.join(lines)
