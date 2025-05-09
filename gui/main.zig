@@ -1,3 +1,4 @@
+const std = @import("std");
 const raylib = @import("raylib");
 
 const Camera = raylib.Camera3D;
@@ -11,11 +12,22 @@ pub fn main() anyerror!void {
     const screenWidth = 1200;
     const screenHeight = 600;
 
-    const earthPos: Vector3 = .{ .x = 0, .y = 0, .z = 0 };
-
     raylib.initWindow(screenWidth, screenHeight, "Visualize GNSS satellite orbits");
     defer raylib.closeWindow();
     raylib.setTargetFPS(60);
+
+    const earthPos: Vector3 = .{ .x = 0, .y = 0, .z = 0 };
+    const earthMesh = raylib.genMeshSphere(1, 64, 64);
+    var earthModel = try raylib.loadModelFromMesh(earthMesh);
+    defer earthModel.unload();
+    var earthImage = try raylib.loadImage("assets/earth_daymap.jpg");
+    defer earthImage.unload();
+    earthImage.flipVertical();
+    earthImage.rotateCCW();
+    const earthTexture = try raylib.loadTextureFromImage(earthImage);
+    defer earthTexture.unload();
+    earthModel.materials[0].maps[0].texture = earthTexture;
+    earthModel.transform = raylib.Matrix.rotateX(90 * std.math.rad_per_deg);
 
     var camera: Camera = .{
         .position = .{ .x = 7, .y = 7, .z = 7 },
@@ -26,7 +38,7 @@ pub fn main() anyerror!void {
     };
 
     while (!raylib.windowShouldClose()) {
-        raylib.updateCamera(&camera, .orbital);
+        camera.update(.orbital);
 
         {
             raylib.beginDrawing();
@@ -37,11 +49,10 @@ pub fn main() anyerror!void {
                 camera.begin();
                 defer camera.end();
 
-                raylib.drawSphere(earthPos, 1.0, .blue);
-                raylib.drawCircle3D(earthPos, 2.0, X.add(Y), 90.0, .gray);
+                earthModel.draw(earthPos, 1, .white);
+                raylib.drawCircle3D(earthPos, 2.0, X.add(Y), 90.0, .light_gray);
+                raylib.drawCircle3D(earthPos, 3.0, X, 90.0, .gray);
             }
-
-            raylib.drawText("Congrats! You created your first window!", 10, 20, 20, .light_gray);
         }
     }
 }
