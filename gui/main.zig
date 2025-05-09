@@ -17,7 +17,8 @@ pub fn main() anyerror!void {
     raylib.setTargetFPS(60);
 
     const earthPos: Vector3 = .{ .x = 0, .y = 0, .z = 0 };
-    const earthMesh = raylib.genMeshSphere(1, 64, 64);
+    const earthRadius: comptime_float = 6.371;
+    const earthMesh = raylib.genMeshSphere(earthRadius, 64, 64);
     var earthModel = try raylib.loadModelFromMesh(earthMesh);
     defer earthModel.unload();
     var earthImage = try raylib.loadImage("assets/earth_daymap.jpg");
@@ -30,7 +31,7 @@ pub fn main() anyerror!void {
     earthModel.transform = raylib.Matrix.rotateX(90 * std.math.rad_per_deg);
 
     var camera: Camera = .{
-        .position = .{ .x = 7, .y = 7, .z = 7 },
+        .position = .{ .x = earthRadius * 7, .y = earthRadius * 7, .z = earthRadius * 7 },
         .target = earthPos,
         .up = Y,
         .fovy = 70.0,
@@ -50,8 +51,8 @@ pub fn main() anyerror!void {
                 defer camera.end();
 
                 earthModel.draw(earthPos, 1, .white);
-                raylib.drawCircle3D(earthPos, 2.0, X.add(Y), 90.0, .light_gray);
-                raylib.drawCircle3D(earthPos, 3.0, X, 90.0, .gray);
+                raylib.drawCircle3D(earthPos, earthRadius * 2, X.add(Y), 90.0, .light_gray);
+                raylib.drawCircle3D(earthPos, earthRadius * 3, X, 90.0, .gray);
             }
         }
     }

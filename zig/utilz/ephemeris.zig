@@ -1,5 +1,5 @@
-const unitz = @import("unitz");
-const q = unitz.quantities(f64);
+const units = @import("units");
+const q = units.quantities(f64);
 
 const m = q.meter;
 const rad = q.radian;

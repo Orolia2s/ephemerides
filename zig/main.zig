@@ -14,16 +14,26 @@ const SatelliteKey = struct { id: u8, signal: GnssMessageType };
 const SubframeAccumulator = std.AutoArrayHashMapUnmanaged(GnssSubframe.Key, GnssSubframe);
 const SatelliteAccumulator = std.AutoArrayHashMapUnmanaged(SatelliteKey, SubframeAccumulator);
 
+const Mode = enum { subframe, raw_ephemeris, ephemeris };
+var mode: Mode = .subframe;
+
 const Options = struct {
     baudrate: ?i64 = null,
+    mode: Mode = .subframe,
     help: bool = false,
 
-    pub const shorthands = .{ .b = "baudrate", .h = "help" };
+    pub const shorthands = .{ .b = "baudrate", .m = "mode", .h = "help" };
     pub const meta = .{
-        .usage_summary = "PATH [-b UINT]",
+        .usage_summary = "PATH [-b UINT] [-m {subframe}]",
         .full_text = "Parse ublox stream",
         .option_docs = .{
             .baudrate = "The specified path is a serial port and must be configured with this baudrate",
+            .mode =
+            \\Choose what to output:
+            \\\t\t\t\t'subframe': Dump individual subframes
+            \\\t\t\t\t'raw_ephemeris': Dump the integer content of accumulated ephemerides
+            \\\t\t\t\t'ephemeris': Dump the interpreted ephemerides
+            ,
             .help = "Print this help",
         },
     };
@@ -83,6 +93,7 @@ pub fn main() !void {
         return;
     }
 
+    mode = options.options.mode;
     log.infoAt(@src(), "Starting with arguments: {any}", .{options.options});
 
     try utils.read_ublox_from(
@@ -101,7 +112,7 @@ fn c_ublox_callback(message: [*c]o2s.ublox_message_t) callconv(.C) void {
     receive_ublox_subframe(subframe) catch |err| {
         switch (err) {
             error.MissingMessage => show_warning_once(.MissingMessage, "Unsupported GNSS message: {s} {}", .{ o2s.ublox_constellation_to_cstring(subframe.constellation), subframe.signal }),
-            else => log.errAt(@src(), "Error: {}", .{err}),
+            else => log.errAt(@src(), "Error: {s}. Subframe: {any}", .{ @errorName(err), subframe }),
         }
     };
 }
@@ -117,7 +128,43 @@ fn receive_ublox_subframe(ublox: *o2s.struct_ublox_navigation_data) !void {
     const subframeAccumulator = (try accumulator.getOrPutValue(gpa, satKey, .empty)).value_ptr;
     try subframeAccumulator.put(gpa, subframe.key, subframe.message);
 
-    try std.json.stringify(subframe, .{}, out);
-    try out.writeAll("\n---\n");
-    try buffered_out.flush();
+    if (mode == .subframe) {
+        try std.json.stringify(subframe, .{}, out);
+        try out.writeAll("\n---\n");
+        try buffered_out.flush();
+        return;
+    }
+
+    if (subframe.messageType == .LNAVL and subframe.key.subframe == 3) {
+        if (subframeAccumulator.get(.{ .subframe = 1 })) |first| {
+            if (first.LNAVL.header.time_of_week != subframe.message.LNAVL.header.time_of_week - 2)
+                return;
+            if (subframeAccumulator.get(.{ .subframe = 2 })) |second| {
+                if (second.LNAVL.header.time_of_week != subframe.message.LNAVL.header.time_of_week - 1)
+                    return;
+                log.info("{s}: Ephemeris of {s} {} (TOW: {})", .{ @tagName(subframe.messageType), @tagName(subframe.constellation), subframe.satellite, first.LNAVL.header.time_of_week });
+                if (mode == .raw_ephemeris) {
+                    try std.json.stringify(.{ first.LNAVL, second.LNAVL, subframe.message.LNAVL }, .{}, out);
+                } else {}
+                try out.writeAll("\n---\n");
+                try buffered_out.flush();
+            }
+        }
+    }
+    if (subframe.messageType == .D1 and subframe.key.subframe == 3) {
+        if (subframeAccumulator.get(.{ .subframe = 1 })) |first| {
+            if (first.D1.header.time_of_week != subframe.message.D1.header.time_of_week - 12)
+                return;
+            if (subframeAccumulator.get(.{ .subframe = 2 })) |second| {
+                if (second.D1.header.time_of_week != subframe.message.D1.header.time_of_week - 6)
+                    return;
+                log.info("{s}: Ephemeris of {s} {} (TOW: {})", .{ @tagName(subframe.messageType), @tagName(subframe.constellation), subframe.satellite, first.D1.header.time_of_week });
+                if (mode == .raw_ephemeris) {
+                    try std.json.stringify(.{ first.D1, second.D1, subframe.message.D1 }, .{}, out);
+                } else {}
+                try out.writeAll("\n---\n");
+                try buffered_out.flush();
+            }
+        }
+    }
 }
