@@ -70,4 +70,19 @@ pub fn build(b: *std.Build) !void {
         });
         test_step.dependOn(&b.addRunArtifact(unit_tests).step);
     }
+    { // Documentation
+        const docs_step = b.step("docs", "Build the project documentation");
+
+        const docs_obj = b.addObject(.{
+            .name = "ephemerides_utilities",
+            .root_module = utils,
+        });
+
+        const install_docs = b.addInstallDirectory(.{
+            .source_dir = docs_obj.getEmittedDocs(),
+            .install_dir = .prefix,
+            .install_subdir = "docs",
+        });
+        docs_step.dependOn(&install_docs.step);
+    }
 }

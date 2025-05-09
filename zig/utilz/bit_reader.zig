@@ -1,5 +1,6 @@
 const std = @import("std");
 
+/// Read fields that may be spanning on several words
 pub fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type {
     return struct {
         words: [word_count]WordType,
@@ -11,6 +12,7 @@ pub fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type
             return .{ .words = words };
         }
 
+        /// Read a single bit
         pub fn next(self: *Self) ?bool {
             const word = @divTrunc(self.bit_consumed, @bitSizeOf(WordType));
             const bit = @bitSizeOf(WordType) - 1 - @mod(self.bit_consumed, @bitSizeOf(WordType));
@@ -22,6 +24,7 @@ pub fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type
             return (self.words[word] & mask) != 0;
         }
 
+        /// Read a bitfield
         pub fn consume(self: *Self, count: u8, comptime Target: type) !Target {
             var result: Target = 0;
 
@@ -35,6 +38,7 @@ pub fn SimpleBitReader(comptime word_count: usize, comptime WordType: type) type
     };
 }
 
+/// Read a subset of the bits of each words, to read fields that span on multiple words that have padding / parity bits
 pub fn SkippingBitReader(comptime word_count: usize, comptime WordType: type, comptime to_skip: [word_count]u8, comptime to_keep: [word_count]u8) type {
     return struct {
         words: [word_count]WordType,
@@ -48,6 +52,7 @@ pub fn SkippingBitReader(comptime word_count: usize, comptime WordType: type, co
             return .{ .words = words };
         }
 
+        /// Read a single bit
         pub fn next(self: *Self) ?bool {
             if (self.current_word == self.words.len)
                 return null;
@@ -64,6 +69,7 @@ pub fn SkippingBitReader(comptime word_count: usize, comptime WordType: type, co
             return result;
         }
 
+        /// Read a bitfield
         pub fn consume(self: *Self, count: u8, comptime Target: type) !Target {
             var result: Target = 0;
 
