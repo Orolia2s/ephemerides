@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const utils = b.dependency("ephemerides_utilities", .{ .target = target });
+    const utils = b.dependency("orbital_elements", .{ .target = target });
     const axe = b.dependency("axe", .{ .target = target, .optimize = optimize });
     const argsParser = b.dependency("args", .{ .target = target, .optimize = optimize });
 

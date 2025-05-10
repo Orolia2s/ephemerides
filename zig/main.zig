@@ -30,9 +30,9 @@ const Options = struct {
             .baudrate = "The specified path is a serial port and must be configured with this baudrate",
             .mode =
             \\Choose what to output:
-            \\\t\t\t\t'subframe': Dump individual subframes
-            \\\t\t\t\t'raw_ephemeris': Dump the integer content of accumulated ephemerides
-            \\\t\t\t\t'ephemeris': Dump the interpreted ephemerides
+            \\                     'subframe': Dump individual subframes
+            \\                     'raw_ephemeris': Dump the integer content of accumulated ephemerides
+            \\                     'ephemeris': Dump the interpreted ephemerides
             ,
             .help = "Print this help",
         },
