@@ -6,7 +6,7 @@
 
 #set document(
   title: [Ephemerides --- GNSS navigations messages],
-  author: ("Tanguy BERTHOUD"),
+  author: "Tanguy BERTHOUD",
 )
 #show link: set text(fill: blue)
 #show link: underline
@@ -47,13 +47,17 @@
       bytefield(
         bpr: 32,
         bitheader("bytes"),
-        ..contents.enumerate().map(((i, field)) => bits(
-          field.bits,
-          fill: if (
-            not "name" in field
-          ) and "bits" in field and field.len() == 1 { gray } else { white },
-          if "latex" in field { mi(field.latex) } else { [\##(i + 1)] },
-        )),
+        ..contents
+          .enumerate()
+          .map(((i, field)) => bits(
+            field.bits,
+            fill: if (
+              not "name" in field
+            )
+              and "bits" in field
+              and field.len() == 1 { gray } else { white },
+            if "latex" in field { mi(field.latex) } else { [\##(i + 1)] },
+          )),
       ),
     )
     table(
@@ -70,29 +74,32 @@
       ..contents
         .enumerate()
         .map(((i, field)) => (
-            [#(i + 1)],
-            if "latex" in field {
-              mi(field.latex)
-            },
-            display_name(field),
-            raw(if field.at("signed", default: false) { "i" } else {
+          [#(i + 1)],
+          if "latex" in field {
+            mi(field.latex)
+          },
+          display_name(field),
+          raw(
+            if field.at("signed", default: false) { "i" } else {
               "u"
-            } + str(field.bits)),
-            if "factor" in field {
-              [$#field.factor$]
-            } else if "shift" in field {
-              [$2^#int(field.shift)$]
-            },
-            {
-              let u = field.at("unit", default: "")
-              let match = u.match(regex("^(.+)\^\(1/2\)$"))
-              if match != none {
-                $sqrt(#match.captures.first())$
-              } else {
-                unit(u)
-              }
-            },
-          ))
+            }
+              + str(field.bits),
+          ),
+          if "factor" in field {
+            [$#field.factor$]
+          } else if "shift" in field {
+            [$2^#int(field.shift)$]
+          },
+          {
+            let u = field.at("unit", default: "")
+            let match = u.match(regex("^(.+)\^\(1/2\)$"))
+            if match != none {
+              $sqrt(#match.captures.first())$
+            } else {
+              unit(u)
+            }
+          },
+        ))
         .flatten()
     )
   }
@@ -109,10 +116,13 @@
 
   heading(data.metadata.message)
   par(
-    data.metadata.at("description", default: "").replace(
-      regex("[[:space:]]+"),
-      " ",
-    ),
+    data
+      .metadata
+      .at("description", default: "")
+      .replace(
+        regex("[[:space:]]+"),
+        " ",
+      ),
   )
 
   for (i, (title, content)) in notes.enumerate() [
@@ -151,16 +161,32 @@
   }
 
   if "formats" in data {
-    let subframes = ()
+    let subframes = (:)
     for page in data.formats {
-      while subframes.len() <= page.subframe {
-        subframes.push(())
+      let subframe = page.at("subframe")
+      if type(subframe) == int {
+        let slot = subframes.at(str(subframe), default: ())
+        slot.push(page)
+        subframes.insert(str(subframe), slot)
+      } else {
+        for subrange in subframe {
+          if type(subrange) == int {
+            let slot = subframes.at(str(subrange), default: ())
+            slot.push(page)
+            subframes.insert(str(subrange), slot)
+          } else {
+            for sub in range(subrange.first(), subrange.last() + 1) {
+              let slot = subframes.at(str(sub), default: ())
+              slot.push(page)
+              subframes.insert(str(sub), slot)
+            }
+          }
+        }
       }
-      subframes.at(page.subframe).push(page)
     }
-    for subframe in subframes.filter(subframe => subframe.len() > 0) {
+    for (subframe_id, subframe_pages) in subframes.pairs() {
       let first = true
-      for page in subframe {
+      for page in subframe_pages {
         page.description = if "description" in page {
           text(
             style: if page.description == "Reserved" { "italic" } else {
@@ -174,22 +200,18 @@
         let pages = page.at("pages", default: ()).map(item => (item,).flatten())
         let display_pages = pages
           .map(item => if item.len() > 1 {
-              [#item.first()--#item.last()]
-            } else {
-              [#item.first()]
-            })
+            [#item.first()--#item.last()]
+          } else {
+            [#item.first()]
+          })
           .join(", ", last: " and ")
 
         if first {
-          [== Subframe #page.subframe#if subframe.len() <= 1 and pages.len() == 0 and page.description != none [: #page.description] #label(data.metadata.message + ".s" + str(page.subframe))]
+          [== Subframe #subframe_id#if subframe_pages.len() <= 1 and pages.len() == 0 and page.description != none [: #page.description] #label(data.metadata.message + ".s" + str(subframe_id))]
           first = false
         }
         if pages.len() > 0 {
-          let label = label(data
-            .metadata
-            .message + ".s" + str(page.subframe) + "p" + str(
-            pages.first().first(),
-          ))
+          let label = label(data.metadata.message + ".s" + str(subframe_id) + "p" + str(pages.first().first()))
           if pages.len() == 1 {
             [=== Page #display_pages#if page.description != none [: #page.description] #label]
           } else {
@@ -277,22 +299,24 @@
         #table(
           columns: 3 * (auto,),
           [*`page_id`*], [*Subframe*], [*ICD page ID*],
-          ..map.map(((page_id, icd)) => {
-            let subframe = if page_id == (1, 24) or page_id == 51 { 5 } else {
-              4
-            }
-            page_id = if type(page_id) == array and page_id.len() == 2 {
-              [*#page_id.at(0)--#page_id.at(1)*]
-            } else {
-              [*#page_id*]
-            }
-            icd = if type(icd) == array and icd.len() == 2 {
-              [#icd.at(0)--#icd.at(1)]
-            } else {
-              [#icd]
-            }
-            (page_id, [#subframe], icd)
-          }).flatten()
+          ..map
+            .map(((page_id, icd)) => {
+              let subframe = if page_id == (1, 24) or page_id == 51 { 5 } else {
+                4
+              }
+              page_id = if type(page_id) == array and page_id.len() == 2 {
+                [*#page_id.at(0)--#page_id.at(1)*]
+              } else {
+                [*#page_id*]
+              }
+              icd = if type(icd) == array and icd.len() == 2 {
+                [#icd.at(0)--#icd.at(1)]
+              } else {
+                [#icd]
+              }
+              (page_id, [#subframe], icd)
+            })
+            .flatten()
         )
 
         #emoji.warning *The page IDs used in this document are `page_id` values*, not ICD page IDs!
