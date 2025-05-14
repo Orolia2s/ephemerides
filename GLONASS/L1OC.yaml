@@ -14,9 +14,9 @@ ublox:
   layout:
     - words: [[1, 2]]
       keep: 32
-    - words: [3]
+    - words: 3
       keep: 13 # 77 data bits
-    - words: [4]
+    - words: 4
       keep: 0
   subframe_id:
     word: 4
@@ -31,7 +31,7 @@ page_header:
     bits: 4
 formats:
   - subframe: [[1, 5]]
-    pages: [1]
+    pages: 1
     description: Satellite's X data and date
     fields:
       - bits: 2
@@ -66,7 +66,7 @@ formats:
         shift: -11
         unit: km
   - subframe: [[1, 5]]
-    pages: [2]
+    pages: 2
     description: Satellite's Y data and time interval
     fields:
       - name: satellite_health_B
@@ -95,7 +95,7 @@ formats:
         shift: -11
         unit: km
   - subframe: [[1, 5]]
-    pages: [3]
+    pages: 3
     description: Satellite's Z data and other data
     fields:
       - name: almanac_for_satellites
@@ -130,7 +130,7 @@ formats:
         shift: -11
         unit: km
   - subframe: [[1, 5]]
-    pages: [4]
+    pages: 4
     description: Other data
     fields:
       - name: satellite_to_glonass_time_correction
@@ -159,7 +159,7 @@ formats:
       - name: transmitting_satellite_type
         bits: 2
   - subframe: [[1, 5]]
-    pages: [5]
+    pages: 5
     description: Almanac global data
     fields:
       - name: day_number_almanac
@@ -256,7 +256,7 @@ formats:
     description: Almanac (2/2)
     fields: *almanac_2
   - subframe: 5
-    pages: [14]
+    pages: 14
     fields:
       - name: utc_ut1_bias_correction
         latex: B_1
@@ -274,7 +274,7 @@ formats:
         bits: 2
       - bits: 49
   - subframe: 5
-    pages: [15]
+    pages: 15
     fields:
       - bits: 71
       - name: satellite_health_l

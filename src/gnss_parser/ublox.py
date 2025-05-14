@@ -25,8 +25,8 @@ class UbloxLayout(namedtuple('UbloxLayout', ['words', 'discard_msb', 'keep'])):
         return cls(words=RangeList(icd['words']), keep=icd['keep'], discard_msb=icd.get('discard_msb', 0))
 
 class Ublox:
-    def __init__(self, signal: int, layout: list[UbloxLayout], subframe_id: None | SingleField):
-        self.signal = signal
+    def __init__(self, signal: int | list, layout: list[UbloxLayout], subframe_id: None | SingleField):
+        self.signal = RangeList(signal)
         self.layout = layout
         self.per_word = {}
         for x in layout:

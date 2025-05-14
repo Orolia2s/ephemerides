@@ -44,10 +44,10 @@ class FormatKey(namedtuple('FormatKey', ['subframes', 'pages'])):
 
     @classmethod
     def from_icd(cls, icd):
-        subframes = RangeList(icd['subframe']) if isinstance(icd['subframe'], list) else [icd['subframe']]
+        subframes = RangeList(icd['subframe'])
         pages = None
         if 'page' in icd:
-            pages = RangeList(icd['page']) if isinstance(icd['page'], list) else [icd['page']]
+            pages = RangeList(icd['page'])
 
 class GnssFormat(SimpleNamespace):
 
@@ -71,7 +71,7 @@ class GnssFormat(SimpleNamespace):
         result.format_list = []
         for fmt in icd['formats']:
             ensure_fields('format', fmt, ['subframe', 'fields'])
-            subframes = RangeList(fmt['subframe']) if isinstance(fmt['subframe'], list) else [fmt['subframe']]
+            subframes = RangeList(fmt['subframe'])
             parser = FieldArray.from_icd(fmt['fields'])
             description = fmt['description'] if 'description' in fmt else None
             if 'pages' in fmt:

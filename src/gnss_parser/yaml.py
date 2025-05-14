@@ -30,6 +30,8 @@ class RangeList:
     """
 
     def __init__(self, iterable):
+        if isinstance(iterable, int):
+            iterable = [iterable]
         self.as_list = []
         self.human_readable = []
         for element in iterable:

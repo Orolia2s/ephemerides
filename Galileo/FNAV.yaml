@@ -13,9 +13,9 @@ ublox:
   layout:
     - words: [[1, 6]]
       keep: 32
-    - words: [7]
+    - words: 7
       keep: 22 # 214 information bits
-    - words: [8]
+    - words: 8
       keep: 0
 header:
   - name: subframe_id
