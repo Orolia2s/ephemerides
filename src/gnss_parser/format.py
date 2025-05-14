@@ -40,6 +40,15 @@ class GnssFormatHandler:
 
 FormatData = namedtuple('FormatData', ['min_subframe', 'min_page', 'subframes', 'pages', 'parser', 'description'])
 
+class FormatKey(namedtuple('FormatKey', ['subframes', 'pages'])):
+
+    @classmethod
+    def from_icd(cls, icd):
+        subframes = RangeList(icd['subframe']) if isinstance(icd['subframe'], list) else [icd['subframe']]
+        pages = None
+        if 'page' in icd:
+            pages = RangeList(icd['page']) if isinstance(icd['page'], list) else [icd['page']]
+
 class GnssFormat(SimpleNamespace):
 
     def __init__(self, name: str, constellation: Constellation, header: FieldArray, **kwargs):
@@ -55,6 +64,7 @@ class GnssFormat(SimpleNamespace):
         result.page_header = FieldArray.from_icd(icd['page_header']) if 'page_header' in icd else None
         result.ublox = Ublox.from_icd(icd['ublox']) if 'ublox' in icd else None
         result.description = icd['metadata']['description'].strip() if 'description' in icd['metadata'] else None
+        result.ephemeris = [FormatKey.from_icd(key) for key in icd['ephemeris']] if 'ephemeris' in icd else None
         result.paged_subframes = set()
         result.per_subframe = defaultdict(dict)
         result.switch = defaultdict(dict)

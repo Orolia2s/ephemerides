@@ -4,6 +4,10 @@ metadata:
   message: D1
   description: |
     Sent on the B1I (1561.098 MHz) and B3I signals (1269.520 MHz)
+ephemeris:
+  - subframe: 1
+  - subframe: 2
+  - subframe: 3
 ublox:
   signal: 0
   layout:

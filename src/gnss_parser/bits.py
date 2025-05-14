@@ -22,13 +22,6 @@ def xor_bits(integer: int):
     """
     return integer.bit_count() & 1
 
-class Ordering(Enum):
-    """
-    The order of the fields listed in the yaml
-    """
-    msb_first = 0
-    lsb_first = 1
-
 complementary_half = {'msb': 'lsb', 'lsb': 'msb'}
 
 @cache

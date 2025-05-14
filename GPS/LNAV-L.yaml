@@ -5,6 +5,10 @@ metadata:
   description: |
     Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
   prns: [[1, 32]]
+ephemeris:
+  - subframe: 1
+  - subframe: 2
+  - subframe: 3
 ublox:
   signal: 0
   layout:
@@ -51,6 +55,7 @@ formats:
       - name: user_range_accuracy_index
         bits: 4
       - name: satellite_health
+        value: 0
         bits: 6
       - name: issue_of_data_clock
         bits: 2

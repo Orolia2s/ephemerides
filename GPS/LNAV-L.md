@@ -46,7 +46,7 @@ Clock parameters
 |$\text{WN}$|week_number|10|||
 ||l2_code|2|||
 ||user_range_accuracy_index|4|||
-||satellite_health|6|||
+|`000000`|satellite_health|6|||
 ||issue_of_data_clock (msb)|2|||
 ||l2p_data_flag|1|||
 ||_ignored_|87|||
