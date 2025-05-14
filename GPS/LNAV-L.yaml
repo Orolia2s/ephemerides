@@ -5,10 +5,6 @@ metadata:
   description: |
     Legacy Navigation, for the Lower set of PRN numbers (PRN 1-32)
   prns: [[1, 32]]
-frame_count: 25
-subframe_count: 5
-word_count: 10
-order: msb_first
 ublox:
   signal: 0
   layout:

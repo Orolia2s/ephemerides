@@ -9,8 +9,6 @@ metadata:
       - superframe -> frame
       - frame -> subframe
       - string -> page
-frame_count: 1
-subframe_count: 5
 ublox:
   signal: 0
   layout:
@@ -24,7 +22,6 @@ ublox:
     word: 4
     discard_msb: 24
     keep: 8
-order: msb_first
 header:
   - name: idle_chip
     bits: 1

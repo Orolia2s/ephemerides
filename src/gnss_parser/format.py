@@ -5,8 +5,7 @@ from types import SimpleNamespace
 
 from more_itertools import grouper
 
-from gnss_parser.bits import (Ordering, SingleWordBitReaderMsb,
-                              complementary_half, twos_complement)
+from gnss_parser.bits import SingleWordBitReaderMsb, complementary_half, twos_complement
 from gnss_parser.constellations import Constellation
 from gnss_parser.field import FieldArray
 from gnss_parser.ublox import Ublox, reader_from_ublox
@@ -43,12 +42,12 @@ FormatData = namedtuple('FormatData', ['min_subframe', 'min_page', 'subframes', 
 
 class GnssFormat(SimpleNamespace):
 
-    def __init__(self, name: str, constellation: Constellation, order: Ordering, header: FieldArray, **kwargs):
-        super().__init__(name=name, constellation=constellation, order=order, header=header, **kwargs)
+    def __init__(self, name: str, constellation: Constellation, header: FieldArray, **kwargs):
+        super().__init__(name=name, constellation=constellation, header=header, **kwargs)
 
     @classmethod
     def from_icd(cls, icd: dict[str]):
-        ensure_fields('top level of GNSS format', icd, ['header', 'formats', 'metadata', 'order'])
+        ensure_fields('top level of GNSS format', icd, ['header', 'formats', 'metadata'])
         ensure_fields('GNSS format metadata', icd['metadata'], ['constellation', 'message'])
         constellation = icd['metadata']['constellation']
         messageName = icd['metadata']['message']
@@ -80,7 +79,7 @@ class GnssFormat(SimpleNamespace):
                     result.per_subframe[subframe] = parser
                 result.format_list.append(FormatData(min(subframes), 0, subframes, None, parser, description))
                 logging.debug(f"Added format message {constellation} {messageName} > Subframe(s) {subframes}")
-        return cls(messageName, Constellation[constellation], Ordering[icd['order']], FieldArray.from_icd(icd['header']), **result.__dict__)
+        return cls(messageName, Constellation[constellation], FieldArray.from_icd(icd['header']), **result.__dict__)
 
     def parse_subframe(self, reader):
         header = self.header.parse(reader)

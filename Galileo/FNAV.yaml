@@ -8,7 +8,6 @@ metadata:
     and other system messages, such as almanacs and health status messages.
 
     Note that compared to the ICD, the notion of page and subframe has been swapped here
-subframe_count: 12
 ublox:
   signal: 3
   layout:
@@ -18,7 +17,6 @@ ublox:
       keep: 22 # 214 information bits
     - words: [8]
       keep: 0
-order: msb_first
 header:
   - name: subframe_id
     bits: 6
