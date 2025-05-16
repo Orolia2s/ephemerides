@@ -63,7 +63,7 @@ For now only one message type per constellation has been transcribed:
 | | GPS | L5 CNAV ($D_5$) | L5 | | [gps.gov/icwg/IS-GPS-705J.pdf](https://www.gps.gov/technical/icwg/IS-GPS-705J.pdf)
 | | GPS | CNAV-2 (L1C) | L1 | | [gps.gov/icwg/IS-GPS-800J.pdf](https://www.gps.gov/technical/icwg/IS-GPS-800J.pdf)
 | ✅ | Galileo | F/NAV | E5a-I | | [gsc-europa.eu/Galileo_OS_SIS_ICD_v2.1.pdf](https://www.gsc-europa.eu/sites/default/files/sites/all/files/Galileo_OS_SIS_ICD_v2.1.pdf) section 4.2
-| | Galileo | I/NAV | E5b-I, E1-B | | [gsc-europa.eu/Galileo_OS_SIS_ICD_v2.1.pdf](https://www.gsc-europa.eu/sites/default/files/sites/all/files/Galileo_OS_SIS_ICD_v2.1.pdf) section 4.3
+| ✅ | Galileo | I/NAV | E5b-I, E1-B | | [gsc-europa.eu/Galileo_OS_SIS_ICD_v2.1.pdf](https://www.gsc-europa.eu/sites/default/files/sites/all/files/Galileo_OS_SIS_ICD_v2.1.pdf) section 4.3
 | ✅ | Glonass | | L1, L2 | | [unavco.org/ICD_GLONASS_5.0_en.pdf](https://www.unavco.org/help/glossary/docs/ICD_GLONASS_5.0_(2002)_en.pdf)
 | ✅ | BeiDou | D1 | B1I, B3I | MEO/IGSO | [beidou.gov.cn/ICD/OpenServiceSignalB1I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201902/P020190227702348791891.pdf) [beidou.gov.cn/ICD/OpenServiceSignalB3I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201806/P020180608516798097666.pdf) 5.2
 | | BeiDou | D2 | B1I, B3I | GEO | [beidou.gov.cn/ICD/OpenServiceSignalB1I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201902/P020190227702348791891.pdf) [beidou.gov.cn/ICD/OpenServiceSignalB3I.pdf](http://en.beidou.gov.cn/SYSTEMS/ICD/201806/P020180608516798097666.pdf) 5.3

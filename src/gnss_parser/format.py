@@ -26,7 +26,8 @@ class GnssFormatHandler:
         message = GnssFormat.from_icd(obj)
         self.messages[message.name] = message
         if message.ublox:
-            self.ublox_mapping[message.constellation.value, message.ublox.signal] = message.name
+            for signal in message.ublox.signal:
+                self.ublox_mapping[message.constellation.value, signal] = message.name
         self.per_constellation[message.constellation].append(message)
 
     def parse_subframe(self, message_name: str, reader):
