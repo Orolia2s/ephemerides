@@ -2,7 +2,7 @@
 
 #import "@preview/bytefield:0.0.7": *
 #import "@preview/mitex:0.2.5": mi
-#import "@preview/unify:0.7.1": unit, add-unit
+#import "@preview/unify:0.7.1": add-unit, unit
 
 #set document(
   title: [Ephemerides --- GNSS navigations messages],
@@ -11,21 +11,49 @@
 #show link: set text(fill: blue)
 #show link: underline
 
-#align(
-  center,
-  text(size: 2em, weight: "bold")[
-    _Ephemerides_\
-    GNSS navigation messages
-  ],
-)
+#align(center, text(size: 2em, weight: "bold")[
+  _Ephemerides_\
+  GNSS navigation messages
+])
 #align(bottom, outline(depth: 2))
 #pagebreak()
 
 #set page(numbering: "1")
 
-
 #add-unit("semicircle", "semicircle", "#sym.pi")
 #add-unit("solar flux", "sfu", "\"sfu\"")
+
+#let append-at(map, key, value) = {
+  let present = map.at(key, default: ())
+  present.push(value)
+  map.insert(key, present)
+  return map
+}
+
+// 3 -> [3], "3"
+// [2, 5] -> [2, 5], "2 and 5"
+// [[1, 3], [5, 7], 11] -> [1, 2, 3, 5, 6, 7], "1-3, 5-7 and 11"
+#let rangelist(input) = {
+  let all = ()
+  let repr = ()
+  if type(input) == int {
+    all.push(input)
+    repr.push([#input])
+  } else {
+    for value in input {
+      if type(value) == int {
+        all.push(value)
+        repr.push([#value])
+      } else {
+        for i in range(value.first(), value.last() + 1) {
+          all.push(i)
+        }
+        repr.push([#value.first()--#value.last()])
+      }
+    }
+  }
+  return (all, repr.join(", ", last: " and "))
+}
 
 #let format(file, notes: (), heading_depth: 1) = {
   let fields(contents) = {
@@ -43,23 +71,17 @@
     }
 
 
-    box(
-      bytefield(
-        bpr: 32,
-        bitheader("bytes"),
-        ..contents
-          .enumerate()
-          .map(((i, field)) => bits(
-            field.bits,
-            fill: if (
-              not "name" in field
-            )
-              and "bits" in field
-              and field.len() == 1 { gray } else { white },
-            if "latex" in field { mi(field.latex) } else { [\##(i + 1)] },
-          )),
-      ),
-    )
+    box(bytefield(bpr: 32, bitheader("bytes"), ..contents
+      .enumerate()
+      .map(((i, field)) => bits(
+        field.bits,
+        fill: if (
+          not "name" in field
+        )
+          and "bits" in field
+          and field.len() == 1 { gray } else { white },
+        if "latex" in field { mi(field.latex) } else { [\##(i + 1)] },
+      ))))
     table(
       columns: (auto, auto, 1fr, auto, auto, auto),
       align: (col, row) => (
@@ -115,15 +137,10 @@
   set heading(offset: heading_depth)
 
   heading(data.metadata.message)
-  par(
-    data
-      .metadata
-      .at("description", default: "")
-      .replace(
-        regex("[[:space:]]+"),
-        " ",
-      ),
-  )
+  par(data
+    .metadata
+    .at("description", default: "")
+    .replace(regex("[[:space:]]+"), " "))
 
   for (i, (title, content)) in notes.enumerate() [
     == #title #label(data.metadata.message + "_note_" + str(i + 1))
@@ -133,17 +150,16 @@
   if "ublox" in data [
     == _u-blox_ broadcast navigation data
     #for layout in data.ublox.layout [
-      === Words #layout.words.map(item => if type(item) == array [ #item.first()--#item.last() ] else [ #item ]).join(", ", last: " and ")
+      #let words = rangelist(layout.words).last()
+      === Words #words
       #let discard_msb = layout.at("discard_msb", default: 0)
-      #box(
-        bytefield(
-          bpr: 32,
-          bitheader("bytes"),
-          bits(discard_msb, fill: gray)[],
-          bits(layout.keep)[Data],
-          bits(32 - (layout.keep + discard_msb), fill: gray)[],
-        ),
-      )
+      #box(bytefield(
+        bpr: 32,
+        bitheader("bytes"),
+        bits(discard_msb, fill: gray)[],
+        bits(layout.keep)[Data],
+        bits(32 - (layout.keep + discard_msb), fill: gray)[],
+      ))
 
     ]
   ]
@@ -164,24 +180,8 @@
     let subframes = (:)
     for page in data.formats {
       let subframe = page.at("subframe")
-      if type(subframe) == int {
-        let slot = subframes.at(str(subframe), default: ())
-        slot.push(page)
-        subframes.insert(str(subframe), slot)
-      } else {
-        for subrange in subframe {
-          if type(subrange) == int {
-            let slot = subframes.at(str(subrange), default: ())
-            slot.push(page)
-            subframes.insert(str(subrange), slot)
-          } else {
-            for sub in range(subrange.first(), subrange.last() + 1) {
-              let slot = subframes.at(str(sub), default: ())
-              slot.push(page)
-              subframes.insert(str(sub), slot)
-            }
-          }
-        }
+      for subframe in rangelist(page.at("subframe")).first() {
+        subframes = append-at(subframes, str(subframe), page)
       }
     }
     for (subframe_id, subframe_pages) in subframes.pairs() {
@@ -197,25 +197,30 @@
         } else {
           none
         }
-        let pages = page.at("pages", default: ()).map(item => (item,).flatten())
-        let display_pages = pages
-          .map(item => if item.len() > 1 {
-            [#item.first()--#item.last()]
-          } else {
-            [#item.first()]
-          })
-          .join(", ", last: " and ")
+        let (pages, display_pages) = rangelist(page.at("pages", default: ()))
 
         if first {
-          [== Subframe #subframe_id#if subframe_pages.len() <= 1 and pages.len() == 0 and page.description != none [: #page.description] #label(data.metadata.message + ".s" + str(subframe_id))]
+          [
+            == Subframe #subframe_id#if subframe_pages.len() <= 1 and pages.len() == 0 and page.description != none [: #page.description] #label(data.metadata.message + ".s" + str(subframe_id))
+          ]
           first = false
         }
         if pages.len() > 0 {
-          let label = label(data.metadata.message + ".s" + str(subframe_id) + "p" + str(pages.first().first()))
+          let label = label(
+            data.metadata.message
+              + ".s"
+              + str(subframe_id)
+              + "p"
+              + str(pages.first()),
+          )
           if pages.len() == 1 {
-            [=== Page #display_pages#if page.description != none [: #page.description] #label]
+            [
+              === Page #display_pages#if page.description != none [: #page.description] #label
+            ]
           } else {
-            [=== Pages #display_pages#if page.description != none [: #page.description] #label]
+            [
+              === Pages #display_pages#if page.description != none [: #page.description] #label
+            ]
           }
         }
 
