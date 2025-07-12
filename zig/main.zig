@@ -80,21 +80,16 @@ pub fn main() !void {
     try log.init(gpa, null, &env);
     defer log.deinit(gpa);
 
-    if (options.options.help) {
-        try argsParser.printHelp(Options, "ephemerides", out);
-        try buffered_out.flush();
-        return;
-    }
-
-    if (options.positionals.len < 1) {
-        log.errAt(@src(), "Missing path of file / port to parse.", .{});
+    if (options.options.help or options.positionals.len < 1) {
+        if (!options.options.help)
+            log.errAt(@src(), "Missing path of file / port to parse.", .{});
         try argsParser.printHelp(Options, "ephemerides", out);
         try buffered_out.flush();
         return;
     }
 
     mode = options.options.mode;
-    log.infoAt(@src(), "Starting with arguments: {any}", .{options.options});
+    log.infoAt(@src(), "Starting to parse ublox messages from '{s}' with arguments: {any}", .{ options.positionals[0], options.options });
 
     try utils.read_ublox_from(
         options.positionals[0],

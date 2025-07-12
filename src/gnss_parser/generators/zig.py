@@ -186,7 +186,7 @@ def handler_to_zig(self, output: TextIO):
                 for message in sorted(self.per_constellation[constellation], key = lambda m: m.name):
                     if not message.ublox:
                         continue
-                    func.write_line(f'\t\t{message.ublox.signal} => .{Zig.identifier(simplify(message.name))},')
+                    func.write_line(f"\t\t{', '.join(map(str, message.ublox.signal.as_list))} => .{Zig.identifier(simplify(message.name))},")
                 func.write_line('\t\telse => error.MissingMessage')
                 func.write_line('\t},')
             func.write_line('\telse => error.MissingConstellation')
